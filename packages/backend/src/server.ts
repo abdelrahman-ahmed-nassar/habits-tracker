@@ -15,6 +15,7 @@ import { responseHandler } from "./middlewares/responseHandler";
 
 // Import routes
 import habitRoutes from "./routes/habitRoutes";
+import backupRoutes from "./routes/backupRoutes";
 
 /**
  * Creates and configures an Express application
@@ -58,6 +59,7 @@ export function createApp() {
 
   // Register API routes
   app.use("/api/habits", habitRoutes);
+  app.use("/api/backups", backupRoutes);
   // TODO: Add other routes
   // app.use('/api/completions', completionsRouter);
   // app.use('/api/notes', notesRouter);

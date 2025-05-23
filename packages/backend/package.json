@@ -19,9 +19,13 @@
     "check:strict": "tsc --noEmit --strict --strictNullChecks --strictFunctionTypes --strictBindCallApply --strictPropertyInitialization --noImplicitAny --noImplicitThis",
     "find-ts-errors": "node scripts/find-ts-errors.js",
     "check:all": "node scripts/complete-check.js",
-    "validate": "npm run check && npm run test"
+    "validate": "npm run check && npm run test",
+    "init-data": "node scripts/initializeData.js",
+    "backup": "ts-node scripts/createFullBackup.ts",
+    "backup:clean": "ts-node scripts/cleanupOldBackups.ts"
   },
   "dependencies": {
+    "archiver": "^5.3.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -29,6 +33,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "@types/archiver": "^5.3.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.11",
