@@ -55,21 +55,5 @@
     "bestStreak": 12,
     "createdAt": "2025-05-08",
     "isActive": true
-  },
-  {
-    "id": "8d928c8c-ea5f-4bfd-84d8-5388a659e1f3",
-    "name": "Monthly Budget Review",
-    "description": "Review expenses and update budget",
-    "tag": "finance",
-    "repetition": "monthly",
-    "specificDays": [
-      1
-    ],
-    "goalType": "streak",
-    "goalValue": 1,
-    "currentStreak": 2,
-    "bestStreak": 3,
-    "createdAt": "2025-02-22",
-    "isActive": true
   }
 ]

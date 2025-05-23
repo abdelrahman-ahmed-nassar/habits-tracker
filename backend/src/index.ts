@@ -7,6 +7,7 @@ import habitRoutes from "./routes/habitRoutes";
 import analyticsRoutes from "./routes/analyticsRoutes";
 import noteRoutes from "./routes/noteRoutes";
 import recordsRoutes from "./routes/recordsRoutes";
+import completionsRoutes from "./routes/completionsRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
@@ -28,6 +29,7 @@ app.use("/api/habits", habitRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/records", recordsRoutes);
+app.use("/api/completions", completionsRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

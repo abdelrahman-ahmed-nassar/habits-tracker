@@ -7,6 +7,29 @@ import { AppError, asyncHandler } from "../middleware/errorHandler";
 import { isValidDateFormat } from "../utils/validation";
 
 /**
+ * Get completion records for a specific date
+ * @route GET /api/completions/date/:date
+ */
+export const getDailyCompletions = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { date } = req.params;
+
+    // Validate date format
+    if (!isValidDateFormat(date)) {
+      throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
+    }
+
+    // Get all completions for this date
+    const completions = await dataService.getCompletionsByDate(date);
+
+    res.status(200).json({
+      success: true,
+      data: completions,
+    });
+  }
+);
+
+/**
  * Get completion records for a habit
  * @route GET /api/habits/:id/records
  */
@@ -50,22 +73,29 @@ export const getHabitCompletions = asyncHandler(
 export const markHabitComplete = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { date, completed, value } = req.body;
+    const { date, completed, value, habitId } = req.body;
+
+    // Use habitId from body if id param is not provided (for /completions endpoints)
+    const targetHabitId = id || habitId;
 
     // Basic validation
+    if (!targetHabitId) {
+      throw new AppError("Habit ID is required", 400);
+    }
+
     if (!date) {
       throw new AppError("Date is required", 400);
     }
 
     // Check if habit exists
-    const habit = await dataService.getHabitById(id);
+    const habit = await dataService.getHabitById(targetHabitId);
     if (!habit) {
-      throw new AppError(`Habit with ID ${id} not found`, 404);
+      throw new AppError(`Habit with ID ${targetHabitId} not found`, 404);
     }
 
     // Create completion data
     const completionData: Omit<CompletionRecord, "id" | "completedAt"> = {
-      habitId: id,
+      habitId: targetHabitId,
       date,
       completed: completed !== undefined ? completed : true,
       value: value !== undefined ? value : undefined,
@@ -105,7 +135,10 @@ export const markHabitComplete = asyncHandler(
  */
 export const deleteCompletion = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id, date } = req.params;
+    const { id, date, habitId } = req.params;
+
+    // Use habitId or id parameter
+    const targetHabitId = habitId || id;
 
     // Validate date format
     if (!isValidDateFormat(date)) {
@@ -113,18 +146,20 @@ export const deleteCompletion = asyncHandler(
     }
 
     // Check if habit exists
-    const habit = await dataService.getHabitById(id);
+    const habit = await dataService.getHabitById(targetHabitId);
     if (!habit) {
-      throw new AppError(`Habit with ID ${id} not found`, 404);
+      throw new AppError(`Habit with ID ${targetHabitId} not found`, 404);
     }
 
     // Check if completion record exists
-    const completions = await dataService.getCompletionsByHabitId(id);
+    const completions = await dataService.getCompletionsByHabitId(
+      targetHabitId
+    );
     const completionRecord = completions.find((c) => c.date === date);
 
     if (!completionRecord) {
       throw new AppError(
-        `No completion record found for habit ${id} on date ${date}`,
+        `No completion record found for habit ${targetHabitId} on date ${date}`,
         404
       );
     }
@@ -137,11 +172,11 @@ export const deleteCompletion = asyncHandler(
     }
 
     // Update the habit streaks after deletion
-    await dataService.updateHabitStreaks(id);
+    await dataService.updateHabitStreaks(targetHabitId);
 
     res.status(200).json({
       success: true,
-      message: `Completion record for habit ${id} on date ${date} deleted successfully`,
+      message: `Completion record for habit ${targetHabitId} on date ${date} deleted successfully`,
     });
   }
 );
