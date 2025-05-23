@@ -1,6 +1,6 @@
 [
   {
-    "id": "04af4e06-3209-4baa-89a4-fcb038fb4c03",
+    "id": "fe64efe6-4e77-41a6-8e5c-b310a8fdcea4",
     "name": "Daily Exercise",
     "description": "At least 30 minutes of physical activity",
     "tag": "health",
@@ -14,7 +14,7 @@
     "isActive": true
   },
   {
-    "id": "b5c718b4-73c6-44ab-9de2-7ec73ac8252d",
+    "id": "328a4bcf-cb68-4d5d-85b8-524e9bfb07cb",
     "name": "Read a book",
     "description": "Read at least 30 pages",
     "tag": "learning",
@@ -27,7 +27,7 @@
     "isActive": true
   },
   {
-    "id": "8ac1d55c-9281-48b3-ad32-e0ed8bf10978",
+    "id": "cce3f91f-a44a-45f7-9ecf-a2fe4dcd6fc2",
     "name": "Weekly Review",
     "description": "Review goals and plan for next week",
     "tag": "productivity",
@@ -44,7 +44,7 @@
     "isActive": true
   },
   {
-    "id": "cf76ffe8-8a8f-4715-8e07-d6040b2aeb5b",
+    "id": "f89b5254-1099-4226-8ee7-9e4685e7da60",
     "name": "Drink Water",
     "description": "Drink at least 2 liters of water",
     "tag": "health",
@@ -57,7 +57,7 @@
     "isActive": true
   },
   {
-    "id": "59c04328-8efe-4221-8212-87924f9261ee",
+    "id": "8d928c8c-ea5f-4bfd-84d8-5388a659e1f3",
     "name": "Monthly Budget Review",
     "description": "Review expenses and update budget",
     "tag": "finance",

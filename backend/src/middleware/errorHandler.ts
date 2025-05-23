@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 interface ApiError extends Error {
   statusCode?: number;
+  errors?: any[];
 }
 
 export const errorHandler = (
@@ -14,11 +15,39 @@ export const errorHandler = (
   const message = err.message || "Internal server error";
 
   console.error(`Error: ${message}`);
-  console.error(err.stack);
+  if (err.stack) {
+    console.error(err.stack);
+  }
 
   res.status(statusCode).json({
     success: false,
-    error: message,
+    message,
+    errors: err.errors,
     stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
   });
 };
+
+/**
+ * Create a custom error with status code and optional validation errors
+ */
+export class AppError extends Error {
+  statusCode: number;
+  errors?: any[];
+
+  constructor(message: string, statusCode: number, errors?: any[]) {
+    super(message);
+    this.statusCode = statusCode;
+    this.errors = errors;
+
+    // This is needed because we're extending a built-in class
+    Object.setPrototypeOf(this, AppError.prototype);
+  }
+}
+
+/**
+ * Async handler to catch errors in async route handlers
+ */
+export const asyncHandler =
+  (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };

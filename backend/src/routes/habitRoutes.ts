@@ -1,40 +1,29 @@
 import express from "express";
+import * as habitController from "../controllers/habitController";
+import * as completionController from "../controllers/completionController";
 
 const router = express.Router();
 
 // GET /api/habits - Get all habits
-router.get("/", (req, res) => {
-  res.json({ message: "Get all habits" });
-});
-
-// POST /api/habits - Create new habit
-router.post("/", (req, res) => {
-  res.json({ message: "Create new habit" });
-});
+router.get("/", habitController.getAllHabits);
 
 // GET /api/habits/:id - Get a specific habit
-router.get("/:id", (req, res) => {
-  res.json({ message: `Get habit ${req.params.id}` });
-});
+router.get("/:id", habitController.getHabitById);
+
+// POST /api/habits - Create new habit
+router.post("/", habitController.createHabit);
 
 // PUT /api/habits/:id - Update habit
-router.put("/:id", (req, res) => {
-  res.json({ message: `Update habit ${req.params.id}` });
-});
+router.put("/:id", habitController.updateHabit);
 
 // DELETE /api/habits/:id - Delete habit
-router.delete("/:id", (req, res) => {
-  res.json({ message: `Delete habit ${req.params.id}` });
-});
+router.delete("/:id", habitController.deleteHabit);
 
 // GET /api/habits/:id/records - Get habit completion records
-router.get("/:id/records", (req, res) => {
-  res.json({ message: `Get records for habit ${req.params.id}` });
-});
+router.get("/:id/records", completionController.getHabitCompletions);
 
 // POST /api/habits/:id/complete - Mark habit as complete for a date
-router.post("/:id/complete", (req, res) => {
-  res.json({ message: `Mark habit ${req.params.id} as complete` });
-});
+router.post("/:id/complete", completionController.markHabitComplete);
 
+// Export routes
 export default router;

@@ -466,6 +466,16 @@ export const calculateHabitAnalytics = async (
   };
 };
 
+/**
+ * Replace all completion records with a new set
+ * @param completions New set of completion records
+ */
+export const replaceAllCompletions = async (
+  completions: CompletionRecord[]
+): Promise<void> => {
+  await writeData(COMPLETIONS_FILE, completions);
+};
+
 // Initialize data on module load
 initializeData()
   .then(() => console.log("Data service initialized"))
