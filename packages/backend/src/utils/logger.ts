@@ -2,6 +2,9 @@ import env from "../config/env";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
+// Check if running in test environment
+const isTest = process.env.NODE_ENV === "test";
+
 interface LogLevels {
   [key: string]: number;
 }
@@ -27,19 +30,22 @@ class Logger {
         this.prefix
       }${message}`;
 
-      switch (level) {
-        case "debug":
-          console.debug(formattedMessage, ...args);
-          break;
-        case "info":
-          console.info(formattedMessage, ...args);
-          break;
-        case "warn":
-          console.warn(formattedMessage, ...args);
-          break;
-        case "error":
-          console.error(formattedMessage, ...args);
-          break;
+      // Skip console output in test environment
+      if (!isTest) {
+        switch (level) {
+          case "debug":
+            console.debug(formattedMessage, ...args);
+            break;
+          case "info":
+            console.info(formattedMessage, ...args);
+            break;
+          case "warn":
+            console.warn(formattedMessage, ...args);
+            break;
+          case "error":
+            console.error(formattedMessage, ...args);
+            break;
+        }
       }
     }
   }

@@ -1,14 +1,25 @@
 import { Request, Response } from "express";
-import { Habit, UserSettings } from "@ultimate-habits-tracker/shared";
+import { ParsedQs } from "qs";
+
+// Define local type stubs for shared types (for testing purposes)
+interface SharedHabit {
+  id: string;
+  [key: string]: any;
+}
+
+interface SharedUserSettings {
+  [key: string]: any;
+}
 
 // Custom request interfaces
-export interface TypedRequest<T = unknown, Q = unknown> extends Request {
+export interface TypedRequest<T = any, Q extends ParsedQs = ParsedQs>
+  extends Request {
   body: T;
   query: Q;
 }
 
 export interface HabitRequest extends Request {
-  habit?: Habit;
+  habit?: SharedHabit;
 }
 
 // Common query parameters

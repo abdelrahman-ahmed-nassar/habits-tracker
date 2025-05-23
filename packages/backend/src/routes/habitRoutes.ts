@@ -1,8 +1,24 @@
 import { Router } from "express";
 import { TypedRequest, TypedResponse } from "../types/express";
 import { DataService } from "../services/dataService";
-import { Habit } from "@ultimate-habits-tracker/shared";
 import { AppError } from "../middlewares/errorMiddleware";
+
+// Define local Habit interface for testing purposes
+interface Habit {
+  id: string;
+  name: string;
+  tag: string;
+  repetition: string;
+  specificDays?: number[];
+  specificDates?: number[];
+  goalType: string;
+  goalValue: number;
+  createdAt: string;
+  updatedAt: string;
+  color?: string;
+  icon?: string;
+  archived?: boolean;
+}
 
 const router = Router();
 const habitService = new DataService<Habit>("habits");

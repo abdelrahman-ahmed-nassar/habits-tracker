@@ -50,6 +50,48 @@ npm run build
 npm start
 ```
 
+## Testing
+
+The backend uses Jest and Supertest for unit and integration testing.
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run tests in watch mode during development
+npm run test:watch
+
+# Run only server tests
+npm run test:server
+
+# Run only middleware tests
+npm run test:middlewares
+```
+
+### Test Structure
+
+```
+src/__tests__/
+├── server/          # Server startup and endpoints tests
+├── middlewares/     # Middleware tests
+└── typescript-compilation.test.ts  # TypeScript compilation verification
+```
+
+### Test Coverage
+
+The test suite covers:
+
+1. Server startup and port binding
+2. CORS configuration
+3. Middleware chain execution
+4. Error handling middleware
+5. TypeScript compilation
+
 ## API Structure
 
 ### Middleware Chain
