@@ -3,6 +3,11 @@ import { TypedRequest, TypedResponse } from "../types/express";
 import { DataService } from "../services/dataService";
 import { AppError } from "../middlewares/errorMiddleware";
 import { NextFunction } from "express";
+import { HabitController } from "../controllers/habitController";
+import {
+  validateCreateHabit,
+  validateUpdateHabit,
+} from "../middlewares/validationMiddleware";
 
 // Define local Habit interface for testing purposes
 // Rename to IHabit to match ESLint naming convention rule
@@ -24,104 +29,59 @@ interface IHabit {
 
 const router = Router();
 const habitService = new DataService<IHabit>("habits");
+const habitController = new HabitController();
 
-// Get all habits
-router.get(
-  "/",
-  async (req, res: TypedResponse<IHabit[]>, next: NextFunction) => {
-    try {
-      const habits = await habitService.getAll();
-      res.success(habits, "Habits retrieved successfully");
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+/**
+ * @route   GET /api/habits
+ * @desc    Get all habits with optional filtering
+ * @access  Public
+ */
+router.get("/", habitController.getAllHabits.bind(habitController));
 
-// Get a single habit by ID
-router.get(
-  "/:id",
-  async (req, res: TypedResponse<IHabit>, next: NextFunction) => {
-    try {
-      const habit = await habitService.getById(req.params.id);
-      res.success(habit, "Habit retrieved successfully");
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+/**
+ * @route   GET /api/habits/:id
+ * @desc    Get a single habit by ID
+ * @access  Public
+ */
+router.get("/:id", habitController.getHabitById.bind(habitController));
 
-// Create a new habit
+/**
+ * @route   POST /api/habits
+ * @desc    Create a new habit
+ * @access  Public
+ */
 router.post(
   "/",
-  async (
-    req: TypedRequest<IHabit>,
-    res: TypedResponse<IHabit>,
-    next: NextFunction
-  ) => {
-    try {
-      // Validate required fields
-      const { name, tag, repetition, goalType, goalValue } = req.body;
-
-      if (
-        !name ||
-        !tag ||
-        !repetition ||
-        !goalType ||
-        goalValue === undefined
-      ) {
-        throw new AppError("Missing required habit fields", 400);
-      }
-
-      // Generate ID if not provided
-      if (!req.body.id) {
-        req.body.id = Date.now().toString();
-      }
-
-      // Set created timestamp
-      const now = new Date().toISOString();
-      req.body.createdAt = now;
-      req.body.updatedAt = now;
-
-      const newHabit = await habitService.create(req.body);
-      res.success(newHabit, "Habit created successfully", 201);
-    } catch (error) {
-      next(error);
-    }
-  }
+  validateCreateHabit,
+  habitController.createHabit.bind(habitController)
 );
 
-// Update a habit
+/**
+ * @route   PUT /api/habits/:id
+ * @desc    Update an existing habit
+ * @access  Public
+ */
 router.put(
   "/:id",
-  async (
-    req: TypedRequest<Partial<IHabit>>,
-    res: TypedResponse<IHabit>,
-    next: NextFunction
-  ) => {
-    try {
-      // Update timestamp
-      req.body.updatedAt = new Date().toISOString();
-
-      const updatedHabit = await habitService.update(req.params.id, req.body);
-      res.success(updatedHabit, "Habit updated successfully");
-    } catch (error) {
-      next(error);
-    }
-  }
+  validateUpdateHabit,
+  habitController.updateHabit.bind(habitController)
 );
 
-// Delete a habit
-router.delete(
-  "/:id",
-  async (req, res: TypedResponse<null>, next: NextFunction) => {
-    try {
-      await habitService.delete(req.params.id);
-      res.success(null, "Habit deleted successfully");
-    } catch (error) {
-      next(error);
-    }
-  }
+/**
+ * @route   DELETE /api/habits/:id
+ * @desc    Delete a habit
+ * @access  Public
+ */
+router.delete("/:id", habitController.deleteHabit.bind(habitController));
+
+/**
+ * @route   PATCH /api/habits/:id/archive
+ * @desc    Archive a habit (soft delete)
+ * @access  Public
+ */
+router.patch(
+  "/:id/archive",
+  habitController.archiveHabit.bind(habitController)
 );
 
 export default router;
