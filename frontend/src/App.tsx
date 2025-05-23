@@ -1,5 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 import MainLayout from "@/components/layout/MainLayout";
 
@@ -13,48 +12,34 @@ const NotesPage = lazy(() => import("@/pages/NotesPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <BrowserRouter>
-          <MainLayout>
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center h-screen">
-                  Loading...
-                </div>
-              }
-            >
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/daily" element={<DailyPage />} />
-                <Route path="/daily/:date" element={<DailyPage />} />
-                <Route path="/habits" element={<HabitsPage />} />
-                <Route path="/habits/:id" element={<HabitsPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/analytics/:view" element={<AnalyticsPage />} />
-                <Route path="/notes" element={<NotesPage />} />
-                <Route path="/notes/:date" element={<NotesPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/404" element={<NotFoundPage />} />
-                <Route path="*" element={<Navigate to="/404" />} />
-              </Routes>
-            </Suspense>
-          </MainLayout>
-        </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <MainLayout>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              Loading...
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/daily" element={<DailyPage />} />
+            <Route path="/daily/:date" element={<DailyPage />} />
+            <Route path="/habits" element={<HabitsPage />} />
+            <Route path="/habits/:id" element={<HabitsPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/analytics/:view" element={<AnalyticsPage />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/notes/:date" element={<NotesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<Navigate to="/404" />} />
+          </Routes>
+        </Suspense>
+      </MainLayout>
+    </ThemeProvider>
   );
 }
 

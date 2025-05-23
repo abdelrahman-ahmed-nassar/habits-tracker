@@ -7,13 +7,16 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds
 });
 
-// Request interceptor
+// Request interceptor for adding auth token
 api.interceptors.request.use(
   (config) => {
-    // You can add auth tokens here if needed
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -21,30 +24,30 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor for handling common errors
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error: AxiosError) => {
-    // Handle common errors
-    if (error.response) {
-      if (error.response.status === 401) {
-        // Handle unauthorized
-        console.error("Unauthorized access");
-      } else if (error.response.status === 404) {
-        // Handle not found
-        console.error("Resource not found");
-      } else if (error.response.status >= 500) {
-        // Handle server errors
-        console.error("Server error occurred");
+    // Handle unauthorized errors (401) - token expired
+    if (error.response?.status === 401) {
+      // Clear local storage and redirect to login
+      localStorage.removeItem("authToken");
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
       }
-    } else if (error.request) {
-      // Handle network errors
-      console.error("Network error - no response received");
-    } else {
-      // Handle other errors
-      console.error("Error", error.message);
+    }
+
+    // Handle session timeout (403) - session expired
+    if (error.response?.status === 403) {
+      // Redirect to login with return URL
+      if (window.location.pathname !== "/login") {
+        window.location.href = `/login?returnUrl=${encodeURIComponent(window.location.pathname)}`;
+      }
+    }
+
+    // Handle server errors (500)
+    if (error.response?.status === 500) {
+      console.error("Server error:", error.response?.data);
     }
 
     return Promise.reject(error);
