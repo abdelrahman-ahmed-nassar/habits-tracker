@@ -191,3 +191,49 @@ export const getMonthlyAnalytics = async (
     next(error);
   }
 };
+
+/**
+ * Get day of week analytics
+ */
+export const getDayOfWeekAnalysis = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { startDate, endDate, includeArchived } = req.query;
+
+    const result = await analyticsService.getDayOfWeekAnalysis(
+      startDate as string,
+      endDate as string,
+      includeArchived === "true"
+    );
+
+    res.success(result, "Day of week analytics retrieved successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get tag-based analytics
+ */
+export const getTagAnalytics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { startDate, endDate, includeArchived } = req.query;
+
+    const result = await analyticsService.getTagAnalytics(
+      startDate as string,
+      endDate as string,
+      includeArchived === "true"
+    );
+
+    res.success(result, "Tag analytics retrieved successfully");
+  } catch (error) {
+    next(error);
+  }
+};

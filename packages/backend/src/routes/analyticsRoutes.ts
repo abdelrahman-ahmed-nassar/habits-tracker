@@ -72,4 +72,28 @@ router.get("/weekly/:startDate", analyticsController.getWeeklyAnalytics);
  */
 router.get("/monthly/:year/:month", analyticsController.getMonthlyAnalytics);
 
+/**
+ * @route   GET /api/analytics/day-of-week
+ * @desc    Get day of week analytics
+ * @access  Public
+ * @query   {string} startDate - Start date in YYYY-MM-DD format
+ * @query   {string} endDate - End date in YYYY-MM-DD format
+ * @query   {boolean} includeArchived - Whether to include archived habits
+ */
+router.get(
+  "/day-of-week",
+  validateTimeRange,
+  analyticsController.getDayOfWeekAnalysis
+);
+
+/**
+ * @route   GET /api/analytics/tags
+ * @desc    Get analytics by habit tags/categories
+ * @access  Public
+ * @query   {string} startDate - Start date in YYYY-MM-DD format
+ * @query   {string} endDate - End date in YYYY-MM-DD format
+ * @query   {boolean} includeArchived - Whether to include archived habits
+ */
+router.get("/tags", validateTimeRange, analyticsController.getTagAnalytics);
+
 export default router;
