@@ -11,3 +11,4 @@ export * from "./analytics";
 export * from "./settings";
 export * from "./api";
 export * from "./utility";
+export * from "./charts";

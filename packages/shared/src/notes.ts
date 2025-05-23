@@ -143,3 +143,42 @@ export function isHabitMotivation(obj: unknown): obj is HabitMotivation {
     typeof motivation.updatedAt === "string"
   );
 }
+
+/**
+ * Notes interfaces for the Habits Tracker application
+ */
+
+/**
+ * Note interface representing a user note for a habit
+ */
+export interface Note {
+  /**
+   * Unique identifier for the note
+   */
+  id: string;
+
+  /**
+   * The habit ID this note is associated with
+   */
+  habitId: string;
+
+  /**
+   * Date the note is for (ISO string YYYY-MM-DD)
+   */
+  date: string;
+
+  /**
+   * Note content
+   */
+  content: string;
+
+  /**
+   * Creation timestamp
+   */
+  createdAt: string;
+
+  /**
+   * Last update timestamp
+   */
+  updatedAt: string;
+}
