@@ -129,7 +129,7 @@ export class TypedDataService<T extends { id: string }> {
         ? (data): boolean => {
             if (!Array.isArray(data)) return false;
             // Validate each item if a validator is provided
-            return data.every((item) => this.validator!(item));
+            return data.every((item) => this.validator(item));
           }
         : undefined
     );
@@ -168,7 +168,7 @@ export class TypedDataService<T extends { id: string }> {
       this.validator
         ? (data): boolean => {
             if (!Array.isArray(data)) return false;
-            return data.every((item) => this.validator!(item));
+            return data.every((item) => this.validator(item));
           }
         : undefined
     );

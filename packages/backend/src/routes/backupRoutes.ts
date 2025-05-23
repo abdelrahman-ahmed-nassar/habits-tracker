@@ -5,7 +5,6 @@ import { NextFunction } from "express";
 import { BackupService } from "../services/backupService";
 import { FileSystemService } from "../services/fileSystemService";
 import { AppError } from "../middlewares/errorMiddleware";
-import logger from "../utils/logger";
 
 interface IBackupRequest {
   entityName?: string;

@@ -23,17 +23,25 @@ describe("Express Server", () => {
   it("should respond to health check", async () => {
     const response = await request(app).get("/api/health");
 
-    expect(response.status).toBe(200);
-    expect(response.body.success).toBe(true);
-    expect(response.body.data.status).toBe("ok");
+    const statusValue = response.status;
+    const successValue = response.body.success;
+    const statusDataValue = response.body.data.status;
+
+    expect(statusValue).toBe(200);
+    expect(successValue).toBe(true);
+    expect(statusDataValue).toBe("ok");
   });
 
   it("should return 404 for non-existing routes", async () => {
     const response = await request(app).get("/non-existing-route");
 
-    expect(response.status).toBe(404);
-    expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("Error");
+    const statusValue = response.status;
+    const successValue = response.body.success;
+    const errorValue = response.body.error;
+
+    expect(statusValue).toBe(404);
+    expect(successValue).toBe(false);
+    expect(errorValue).toBe("Error");
   });
 
   it("should handle JSON parsing errors", async () => {
@@ -42,8 +50,11 @@ describe("Express Server", () => {
       .set("Content-Type", "application/json")
       .send('{"invalid JSON');
 
-    expect(response.status).toBe(500);
-    expect(response.body.success).toBe(false);
+    const statusValue = response.status;
+    const successValue = response.body.success;
+
+    expect(statusValue).toBe(500);
+    expect(successValue).toBe(false);
   });
 
   it("should bind to a port when started", async () => {
@@ -53,9 +64,12 @@ describe("Express Server", () => {
     server = app.listen(PORT);
     const address = server.address();
 
-    expect(address).not.toBeNull();
+    const isAddressNull = address === null;
+    expect(isAddressNull).toBe(false);
+
     if (typeof address === "object" && address !== null) {
-      expect(address.port).toBeGreaterThan(0);
+      const portValue = address.port;
+      expect(portValue).toBeGreaterThan(0);
     }
   });
 });
