@@ -1,33 +1,29 @@
 import { Request, Response, NextFunction } from "express";
 import {
-  Habit,
   HabitTag,
   RepetitionPattern,
   GoalType,
   HabitFilter,
-  isHabit,
 } from "../../../shared/src/habits";
-import { TypedDataService } from "../services/typedDataService";
+import { HabitService } from "../services/habitService";
 import { AppError } from "../middlewares/errorMiddleware";
 import {
   CreateHabitDto,
   UpdateHabitDto,
   HabitsListResponse,
 } from "../../../shared/src/api";
-import { v4 as uuidv4 } from "uuid";
 
 /**
  * Controller for habit-related operations
  */
 export class HabitController {
-  private habitService: TypedDataService<Habit>;
+  private habitService: HabitService;
 
   /**
    * Creates a new HabitController instance
    */
   constructor() {
-    // Initialize the TypedDataService with the habit entity type and validator
-    this.habitService = new TypedDataService<Habit>("habits", isHabit);
+    this.habitService = new HabitService();
   }
 
   /**
@@ -58,47 +54,12 @@ export class HabitController {
         filter.includeArchived = req.query.includeArchived === "true";
       }
 
-      // Get all habits
-      const allHabits = await this.habitService.getAll();
+      // Get habits with streak information
+      const habitsWithStreaks = await this.habitService.getAllHabits(filter);
 
-      // Apply filters if any exist
-      let filteredHabits = [...allHabits];
-
-      if (filter.tags?.length) {
-        filteredHabits = filteredHabits.filter((habit) =>
-          filter.tags!.includes(habit.tag)
-        );
-      }
-
-      if (filter.repetition) {
-        filteredHabits = filteredHabits.filter(
-          (habit) => habit.repetition === filter.repetition
-        );
-      }
-
-      if (filter.searchTerm) {
-        const searchTerm = filter.searchTerm.toLowerCase();
-        filteredHabits = filteredHabits.filter(
-          (habit) =>
-            habit.name.toLowerCase().includes(searchTerm) ||
-            (habit.description &&
-              habit.description.toLowerCase().includes(searchTerm))
-        );
-      }
-
-      // By default, don't include archived habits unless specifically requested
-      if (!filter.includeArchived) {
-        filteredHabits = filteredHabits.filter((habit) => !habit.archived);
-      }
-
-      // Sort habits by createdAt date, newest first
-      filteredHabits.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-
+      // Format response according to API schema
       const response: HabitsListResponse = {
-        habits: filteredHabits,
+        habits: habitsWithStreaks,
         filter: Object.keys(filter).length > 0 ? filter : undefined,
       };
 
@@ -118,7 +79,7 @@ export class HabitController {
   ): Promise<void> {
     try {
       const habitId = req.params.id;
-      const habit = await this.habitService.getById(habitId);
+      const habit = await this.habitService.getHabitById(habitId);
       res.success(habit, "Habit retrieved successfully");
     } catch (error) {
       next(error);
@@ -135,22 +96,7 @@ export class HabitController {
   ): Promise<void> {
     try {
       const habitData = req.body as CreateHabitDto;
-
-      // Generate a UUID for the new habit
-      const id = uuidv4();
-
-      // Set additional required fields
-      const now = new Date().toISOString();
-
-      const newHabit: Habit = {
-        ...habitData,
-        id,
-        createdAt: now,
-        updatedAt: now,
-        archived: false, // New habits are not archived by default
-      };
-
-      const createdHabit = await this.habitService.create(newHabit);
+      const createdHabit = await this.habitService.createHabit(habitData);
       res.success(createdHabit, "Habit created successfully", 201);
     } catch (error) {
       next(error);
@@ -168,14 +114,10 @@ export class HabitController {
     try {
       const habitId = req.params.id;
       const updateData = req.body as UpdateHabitDto;
-
-      // Add updated timestamp
-      const updatedData = {
-        ...updateData,
-        updatedAt: new Date().toISOString(),
-      };
-
-      const updatedHabit = await this.habitService.update(habitId, updatedData);
+      const updatedHabit = await this.habitService.updateHabit(
+        habitId,
+        updateData
+      );
       res.success(updatedHabit, "Habit updated successfully");
     } catch (error) {
       next(error);
@@ -183,7 +125,7 @@ export class HabitController {
   }
 
   /**
-   * Delete a habit
+   * Delete a habit (hard delete)
    */
   async deleteHabit(
     req: Request,
@@ -192,7 +134,9 @@ export class HabitController {
   ): Promise<void> {
     try {
       const habitId = req.params.id;
-      await this.habitService.delete(habitId);
+      const deleteCompletions = req.query.deleteCompletions === "true";
+
+      await this.habitService.deleteHabit(habitId, deleteCompletions);
       res.success(null, "Habit deleted successfully");
     } catch (error) {
       next(error);
@@ -209,17 +153,25 @@ export class HabitController {
   ): Promise<void> {
     try {
       const habitId = req.params.id;
+      const archivedHabit = await this.habitService.archiveHabit(habitId);
+      res.success(archivedHabit, "Habit archived successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      // Get the current habit
-      const habit = await this.habitService.getById(habitId);
-
-      // Update with archived status
-      const updatedHabit = await this.habitService.update(habitId, {
-        archived: true,
-        updatedAt: new Date().toISOString(),
-      });
-
-      res.success(updatedHabit, "Habit archived successfully");
+  /**
+   * Restore an archived habit
+   */
+  async restoreHabit(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const habitId = req.params.id;
+      const restoredHabit = await this.habitService.restoreHabit(habitId);
+      res.success(restoredHabit, "Habit restored successfully");
     } catch (error) {
       next(error);
     }

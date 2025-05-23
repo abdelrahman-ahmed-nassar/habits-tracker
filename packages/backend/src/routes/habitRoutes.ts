@@ -69,8 +69,9 @@ router.put(
 
 /**
  * @route   DELETE /api/habits/:id
- * @desc    Delete a habit
+ * @desc    Delete a habit (hard delete)
  * @access  Public
+ * @query   deleteCompletions - Whether to also delete completions (true/false)
  */
 router.delete("/:id", habitController.deleteHabit.bind(habitController));
 
@@ -82,6 +83,16 @@ router.delete("/:id", habitController.deleteHabit.bind(habitController));
 router.patch(
   "/:id/archive",
   habitController.archiveHabit.bind(habitController)
+);
+
+/**
+ * @route   PATCH /api/habits/:id/restore
+ * @desc    Restore an archived habit
+ * @access  Public
+ */
+router.patch(
+  "/:id/restore",
+  habitController.restoreHabit.bind(habitController)
 );
 
 export default router;
