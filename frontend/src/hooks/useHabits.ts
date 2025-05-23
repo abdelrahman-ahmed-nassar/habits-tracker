@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { habitsApi } from "@/services/habitsApi";
 import { CreateHabitDto, UpdateHabitDto, Habit } from "@/types";
+import { fallbackHabits, isFetchError } from "@/utils/fallbackData";
 
 export function useHabits() {
   const queryClient = useQueryClient();
@@ -15,16 +16,24 @@ export function useHabits() {
   } = useQuery({
     queryKey,
     queryFn: habitsApi.getAll,
+    retry: 1,
+    onError: (error) => {
+      console.error("Failed to fetch habits:", error);
+    },
   });
 
-  // Extract the habits data from the response
-  const habits = habitsResponse?.data || [];
+  // Extract the habits data from the response or use fallback
+  const habits =
+    habitsResponse?.data || (isFetchError(error) ? fallbackHabits : []);
 
   // Create new habit
   const createHabit = useMutation({
     mutationFn: (newHabit: CreateHabitDto) => habitsApi.create(newHabit),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error) => {
+      console.error("Failed to create habit:", error);
     },
   });
 
@@ -42,6 +51,10 @@ export function useHabits() {
         );
         return { ...old, data: updatedHabits };
       });
+      queryClient.invalidateQueries({ queryKey });
+    },
+    onError: (error) => {
+      console.error("Failed to update habit:", error);
       queryClient.invalidateQueries({ queryKey });
     },
   });
@@ -70,6 +83,7 @@ export function useHabits() {
       return { previousHabits };
     },
     onError: (_err, _variables, context) => {
+      console.error("Failed to delete habit:", _err);
       // If the mutation fails, use the context to reset the cache
       if (context?.previousHabits) {
         queryClient.setQueryData(queryKey, context.previousHabits);

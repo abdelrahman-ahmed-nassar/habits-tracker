@@ -15,15 +15,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+} from "@/components/ui/Card";
+import { Progress } from "@/components/ui/Progress";
 import { useHabits } from "@/hooks/useHabits";
 import { useHabitCompletions } from "@/hooks/useHabitCompletions";
 import { formatDateForDisplay, getTodayString } from "@/utils/dateUtils";
 import { Habit, HabitCompletion } from "@/types";
 
 const Dashboard = () => {
-  const [date, setDate] = useState<string>(getTodayString());
+  const [date] = useState<string>(getTodayString());
   const [greeting, setGreeting] = useState<string>("");
   const { habits, isLoading: habitsLoading } = useHabits();
   const { completions, isLoading: completionsLoading } =
@@ -45,12 +45,29 @@ const Dashboard = () => {
 
   // Calculate stats when habits or completions change
   useEffect(() => {
-    if (habitsLoading || completionsLoading || !habits) return;
+    // Skip if data is still loading or no habits data
+    if (habitsLoading || completionsLoading || !habits || !habits.length)
+      return;
+
+    // Skip unnecessary recalculations
+    if (
+      habits.length === stats.totalHabits &&
+      stats.completionRate > 0 &&
+      completions &&
+      completions.filter((c: HabitCompletion) => c.completed).length ===
+        stats.completedToday
+    ) {
+      return;
+    }
 
     const totalHabits = habits.length;
     const dailyHabits = habits.filter((habit: Habit) => {
       const today = new Date().getDay() || 7; // Convert Sunday from 0 to 7
-      return habit.frequency.includes(today);
+      return (
+        habit.frequency &&
+        Array.isArray(habit.frequency) &&
+        habit.frequency.includes(today)
+      );
     });
 
     const completedToday =
@@ -61,7 +78,6 @@ const Dashboard = () => {
         : 0;
 
     // For now, we'll just use a placeholder value for streak
-    // In a real app, this would be calculated properly based on historical data
     const streak = 3;
 
     setStats({
@@ -70,12 +86,23 @@ const Dashboard = () => {
       completionRate,
       streak,
     });
-  }, [habits, completions, habitsLoading, completionsLoading]);
+  }, [
+    habits,
+    completions,
+    habitsLoading,
+    completionsLoading,
+    stats.totalHabits,
+    stats.completionRate,
+    stats.completedToday,
+  ]);
 
   // Today's habits that should be displayed on dashboard
   const todaysHabits =
     habits
       ?.filter((habit: Habit) => {
+        if (!habit || !habit.frequency || !Array.isArray(habit.frequency)) {
+          return false;
+        }
         const today = new Date().getDay() || 7; // Convert Sunday from 0 to 7
         return habit.frequency.includes(today);
       })
