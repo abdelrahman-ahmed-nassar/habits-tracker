@@ -66,7 +66,7 @@ export class HabitController {
 
       if (filter.tags?.length) {
         filteredHabits = filteredHabits.filter((habit) =>
-          filter.tags.includes(habit.tag)
+          filter.tags!.includes(habit.tag)
         );
       }
 
