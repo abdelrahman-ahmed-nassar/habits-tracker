@@ -13,7 +13,12 @@
     "test:server": "jest server",
     "test:middlewares": "jest middlewares",
     "lint": "eslint . --ext .ts",
-    "type-check": "tsc --noEmit"
+    "lint:fix": "eslint . --ext .ts --fix",
+    "type-check": "tsc --noEmit",
+    "check": "npm run type-check && npm run lint",
+    "check:strict": "tsc --noEmit --strict --strictNullChecks --strictFunctionTypes --strictBindCallApply --strictPropertyInitialization --noImplicitAny --noImplicitThis",
+    "find-ts-errors": "node scripts/find-ts-errors.js",
+    "validate": "npm run check && npm run test"
   },
   "dependencies": {
     "cors": "^2.8.5",
