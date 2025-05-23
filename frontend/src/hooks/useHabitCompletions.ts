@@ -10,7 +10,7 @@ export function useHabitCompletions(date?: string) {
 
   // Fetch habit completions for a specific date
   const {
-    data: completions = [],
+    data: completionsResponse,
     isLoading,
     error,
     refetch,
@@ -18,6 +18,9 @@ export function useHabitCompletions(date?: string) {
     queryKey,
     queryFn: () => completionsApi.getByDate(today),
   });
+
+  // Extract completions data from response
+  const completions = completionsResponse?.data || [];
 
   // Track a new habit completion
   const trackCompletion = useMutation({
@@ -43,8 +46,9 @@ export function useHabitCompletions(date?: string) {
 
       // Add optimistic completion to cache
       queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old) return [optimisticCompletion];
-        return [...old, optimisticCompletion];
+        if (!old) return { data: [optimisticCompletion] };
+        const oldCompletions = old.data || [];
+        return { ...old, data: [...oldCompletions, optimisticCompletion] };
       });
 
       // Return context with the snapshotted value
@@ -73,35 +77,41 @@ export function useHabitCompletions(date?: string) {
       const previousCompletions = queryClient.getQueryData(queryKey);
 
       // Optimistically update the completion status
-      queryClient.setQueryData(queryKey, (old: HabitCompletion[] = []) => {
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old) return old;
+        const oldCompletions = old.data || [];
+
         // Check if completion already exists
-        const existingIndex = old.findIndex(
-          (completion) =>
+        const existingIndex = oldCompletions.findIndex(
+          (completion: HabitCompletion) =>
             completion.habitId === habitId && completion.date === date
         );
 
         if (existingIndex >= 0) {
           // Toggle existing completion
-          const updated = [...old];
+          const updated = [...oldCompletions];
           updated[existingIndex] = {
             ...updated[existingIndex],
             completed: !updated[existingIndex].completed,
             updatedAt: new Date().toISOString(),
           };
-          return updated;
+          return { ...old, data: updated };
         } else {
           // Create new completion
-          return [
+          return {
             ...old,
-            {
-              id: "temp-id-" + Date.now(),
-              habitId,
-              date,
-              completed: true,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          ];
+            data: [
+              ...oldCompletions,
+              {
+                id: "temp-id-" + Date.now(),
+                habitId,
+                date,
+                completed: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            ],
+          };
         }
       });
 
@@ -131,11 +141,16 @@ export function useHabitCompletions(date?: string) {
       const previousCompletions = queryClient.getQueryData(queryKey);
 
       // Optimistically remove the completion from cache
-      queryClient.setQueryData(queryKey, (old: HabitCompletion[] = []) => {
-        return old.filter(
-          (completion) =>
-            !(completion.habitId === habitId && completion.date === date)
-        );
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old) return old;
+        const oldCompletions = old.data || [];
+        return {
+          ...old,
+          data: oldCompletions.filter(
+            (completion: HabitCompletion) =>
+              !(completion.habitId === habitId && completion.date === date)
+          ),
+        };
       });
 
       // Return context with the snapshotted value
@@ -171,7 +186,8 @@ export function useHabitCompletions(date?: string) {
   // Check if a habit is completed for the current date
   const isHabitCompletedForDate = (habitId: string): boolean => {
     return completions.some(
-      (completion) => completion.habitId === habitId && completion.completed
+      (completion: HabitCompletion) =>
+        completion.habitId === habitId && completion.completed
     );
   };
 

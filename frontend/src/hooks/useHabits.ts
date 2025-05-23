@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { habitsApi } from "@/services/habitsApi";
-import { CreateHabitDto, UpdateHabitDto } from "@/types";
+import { CreateHabitDto, UpdateHabitDto, Habit } from "@/types";
 
 export function useHabits() {
   const queryClient = useQueryClient();
@@ -8,7 +8,7 @@ export function useHabits() {
 
   // Fetch all habits
   const {
-    data: habits = [],
+    data: habitsResponse,
     isLoading,
     error,
     refetch,
@@ -16,6 +16,9 @@ export function useHabits() {
     queryKey,
     queryFn: habitsApi.getAll,
   });
+
+  // Extract the habits data from the response
+  const habits = habitsResponse?.data || [];
 
   // Create new habit
   const createHabit = useMutation({
@@ -33,9 +36,11 @@ export function useHabits() {
       // Optimistic update
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old) return old;
-        return old.map((habit: any) =>
-          habit.id === updatedHabit.id ? updatedHabit : habit
+        const oldHabits = old.data || [];
+        const updatedHabits = oldHabits.map((habit: Habit) =>
+          habit.id === updatedHabit.data.id ? updatedHabit.data : habit
         );
+        return { ...old, data: updatedHabits };
       });
       queryClient.invalidateQueries({ queryKey });
     },
@@ -54,7 +59,11 @@ export function useHabits() {
       // Optimistically remove the habit from cache
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old) return old;
-        return old.filter((habit: any) => habit.id !== deletedId);
+        const oldHabits = old.data || [];
+        return {
+          ...old,
+          data: oldHabits.filter((habit: Habit) => habit.id !== deletedId),
+        };
       });
 
       // Return context with the snapshotted value
