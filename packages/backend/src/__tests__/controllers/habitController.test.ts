@@ -321,6 +321,11 @@ describe("HabitController", () => {
     it("should delete a habit", async () => {
       // Set params
       mockReq.params = { id: "1" };
+      mockReq.query = {};
+
+      // Mock response methods
+      mockRes.status = jest.fn().mockReturnThis();
+      mockRes.send = jest.fn();
 
       // Mock deleteHabit method
       (HabitService.prototype.deleteHabit as jest.Mock).mockResolvedValue(
@@ -339,10 +344,9 @@ describe("HabitController", () => {
         "1",
         false
       );
-      expect(mockRes.success).toHaveBeenCalledWith(
-        null,
-        "Habit deleted successfully"
-      );
+      // Check for status 204 No Content
+      expect(mockRes.status).toHaveBeenCalledWith(204);
+      expect(mockRes.send).toHaveBeenCalled();
     });
   });
 });

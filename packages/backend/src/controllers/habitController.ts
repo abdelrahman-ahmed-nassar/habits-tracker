@@ -148,7 +148,8 @@ export class HabitController {
       const deleteCompletions = req.query.deleteCompletions === "true";
 
       await this.habitService.deleteHabit(habitId, deleteCompletions);
-      res.success(null, "Habit deleted successfully");
+      // Use status 204 No Content for successful deletion
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
