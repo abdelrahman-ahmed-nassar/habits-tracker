@@ -13,10 +13,29 @@ src/
 ├── routes/         # Route definitions
 ├── services/       # Business logic (service layer)
 ├── utils/          # Utility functions and helpers
+├── types/          # TypeScript type definitions
 └── server.ts       # Express app initialization
 ```
 
 ## Getting Started
+
+### Environment Variables
+
+The backend uses environment variables for configuration. Copy `sample.env` to `.env` and adjust as needed:
+
+```bash
+cp sample.env .env
+```
+
+Available environment variables:
+
+| Variable    | Description                          | Default               |
+| ----------- | ------------------------------------ | --------------------- |
+| NODE_ENV    | Environment (development/production) | development           |
+| PORT        | Server port                          | 3001                  |
+| CORS_ORIGIN | Allowed CORS origin                  | http://localhost:3000 |
+| DATA_DIR    | Directory to store JSON data files   | ./data                |
+| LOG_LEVEL   | Log level (debug/info/warn/error)    | info                  |
 
 ### Development
 
@@ -29,6 +48,48 @@ npm run dev
 ```bash
 npm run build
 npm start
+```
+
+## API Structure
+
+### Middleware Chain
+
+The Express application uses the following middleware chain:
+
+1. CORS configuration
+2. Helmet (security headers)
+3. JSON body parsing
+4. URL-encoded body parsing
+5. Custom request logging
+6. Custom response formatting
+7. Route handlers
+8. 404 handler
+9. Global error handler
+
+### Custom Response Format
+
+All API responses follow this format:
+
+```json
+{
+  "success": true,
+  "message": "Success message",
+  "data": {
+    /* Response data */
+  },
+  "timestamp": "2023-01-01T00:00:00.000Z"
+}
+```
+
+For errors:
+
+```json
+{
+  "success": false,
+  "error": "ErrorType",
+  "message": "Error message",
+  "timestamp": "2023-01-01T00:00:00.000Z"
+}
 ```
 
 ## API Endpoints
