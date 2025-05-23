@@ -67,5 +67,13 @@ module.exports = {
       },
     ],
     "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        checksVoidReturn: {
+          arguments: false,
+        },
+      },
+    ],
   },
 };

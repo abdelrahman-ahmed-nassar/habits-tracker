@@ -18,6 +18,7 @@
     "check": "npm run type-check && npm run lint",
     "check:strict": "tsc --noEmit --strict --strictNullChecks --strictFunctionTypes --strictBindCallApply --strictPropertyInitialization --noImplicitAny --noImplicitThis",
     "find-ts-errors": "node scripts/find-ts-errors.js",
+    "check:all": "node scripts/complete-check.js",
     "validate": "npm run check && npm run test"
   },
   "dependencies": {
