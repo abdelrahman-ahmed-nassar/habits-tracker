@@ -61,28 +61,21 @@ const Dashboard = () => {
     }
 
     const totalHabits = habits.length;
-    const dailyHabits = habits.filter((habit: Habit) => {
-      const today = new Date().getDay() || 7; // Convert Sunday from 0 to 7
-      return (
-        habit.frequency &&
-        Array.isArray(habit.frequency) &&
-        habit.frequency.includes(today)
-      );
-    });
 
-    const completedToday =
+    // Get completions that are marked as completed
+    const completedCount =
       completions?.filter((c: HabitCompletion) => c.completed).length || 0;
+
+    // Calculate completion rate by dividing completed habits by total habits
     const completionRate =
-      dailyHabits.length > 0
-        ? Math.round((completedToday / dailyHabits.length) * 100)
-        : 0;
+      totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
 
     // For now, we'll just use a placeholder value for streak
     const streak = 3;
 
     setStats({
       totalHabits,
-      completedToday,
+      completedToday: completedCount,
       completionRate,
       streak,
     });
@@ -100,6 +93,16 @@ const Dashboard = () => {
   const todaysHabits =
     habits
       ?.filter((habit: Habit) => {
+        // Include habits that have a completion for today
+        const hasCompletionToday = completions?.some(
+          (completion: HabitCompletion) => completion.habitId === habit.id
+        );
+
+        // Or include if scheduled for today based on frequency
+        if (hasCompletionToday) {
+          return true;
+        }
+
         if (!habit || !habit.frequency || !Array.isArray(habit.frequency)) {
           return false;
         }
@@ -267,7 +270,7 @@ const Dashboard = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span>Weekly progress</span>
+              <span>Today's progress</span>
               <span className="text-sm font-medium">
                 {stats.completionRate}%
               </span>
