@@ -247,21 +247,41 @@ describe("FileSystemService", () => {
       ]);
       (fs.copyFile as jest.Mock).mockResolvedValue(undefined);
 
+      // Mock private methods using jest.spyOn
+      const tryAcquireLockSpy = jest
+        .spyOn(fileSystemService as any, "tryAcquireLock")
+        .mockResolvedValue(true);
+      const releaseLockSpy = jest
+        .spyOn(fileSystemService as any, "releaseLock")
+        .mockResolvedValue(undefined);
+
       const result = await fileSystemService.restoreFromLatestBackup("test");
 
       expect(result.success).toBe(true);
       expect(fs.copyFile).toHaveBeenCalled();
       expect(logger.info).toHaveBeenCalled();
+      expect(tryAcquireLockSpy).toHaveBeenCalled();
+      expect(releaseLockSpy).toHaveBeenCalled();
     });
 
     it("should handle no backups available", async () => {
       // Mock empty backups directory
       (fs.readdir as jest.Mock).mockResolvedValue([]);
 
+      // Mock private methods using jest.spyOn
+      const tryAcquireLockSpy = jest
+        .spyOn(fileSystemService as any, "tryAcquireLock")
+        .mockResolvedValue(true);
+      const releaseLockSpy = jest
+        .spyOn(fileSystemService as any, "releaseLock")
+        .mockResolvedValue(undefined);
+
       const result = await fileSystemService.restoreFromLatestBackup("test");
 
       expect(result.success).toBe(false);
       expect(result.error).toContain("No backups found");
+      expect(tryAcquireLockSpy).not.toHaveBeenCalled();
+      expect(releaseLockSpy).not.toHaveBeenCalled();
     });
 
     it("should list all backups for a file", async () => {

@@ -33,6 +33,7 @@ describe("CompletionService", () => {
   let completionService: CompletionService;
   let mockHabitService: jest.Mocked<HabitService>;
   let mockCompletionDataService: jest.Mocked<TypedDataService<Completion>>;
+  let RealDate: DateConstructor;
 
   // Mock streak data
   const mockStreakData: StreakData = {
@@ -127,6 +128,9 @@ describe("CompletionService", () => {
     // Clear all mocks
     jest.clearAllMocks();
 
+    // Save the original Date constructor
+    RealDate = Date;
+
     // Initialize the mock services
     mockHabitService = new HabitService() as jest.Mocked<HabitService>;
     mockCompletionDataService = new TypedDataService<Completion>(
@@ -184,11 +188,20 @@ describe("CompletionService", () => {
     (dateUtils.isToday as jest.Mock).mockImplementation((dateStr) => {
       return dateStr === "2023-06-03";
     });
+
+    // Mock Date constructor to return a fixed date, but use the real Date for arguments
+    jest.spyOn(global, "Date").mockImplementation((arg?: any) => {
+      if (arg) {
+        return new RealDate(arg);
+      }
+      return new RealDate("2023-06-03");
+    });
   });
 
   // Memory optimization: Add proper cleanup
   afterEach(() => {
     jest.resetAllMocks();
+    global.Date = RealDate;
   });
 
   // Memory optimization: Group related tests together with fewer assertions per test
@@ -342,21 +355,21 @@ describe("CompletionService", () => {
           habitId: "habit-1",
           date: "2023-06-01",
           completed: true,
-          timestamp: "",
+          timestamp: "2023-06-01T10:00:00.000Z",
         },
         {
           id: "s2",
           habitId: "habit-1",
           date: "2023-06-02",
           completed: true,
-          timestamp: "",
+          timestamp: "2023-06-02T10:00:00.000Z",
         },
         {
           id: "s3",
           habitId: "habit-1",
           date: "2023-06-03",
           completed: true,
-          timestamp: "",
+          timestamp: "2023-06-03T10:00:00.000Z",
         }, // Today
       ];
 

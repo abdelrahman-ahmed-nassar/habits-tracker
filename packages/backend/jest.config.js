@@ -2,27 +2,18 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/__tests__/**/*.test.ts"],
-  collectCoverage: true,
-  coverageDirectory: "coverage",
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.d.ts",
-    "!src/**/__tests__/**",
+  roots: ["<rootDir>/src", "<rootDir>/../../tests"],
+  testMatch: [
+    "**/__tests__/**/*.ts",
+    "**/?(*.)+(spec|test).ts",
+    "../../tests/**/*.test.js",
   ],
-  verbose: true,
-  forceExit: true,
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true,
   transform: {
-    "^.+\\.tsx?$": [
-      "ts-jest",
-      {
-        diagnostics: {
-          warnOnly: true, // This will make TypeScript errors warnings only and not fail the tests
-        },
-      },
-    ],
+    "^.+\\.ts$": "ts-jest",
   },
+  moduleFileExtensions: ["ts", "js", "json", "node"],
+  collectCoverageFrom: ["src/**/*.ts"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testTimeout: 10000,
+  verbose: true,
 };

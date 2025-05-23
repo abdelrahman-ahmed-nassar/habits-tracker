@@ -61,7 +61,7 @@ export function createApp() {
 
   // Register API routes
   app.use("/api/habits", habitRoutes);
-  app.use("/api/backups", backupRoutes);
+  app.use("/api/backup", backupRoutes);
   app.use("/api", completionRoutes);
   app.use("/api/analytics", analyticsRoutes);
   // TODO: Add other routes
@@ -77,11 +77,13 @@ export function createApp() {
   return app;
 }
 
+// Create app instance for testing and for direct usage
+export const app = createApp();
+
 /**
  * Only start the server if this file is executed directly
  */
 if (require.main === module) {
-  const app = createApp();
   const PORT = env.PORT;
 
   const server = app.listen(PORT, () => {

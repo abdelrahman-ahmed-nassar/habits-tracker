@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": "c1",
+    "habitId": "1",
+    "date": "2023-01-01",
+    "completed": true,
+    "value": 45,
+    "notes": "Morning jog and stretching",
+    "createdAt": "2023-01-01T18:30:00.000Z",
+    "updatedAt": "2023-01-01T18:30:00.000Z"
+  },
+  {
+    "id": "c2",
+    "habitId": "2",
+    "date": "2023-01-01",
+    "completed": true,
+    "value": 30,
+    "notes": "Read 'Atomic Habits' chapter 3",
+    "createdAt": "2023-01-01T22:15:00.000Z",
+    "updatedAt": "2023-01-01T22:15:00.000Z"
+  },
+  {
+    "id": "c3",
+    "habitId": "3",
+    "date": "2023-01-07",
+    "completed": true,
+    "value": 1,
+    "notes": "Weekly review completed, set goals for next week",
+    "createdAt": "2023-01-07T10:00:00.000Z",
+    "updatedAt": "2023-01-07T10:00:00.000Z"
+  },
+  {
+    "id": "c4",
+    "habitId": "4",
+    "date": "2023-02-01",
+    "completed": true,
+    "value": 1,
+    "notes": "Budget review for January. Need to reduce dining out expenses.",
+    "createdAt": "2023-02-01T19:45:00.000Z",
+    "updatedAt": "2023-02-01T19:45:00.000Z"
+  }
+]

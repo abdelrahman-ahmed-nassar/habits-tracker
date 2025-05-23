@@ -1,0 +1,1573 @@
+openapi: 3.0.3
+info:
+  title: Local Habits Tracker API
+  description: API documentation for the Local Habits Tracker application
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3001/api
+    description: Local development server
+
+paths:
+  /habits:
+    get:
+      summary: Get all habits
+      description: Retrieve all habits with optional filtering
+      parameters:
+        - name: tag
+          in: query
+          schema:
+            type: string
+          description: Filter habits by tag
+        - name: archived
+          in: query
+          schema:
+            type: boolean
+          description: Filter by archived status
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [name, createdAt, updatedAt]
+          description: Field to sort by
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Sort order
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitListResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      summary: Create a new habit
+      description: Create a new habit with the provided data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HabitCreate"
+      responses:
+        "200":
+          description: Habit created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitResponse"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}:
+    get:
+      summary: Get a habit by ID
+      description: Retrieve a specific habit by its unique identifier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      summary: Update a habit
+      description: Update an existing habit with new data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HabitUpdate"
+      responses:
+        "200":
+          description: Habit updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      summary: Delete a habit
+      description: Delete a habit permanently
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+        - name: deleteCompletions
+          in: query
+          schema:
+            type: boolean
+          description: Whether to also delete completions
+      responses:
+        "200":
+          description: Habit deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}/archive:
+    patch:
+      summary: Archive a habit
+      description: Archive a habit (soft delete)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+      responses:
+        "200":
+          description: Habit archived successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchiveResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}/restore:
+    patch:
+      summary: Restore an archived habit
+      description: Restore a previously archived habit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+      responses:
+        "200":
+          description: Habit restored successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchiveResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}/complete:
+    post:
+      summary: Mark habit as complete
+      description: Mark a habit as complete for a specific date
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompletionCreate"
+      responses:
+        "200":
+          description: Habit marked as complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}/complete/{date}:
+    delete:
+      summary: Remove completion record
+      description: Remove a completion record for a habit on a specific date
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Completion record removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "404":
+          description: Habit or completion record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /habits/{id}/records:
+    get:
+      summary: Get habit completion history
+      description: Retrieve completion history for a specific habit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionListResponse"
+
+  /completions/daily/{date}:
+    get:
+      summary: Get daily completions
+      description: Retrieve all completions for a specific date
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionListResponse"
+        "422":
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /completions/range:
+    get:
+      summary: Get completions in range
+      description: Retrieve completions for a specific date range
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletionListResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /completions/bulk:
+    post:
+      summary: Bulk complete habits
+      description: Mark multiple habits as complete in a single request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/BulkCompletion"
+      responses:
+        "200":
+          description: Bulk completion successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkCompletionResponse"
+        "400":
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: One or more habits not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/overview:
+    get:
+      summary: Get overall analytics
+      description: Retrieve overall analytics for all habits
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+          description: Whether to include archived habits
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OverallAnalyticsResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/habits/{id}:
+    get:
+      summary: Get habit analytics
+      description: Retrieve analytics for a specific habit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The habit's unique identifier
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitAnalyticsResponse"
+        "404":
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/trends:
+    get:
+      summary: Get completion trends
+      description: Retrieve completion trends over time
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+        - name: granularity
+          in: query
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+            default: daily
+          description: Time granularity
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Whether to include archived habits
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendsResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/daily/{date}:
+    get:
+      summary: Get daily analytics
+      description: Retrieve analytics for a specific day
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyAnalyticsResponse"
+        "422":
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/weekly/{startDate}:
+    get:
+      summary: Get weekly analytics
+      description: Retrieve analytics for a specific week
+      parameters:
+        - name: startDate
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date of week in YYYY-MM-DD format
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeeklyAnalyticsResponse"
+        "422":
+          description: Invalid date format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/monthly/{year}/{month}:
+    get:
+      summary: Get monthly analytics
+      description: Retrieve analytics for a specific month
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Year (e.g., 2023)
+        - name: month
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Month (1-12)
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyAnalyticsResponse"
+        "422":
+          description: Invalid year or month format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/day-of-week:
+    get:
+      summary: Get day of week analysis
+      description: Retrieve day-of-week analytics
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Whether to include archived habits
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DayOfWeekResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics/tags:
+    get:
+      summary: Get tag analytics
+      description: Retrieve analytics by habit tags/categories
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: End date in YYYY-MM-DD format
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Whether to include archived habits
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagAnalyticsResponse"
+        "422":
+          description: Invalid date format or range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /backup/files:
+    get:
+      summary: List data files
+      description: Retrieve a list of all data files
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileListResponse"
+
+  /backup/entity/{entityName}:
+    get:
+      summary: List entity backups
+      description: Retrieve a list of backups for a specific entity
+      parameters:
+        - name: entityName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The entity name (e.g., habits, completions)
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackupListResponse"
+
+  /backup/system:
+    get:
+      summary: List system backups
+      description: Retrieve a list of all full system backups
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackupListResponse"
+
+    post:
+      summary: Create system backup
+      description: Create a full system backup
+      responses:
+        "200":
+          description: Backup created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackupResponse"
+
+  /backup/entity:
+    post:
+      summary: Create entity backup
+      description: Create a backup of a specific entity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entityName
+              properties:
+                entityName:
+                  type: string
+                  description: The entity name (e.g., habits, completions)
+      responses:
+        "200":
+          description: Backup created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackupResponse"
+        "400":
+          description: Entity name is required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /backup/restore/entity:
+    post:
+      summary: Restore entity backup
+      description: Restore a specific entity from backup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entityName
+              properties:
+                entityName:
+                  type: string
+                  description: The entity name (e.g., habits, completions)
+                backupName:
+                  type: string
+                  description: Specific backup file to restore (if omitted, uses the latest)
+      responses:
+        "200":
+          description: Entity restored successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BackupResponse"
+        "400":
+          description: Entity name is required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Backup file not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /backup/restore/system:
+    post:
+      summary: Restore system backup
+      description: Restore from a full system backup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - backupName
+              properties:
+                backupName:
+                  type: string
+                  description: The backup file name
+      responses:
+        "200":
+          description: System restored successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Backup name is required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Backup file not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /backup/cleanup/entity:
+    post:
+      summary: Clean up entity backups
+      description: Clean up old entity backups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - entityName
+              properties:
+                entityName:
+                  type: string
+                  description: The entity name (e.g., habits, completions)
+                keepCount:
+                  type: integer
+                  description: Number of recent backups to keep
+                  default: 5
+      responses:
+        "200":
+          description: Backups cleaned up successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CleanupResponse"
+        "400":
+          description: Entity name is required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    Habit:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tag:
+          type: string
+        repetition:
+          type: string
+          enum: [daily, weekly, monthly, specific-days, specific-dates]
+        specificDays:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+          nullable: true
+        specificDates:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 31
+          nullable: true
+        goalType:
+          type: string
+          enum: [streak, counter]
+        goalValue:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        color:
+          type: string
+          nullable: true
+        icon:
+          type: string
+          nullable: true
+        archived:
+          type: boolean
+          default: false
+
+    HabitCreate:
+      type: object
+      required:
+        - name
+        - tag
+        - repetition
+        - goalType
+        - goalValue
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        tag:
+          type: string
+        repetition:
+          type: string
+          enum: [daily, weekly, monthly, specific-days, specific-dates]
+        specificDays:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+        specificDates:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 31
+        goalType:
+          type: string
+          enum: [streak, counter]
+        goalValue:
+          type: integer
+          minimum: 1
+        color:
+          type: string
+        icon:
+          type: string
+
+    HabitUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        tag:
+          type: string
+        repetition:
+          type: string
+          enum: [daily, weekly, monthly, specific-days, specific-dates]
+        specificDays:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+        specificDates:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 31
+        goalType:
+          type: string
+          enum: [streak, counter]
+        goalValue:
+          type: integer
+          minimum: 1
+        color:
+          type: string
+        icon:
+          type: string
+
+    Completion:
+      type: object
+      properties:
+        id:
+          type: string
+        habitId:
+          type: string
+        date:
+          type: string
+          format: date
+        completed:
+          type: boolean
+        value:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CompletionCreate:
+      type: object
+      required:
+        - date
+      properties:
+        date:
+          type: string
+          format: date
+        value:
+          type: integer
+        notes:
+          type: string
+
+    BulkCompletion:
+      type: object
+      required:
+        - habitId
+        - date
+      properties:
+        habitId:
+          type: string
+        date:
+          type: string
+          format: date
+        value:
+          type: integer
+        notes:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        message:
+          type: string
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            details:
+              type: object
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: boolean
+          default: true
+        message:
+          type: string
+
+    HabitResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          $ref: "#/components/schemas/Habit"
+        message:
+          type: string
+
+    HabitListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Habit"
+        message:
+          type: string
+
+    CompletionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          $ref: "#/components/schemas/Completion"
+        message:
+          type: string
+
+    CompletionListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Completion"
+        message:
+          type: string
+
+    BulkCompletionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Completion"
+        message:
+          type: string
+
+    ArchiveResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            archived:
+              type: boolean
+            updatedAt:
+              type: string
+              format: date-time
+        message:
+          type: string
+
+    OverallAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            totalHabits:
+              type: integer
+            activeHabits:
+              type: integer
+            archivedHabits:
+              type: integer
+            completionRate:
+              type: number
+              format: float
+            completedHabits:
+              type: integer
+            totalPossibleHabits:
+              type: integer
+            streakStats:
+              type: object
+              properties:
+                averageStreak:
+                  type: number
+                  format: float
+                maxStreak:
+                  type: integer
+                habitsWithStreak:
+                  type: integer
+        message:
+          type: string
+
+    HabitAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            habitId:
+              type: string
+            habitName:
+              type: string
+            completionRate:
+              type: number
+              format: float
+            completedDays:
+              type: integer
+            totalPossibleDays:
+              type: integer
+            streak:
+              type: object
+              properties:
+                current:
+                  type: integer
+                longest:
+                  type: integer
+                history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: date
+                      end:
+                        type: string
+                        format: date
+                      length:
+                        type: integer
+            counterStats:
+              type: object
+              properties:
+                total:
+                  type: integer
+                average:
+                  type: number
+                  format: float
+                min:
+                  type: integer
+                max:
+                  type: integer
+        message:
+          type: string
+
+    TrendsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            timePoints:
+              type: array
+              items:
+                type: string
+                format: date
+            completionRates:
+              type: array
+              items:
+                type: number
+                format: float
+            habitData:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: boolean
+        message:
+          type: string
+
+    DailyAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+            completionRate:
+              type: number
+              format: float
+            completedHabits:
+              type: integer
+            totalHabits:
+              type: integer
+            habitDetails:
+              type: array
+              items:
+                type: object
+                properties:
+                  habitId:
+                    type: string
+                  name:
+                    type: string
+                  completed:
+                    type: boolean
+                  value:
+                    type: integer
+        message:
+          type: string
+
+    WeeklyAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date
+            endDate:
+              type: string
+              format: date
+            completionRate:
+              type: number
+              format: float
+            completedHabits:
+              type: integer
+            totalHabits:
+              type: integer
+            dailyStats:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  completionRate:
+                    type: number
+                    format: float
+            habitDetails:
+              type: array
+              items:
+                type: object
+                properties:
+                  habitId:
+                    type: string
+                  name:
+                    type: string
+                  completedDays:
+                    type: integer
+                  possibleDays:
+                    type: integer
+                  completionRate:
+                    type: number
+                    format: float
+        message:
+          type: string
+
+    MonthlyAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            year:
+              type: integer
+            month:
+              type: integer
+            completionRate:
+              type: number
+              format: float
+            completedHabits:
+              type: integer
+            totalHabits:
+              type: integer
+            weeklyStats:
+              type: array
+              items:
+                type: object
+                properties:
+                  startDate:
+                    type: string
+                    format: date
+                  endDate:
+                    type: string
+                    format: date
+                  completionRate:
+                    type: number
+                    format: float
+            habitDetails:
+              type: array
+              items:
+                type: object
+                properties:
+                  habitId:
+                    type: string
+                  name:
+                    type: string
+                  completedDays:
+                    type: integer
+                  possibleDays:
+                    type: integer
+                  completionRate:
+                    type: number
+                    format: float
+        message:
+          type: string
+
+    DayOfWeekResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            dayRates:
+              type: array
+              items:
+                type: object
+                properties:
+                  day:
+                    type: integer
+                  name:
+                    type: string
+                  completionRate:
+                    type: number
+                    format: float
+            bestDay:
+              type: object
+              properties:
+                day:
+                  type: integer
+                name:
+                  type: string
+                completionRate:
+                  type: number
+                  format: float
+            worstDay:
+              type: object
+              properties:
+                day:
+                  type: integer
+                name:
+                  type: string
+                completionRate:
+                  type: number
+                  format: float
+        message:
+          type: string
+
+    TagAnalyticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: object
+          properties:
+            tagStats:
+              type: array
+              items:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  habitCount:
+                    type: integer
+                  completionRate:
+                    type: number
+                    format: float
+                  habits:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        habitId:
+                          type: string
+                        name:
+                          type: string
+                        completionRate:
+                          type: number
+                          format: float
+        message:
+          type: string
+
+    FileListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+
+    BackupListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+
+    BackupResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: string
+        message:
+          type: string
+
+    CleanupResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+        data:
+          type: integer
+        message:
+          type: string

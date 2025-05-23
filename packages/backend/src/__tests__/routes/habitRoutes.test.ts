@@ -708,18 +708,13 @@ describe("Habit Routes API Tests", () => {
     });
 
     it("should return 400 when restoring a non-archived habit", async () => {
-      try {
-        const response = await request(app)
-          .patch("/api/habits/habit-1/restore") // habit-1 is not archived
-          .expect("Content-Type", /json/);
+      const response = await request(app)
+        .patch("/api/habits/habit-1/restore") // habit-1 is not archived
+        .expect("Content-Type", /json/)
+        .expect(400);
 
-        // We expect 400 Bad Request
-        expect(response.status).toBe(400);
-        expect(response.body.success).toBe(false);
-      } catch (error) {
-        console.error("Error in test:", error);
-        throw error;
-      }
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe("Habit is not archived");
     });
 
     it("should return 404 when restoring non-existent habit", async () => {
@@ -786,11 +781,13 @@ describe("Habit Routes API Tests", () => {
     });
 
     it("should handle special characters in search terms", async () => {
-      await request(app)
+      const response = await request(app)
         .get("/api/habits?searchTerm=special!@#$%^&*()_+{}|:\"<>?[]\\;',./~`")
         .expect(200);
 
-      // Should not throw errors with special characters
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.habits).toBeDefined();
+      expect(Array.isArray(response.body.data.habits)).toBe(true);
     });
   });
 });
