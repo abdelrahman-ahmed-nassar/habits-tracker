@@ -293,9 +293,10 @@ export class HabitService {
       // Filter completions for this habit
       const habitCompletions = allCompletions.filter((c) => c.habitId === id);
 
-      // Delete each completion (we'd need a batch delete in a real app)
+      // Delete each completion
       for (const completion of habitCompletions) {
         try {
+          // Delete by the completion ID, not the habit ID
           await this.completionDataService.delete(completion.id);
         } catch (error) {
           logger.error(`Failed to delete completion ${completion.id}:`, error);

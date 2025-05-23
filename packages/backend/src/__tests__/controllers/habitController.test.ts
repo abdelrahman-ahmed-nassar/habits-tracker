@@ -1,21 +1,32 @@
 import { Request, Response, NextFunction } from "express";
 import { HabitController } from "../../controllers/habitController";
 import { TypedDataService } from "../../services/typedDataService";
+import { HabitService } from "../../services/habitService";
 import {
   Habit,
   HabitTag,
   RepetitionPattern,
   GoalType,
 } from "../../../../shared/src/habits";
+import { StreakData } from "../../utils/streakCalculator";
 
-// Mock TypedDataService
+// Mock TypedDataService and HabitService
 jest.mock("../../services/typedDataService");
+jest.mock("../../services/habitService");
 
 describe("HabitController", () => {
   let habitController: HabitController;
   let mockReq: Partial<Request>;
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
+
+  // Define default streak data for testing
+  const defaultStreakData: StreakData = {
+    currentStreak: 0,
+    longestStreak: 0,
+    totalCompletions: 0,
+    isDueToday: true,
+  };
 
   beforeEach(() => {
     // Reset mocks before each test
@@ -54,6 +65,7 @@ describe("HabitController", () => {
           archived: false,
           createdAt: "2023-01-01T00:00:00Z",
           updatedAt: "2023-01-01T00:00:00Z",
+          streak: defaultStreakData,
         },
         {
           id: "2",
@@ -65,11 +77,12 @@ describe("HabitController", () => {
           archived: false,
           createdAt: "2023-01-02T00:00:00Z",
           updatedAt: "2023-01-02T00:00:00Z",
+          streak: defaultStreakData,
         },
-      ] as Habit[];
+      ];
 
-      // Mock getAll method on TypedDataService
-      (TypedDataService.prototype.getAll as jest.Mock).mockResolvedValue(
+      // Mock getAllHabits method on HabitService
+      (HabitService.prototype.getAllHabits as jest.Mock).mockResolvedValue(
         mockHabits
       );
 
@@ -81,10 +94,13 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.getAll).toHaveBeenCalled();
+      expect(HabitService.prototype.getAllHabits).toHaveBeenCalledWith(
+        undefined
+      );
+
       expect(mockRes.success).toHaveBeenCalledWith(
         {
-          habits: expect.arrayContaining(mockHabits),
+          habits: mockHabits,
           filter: undefined,
         },
         "Habits retrieved successfully"
@@ -93,7 +109,7 @@ describe("HabitController", () => {
 
     it("should filter habits by tag", async () => {
       // Mock data
-      const mockHabits = [
+      const filteredHabits = [
         {
           id: "1",
           name: "Exercise",
@@ -104,26 +120,16 @@ describe("HabitController", () => {
           archived: false,
           createdAt: "2023-01-01T00:00:00Z",
           updatedAt: "2023-01-01T00:00:00Z",
+          streak: defaultStreakData,
         },
-        {
-          id: "2",
-          name: "Read",
-          tag: HabitTag.Learning,
-          repetition: RepetitionPattern.Daily,
-          goalType: GoalType.Counter,
-          goalValue: 30,
-          archived: false,
-          createdAt: "2023-01-02T00:00:00Z",
-          updatedAt: "2023-01-02T00:00:00Z",
-        },
-      ] as Habit[];
+      ];
 
       // Set query parameters
       mockReq.query = { tags: HabitTag.Fitness };
 
-      // Mock getAll method on TypedDataService
-      (TypedDataService.prototype.getAll as jest.Mock).mockResolvedValue(
-        mockHabits
+      // Mock getAllHabits method to return filtered results
+      (HabitService.prototype.getAllHabits as jest.Mock).mockResolvedValue(
+        filteredHabits
       );
 
       // Call controller method
@@ -134,10 +140,15 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.getAll).toHaveBeenCalled();
+      expect(HabitService.prototype.getAllHabits).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tags: [HabitTag.Fitness],
+        })
+      );
+
       expect(mockRes.success).toHaveBeenCalledWith(
         {
-          habits: expect.arrayContaining([mockHabits[0]]), // Only fitness habits
+          habits: filteredHabits,
           filter: expect.objectContaining({
             tags: [HabitTag.Fitness],
           }),
@@ -160,13 +171,14 @@ describe("HabitController", () => {
         archived: false,
         createdAt: "2023-01-01T00:00:00Z",
         updatedAt: "2023-01-01T00:00:00Z",
-      } as Habit;
+        streak: defaultStreakData,
+      };
 
       // Set params
       mockReq.params = { id: "1" };
 
-      // Mock getById method
-      (TypedDataService.prototype.getById as jest.Mock).mockResolvedValue(
+      // Mock getHabitById method
+      (HabitService.prototype.getHabitById as jest.Mock).mockResolvedValue(
         mockHabit
       );
 
@@ -178,7 +190,8 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.getById).toHaveBeenCalledWith("1");
+      expect(HabitService.prototype.getHabitById).toHaveBeenCalledWith("1");
+
       expect(mockRes.success).toHaveBeenCalledWith(
         mockHabit,
         "Habit retrieved successfully"
@@ -189,9 +202,9 @@ describe("HabitController", () => {
       // Set params
       mockReq.params = { id: "nonexistent" };
 
-      // Mock getById method to throw an error
+      // Mock getHabitById method to throw an error
       const error = new Error("Habit not found");
-      (TypedDataService.prototype.getById as jest.Mock).mockRejectedValue(
+      (HabitService.prototype.getHabitById as jest.Mock).mockRejectedValue(
         error
       );
 
@@ -203,7 +216,7 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.getById).toHaveBeenCalledWith(
+      expect(HabitService.prototype.getHabitById).toHaveBeenCalledWith(
         "nonexistent"
       );
       expect(mockNext).toHaveBeenCalledWith(error);
@@ -224,14 +237,15 @@ describe("HabitController", () => {
       // Mock created habit with generated ID
       const mockCreatedHabit = {
         ...mockReq.body,
-        id: expect.any(String),
+        id: "new-habit-id",
         archived: false,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        createdAt: "2023-01-01T00:00:00Z",
+        updatedAt: "2023-01-01T00:00:00Z",
+        streak: defaultStreakData,
       };
 
-      // Mock create method
-      (TypedDataService.prototype.create as jest.Mock).mockResolvedValue(
+      // Mock createHabit method
+      (HabitService.prototype.createHabit as jest.Mock).mockResolvedValue(
         mockCreatedHabit
       );
 
@@ -243,16 +257,10 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: "Exercise",
-          tag: HabitTag.Fitness,
-          repetition: RepetitionPattern.Daily,
-          goalType: GoalType.Streak,
-          goalValue: 7,
-          archived: false,
-        })
+      expect(HabitService.prototype.createHabit).toHaveBeenCalledWith(
+        mockReq.body
       );
+
       expect(mockRes.success).toHaveBeenCalledWith(
         mockCreatedHabit,
         "Habit created successfully",
@@ -280,11 +288,12 @@ describe("HabitController", () => {
         goalValue: 10,
         archived: false,
         createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: expect.any(String), // Updated timestamp
+        updatedAt: "2023-01-02T00:00:00Z",
+        streak: defaultStreakData,
       };
 
-      // Mock update method
-      (TypedDataService.prototype.update as jest.Mock).mockResolvedValue(
+      // Mock updateHabit method
+      (HabitService.prototype.updateHabit as jest.Mock).mockResolvedValue(
         mockUpdatedHabit
       );
 
@@ -296,14 +305,11 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.update).toHaveBeenCalledWith(
+      expect(HabitService.prototype.updateHabit).toHaveBeenCalledWith(
         "1",
-        expect.objectContaining({
-          name: "Updated Exercise",
-          goalValue: 10,
-          updatedAt: expect.any(String),
-        })
+        mockReq.body
       );
+
       expect(mockRes.success).toHaveBeenCalledWith(
         mockUpdatedHabit,
         "Habit updated successfully"
@@ -316,8 +322,8 @@ describe("HabitController", () => {
       // Set params
       mockReq.params = { id: "1" };
 
-      // Mock delete method
-      (TypedDataService.prototype.delete as jest.Mock).mockResolvedValue(
+      // Mock deleteHabit method
+      (HabitService.prototype.deleteHabit as jest.Mock).mockResolvedValue(
         undefined
       );
 
@@ -329,7 +335,10 @@ describe("HabitController", () => {
       );
 
       // Expectations
-      expect(TypedDataService.prototype.delete).toHaveBeenCalledWith("1");
+      expect(HabitService.prototype.deleteHabit).toHaveBeenCalledWith(
+        "1",
+        false
+      );
       expect(mockRes.success).toHaveBeenCalledWith(
         null,
         "Habit deleted successfully"

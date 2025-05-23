@@ -36,22 +36,33 @@ export class HabitController {
   ): Promise<void> {
     try {
       // Extract filter parameters from query
-      const filter: HabitFilter = {};
+      let filter: HabitFilter | undefined = undefined;
 
-      if (req.query.tags) {
-        filter.tags = (req.query.tags as string).split(",") as HabitTag[];
-      }
+      // Only create a filter object if we have query parameters
+      if (Object.keys(req.query).length > 0) {
+        filter = {};
 
-      if (req.query.repetition) {
-        filter.repetition = req.query.repetition as RepetitionPattern;
-      }
+        if (req.query.tags) {
+          filter.tags = (req.query.tags as string).split(",") as HabitTag[];
+        }
 
-      if (req.query.searchTerm) {
-        filter.searchTerm = req.query.searchTerm as string;
-      }
+        if (req.query.repetition) {
+          filter.repetition = req.query.repetition as RepetitionPattern;
+        }
 
-      if (req.query.includeArchived) {
-        filter.includeArchived = req.query.includeArchived === "true";
+        if (req.query.searchTerm) {
+          filter.searchTerm = req.query.searchTerm as string;
+        }
+
+        if (req.query.includeArchived) {
+          filter.includeArchived = req.query.includeArchived === "true";
+        }
+
+        // If after processing all query parameters the filter is empty,
+        // set it back to undefined
+        if (Object.keys(filter).length === 0) {
+          filter = undefined;
+        }
       }
 
       // Get habits with streak information
@@ -60,7 +71,7 @@ export class HabitController {
       // Format response according to API schema
       const response: HabitsListResponse = {
         habits: habitsWithStreaks,
-        filter: Object.keys(filter).length > 0 ? filter : undefined,
+        filter: filter,
       };
 
       res.success(response, "Habits retrieved successfully");

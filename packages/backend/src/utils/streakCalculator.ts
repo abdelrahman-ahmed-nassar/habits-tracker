@@ -53,10 +53,6 @@ export function calculateStreakData(
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Get yesterday's date for checking streak continuity
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
   // Count total completions
   const totalCompletions = habitCompletions.length;
 
@@ -72,51 +68,84 @@ export function calculateStreakData(
   // Determine if habit is due today
   const isDueToday = isHabitDueOnDate(habit, today);
 
-  // Group completions by period (needed for both daily and non-daily calculations)
-  const completionsByPeriod = habitCompletions.reduce((acc, completion) => {
-    const completionDate = new Date(completion.date);
-    const periodKey = getPeriodKey(habit.repetition, completionDate);
+  // Create a set of completion dates for faster lookup
+  const completionDates = new Set<string>(
+    habitCompletions.map((c) => c.date.split("T")[0])
+  );
 
-    if (!acc[periodKey]) {
-      acc[periodKey] = [];
-    }
-
-    acc[periodKey].push(completion);
-    return acc;
-  }, {} as Record<string, Completion[]>);
-
-  // Simple case for daily habits
+  // For daily habits
   if (habit.repetition === RepetitionPattern.Daily) {
-    // Check each date from today back
+    // Calculate current streak - check consecutive days backward from today
     const checkDate = new Date(today);
     let streakBroken = false;
 
     while (!streakBroken) {
+      // Format as YYYY-MM-DD
       const dateStr = checkDate.toISOString().split("T")[0];
-      const completedOnDate = habitCompletions.some(
-        (c) => c.date.split("T")[0] === dateStr
-      );
 
-      if (completedOnDate) {
+      if (completionDates.has(dateStr)) {
+        // This day was completed, increment streak
         currentStreak++;
       } else {
-        // If we've checked today and it's not completed yet,
-        // it doesn't break the streak
+        // If it's today and habit is due, don't break the streak yet
         if (checkDate.getTime() === today.getTime() && isDueToday) {
-          // Today is not completed yet but doesn't break the streak
+          // Today is not completed yet
         } else {
+          // Any other day without completion breaks the streak
           streakBroken = true;
         }
       }
 
-      // Move to the previous day
+      // Go to previous day
       checkDate.setDate(checkDate.getDate() - 1);
     }
+
+    // Calculate longest streak by finding consecutive dates in history
+    if (habitCompletions.length > 0) {
+      // Sort dates for streak calculation (oldest to newest)
+      const sortedDates = Array.from(completionDates).sort();
+
+      for (let i = 0; i < sortedDates.length; i++) {
+        if (i === 0) {
+          tempStreak = 1;
+        } else {
+          const currentDate = new Date(sortedDates[i]);
+          const prevDate = new Date(sortedDates[i - 1]);
+
+          // Check if dates are consecutive
+          const nextExpectedDate = new Date(prevDate);
+          nextExpectedDate.setDate(nextExpectedDate.getDate() + 1);
+
+          if (currentDate.getTime() === nextExpectedDate.getTime()) {
+            // Consecutive date, continue the streak
+            tempStreak++;
+          } else {
+            // Non-consecutive, reset streak
+            tempStreak = 1;
+          }
+        }
+
+        // Update longest streak
+        longestStreak = Math.max(longestStreak, tempStreak);
+      }
+    }
   }
-  // For weekly and monthly habits, we need to check if the habit was completed
-  // during each period it was due
+  // For weekly and monthly habits
   else {
-    // Get all unique periods (weeks or months) where the habit was due
+    // Group completions by period
+    const completionsByPeriod = habitCompletions.reduce((acc, completion) => {
+      const completionDate = new Date(completion.date);
+      const periodKey = getPeriodKey(habit.repetition, completionDate);
+
+      if (!acc[periodKey]) {
+        acc[periodKey] = [];
+      }
+
+      acc[periodKey].push(completion);
+      return acc;
+    }, {} as Record<string, Completion[]>);
+
+    // Get all unique periods where the habit was due
     const periods = getHabitPeriods(habit);
 
     // Calculate current streak
@@ -131,15 +160,15 @@ export function calculateStreakData(
         continue;
       }
 
-      // Period hasn't ended yet and it's the current period
+      // Current period that hasn't ended yet
       if (new Date(period.endDate).getTime() >= today.getTime()) {
-        // If we have completions in this period or it's today, increment streak
+        // If we have completions in this period, increment streak
         if (completionsByPeriod[period.key]?.length > 0) {
           currentStreak++;
         }
-        // Otherwise don't count it as breaking the streak if due today
+        // Otherwise don't count it as breaking the streak if it's due today
         else if (isDueToday) {
-          // Don't break streak for today if it's not completed yet
+          // Don't break streak for current period if it's not completed yet
         } else {
           streakBroken = true;
         }
@@ -154,46 +183,16 @@ export function calculateStreakData(
         }
       }
     }
-  }
 
-  // Calculate longest streak from historical data
-  const dateCompletions = new Set<string>(
-    habitCompletions.map((c) => c.date.split("T")[0])
-  );
-
-  if (habit.repetition === RepetitionPattern.Daily) {
-    // Sort dates for streak calculation
-    const sortedDates = Array.from(dateCompletions).sort();
-
-    for (let i = 0; i < sortedDates.length; i++) {
-      const currentDate = new Date(sortedDates[i]);
-
-      if (i > 0) {
-        const prevDate = new Date(sortedDates[i - 1]);
-        prevDate.setDate(prevDate.getDate() + 1);
-
-        // If dates are consecutive, increment temp streak
-        if (currentDate.getTime() === prevDate.getTime()) {
-          tempStreak++;
-        } else {
-          // Streak broken, reset
-          tempStreak = 1;
-        }
-      } else {
-        tempStreak = 1;
-      }
-
-      // Update longest streak
-      longestStreak = Math.max(longestStreak, tempStreak);
-    }
-  } else {
-    // For weekly and monthly, count by periods
+    // Calculate longest streak from historical data
     const completedPeriods = Object.keys(completionsByPeriod)
       .filter((key) => completionsByPeriod[key].length > 0)
       .sort();
 
     for (let i = 0; i < completedPeriods.length; i++) {
-      if (i > 0) {
+      if (i === 0) {
+        tempStreak = 1;
+      } else {
         // Check if periods are consecutive
         const [prevType, prevValue] = completedPeriods[i - 1].split("-");
         const [currType, currValue] = completedPeriods[i].split("-");
@@ -211,7 +210,7 @@ export function calculateStreakData(
           } else {
             tempStreak = 1;
           }
-        } else {
+        } else if (habit.repetition === RepetitionPattern.Monthly) {
           const prevMonth = parseInt(prevValue.split("-")[1]);
           const prevYear = parseInt(prevValue.split("-")[0]);
           const currMonth = parseInt(currValue.split("-")[1]);
@@ -227,8 +226,6 @@ export function calculateStreakData(
             tempStreak = 1;
           }
         }
-      } else {
-        tempStreak = 1;
       }
 
       // Update longest streak
@@ -253,63 +250,80 @@ export function calculateStreakData(
  *
  * @param habit The habit to check
  * @param date The date to check against
- * @returns Boolean indicating if habit is due on the specified date
+ * @returns true if the habit is due on the date
  */
 export function isHabitDueOnDate(habit: Habit, date: Date): boolean {
-  // Check if habit has start/end dates and if the date falls outside that range
-  if (habit.startDate && new Date(habit.startDate) > date) {
-    return false;
-  }
+  const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+  const dayOfMonth = date.getDate(); // 1-31
 
-  if (habit.endDate && new Date(habit.endDate) < date) {
-    return false;
-  }
-
-  // Check based on repetition pattern
   switch (habit.repetition) {
     case RepetitionPattern.Daily:
       return true;
-
     case RepetitionPattern.Weekly:
-      // Check if the day of week is in specificDays
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      return habit.specificDays?.includes(dayOfWeek) ?? false;
-
+      // Check if the current day of the week is in the specific days
+      return habit.specificDays?.includes(dayOfWeek) || false;
     case RepetitionPattern.Monthly:
-      // Check if the date is in specificDates
-      const dayOfMonth = date.getDate(); // 1-31
-      return habit.specificDates?.includes(dayOfMonth) ?? false;
-
+      // Check if the current day of the month is in the specific dates
+      return habit.specificDates?.includes(dayOfMonth) || false;
     default:
       return false;
   }
 }
 
 /**
- * Get a unique key for a period based on repetition pattern
+ * Get a standardized period key for a date based on the repetition pattern
+ *
+ * @param repetitionPattern The repetition pattern (weekly, monthly)
+ * @param date The date to get the period key for
+ * @returns A string key representing the period
  */
 function getPeriodKey(
   repetitionPattern: RepetitionPattern,
   date: Date
 ): string {
-  if (repetitionPattern === RepetitionPattern.Weekly) {
-    // Get week number and year
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear =
-      (date.getTime() - firstDayOfYear.getTime()) / 86400000;
-    const weekNumber = Math.ceil(
-      (pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7
-    );
-    return `week-${weekNumber}-${date.getFullYear()}`;
-  } else if (repetitionPattern === RepetitionPattern.Monthly) {
-    // Get month and year
-    return `month-${date.getFullYear()}-${date.getMonth() + 1}`;
-  } else {
-    // Daily - use the date itself
-    return `day-${date.toISOString().split("T")[0]}`;
+  switch (repetitionPattern) {
+    case RepetitionPattern.Daily:
+      // For daily habits, we use the date itself (YYYY-MM-DD)
+      return date.toISOString().split("T")[0];
+    case RepetitionPattern.Weekly:
+      // For weekly habits, we use the ISO week number
+      const year = date.getFullYear();
+      const weekNum = getWeekNumber(date);
+      return `week-${weekNum}`;
+    case RepetitionPattern.Monthly:
+      // For monthly habits, we use the year and month (YYYY-MM)
+      const month = date.getMonth() + 1; // getMonth() returns 0-11
+      return `month-${date.getFullYear()}-${month.toString().padStart(2, "0")}`;
+    default:
+      return date.toISOString().split("T")[0];
   }
 }
 
+/**
+ * Get the ISO week number for a date
+ *
+ * @param date The date to get the week number for
+ * @returns The ISO week number (1-53)
+ */
+function getWeekNumber(date: Date): number {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  return (
+    1 +
+    Math.round(
+      ((d.getTime() - week1.getTime()) / 86400000 -
+        3 +
+        ((week1.getDay() + 6) % 7)) /
+        7
+    )
+  );
+}
+
+/**
+ * Represents a time period for a habit
+ */
 interface Period {
   key: string;
   startDate: string;
@@ -317,73 +331,56 @@ interface Period {
 }
 
 /**
- * Get all periods (weeks or months) where a habit was due,
- * from the start date to today
+ * Get all periods (weeks or months) where a habit is due
+ *
+ * @param habit The habit to get periods for
+ * @returns Array of periods
  */
 function getHabitPeriods(habit: Habit): Period[] {
   const periods: Period[] = [];
   const today = new Date();
 
-  // Default start date to habit creation date if not specified
-  const startDate = habit.startDate
-    ? new Date(habit.startDate)
-    : new Date(habit.createdAt);
-
-  // Set end date to either habit end date or today
-  const endDate =
-    habit.endDate && new Date(habit.endDate) < today
-      ? new Date(habit.endDate)
-      : today;
-
+  // For weekly habits
   if (habit.repetition === RepetitionPattern.Weekly) {
-    // Generate all weeks from start to end
-    const currentDate = new Date(startDate);
+    // Get periods for the last 12 weeks (~ 3 months)
+    for (let i = 0; i < 12; i++) {
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - i * 7);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Set to Sunday
 
-    while (currentDate <= endDate) {
-      // Get first day of the week (Sunday)
-      const firstDay = new Date(currentDate);
-      const day = firstDay.getDay();
-      firstDay.setDate(firstDay.getDate() - day);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6); // Set to Saturday
 
-      // Get last day of the week (Saturday)
-      const lastDay = new Date(firstDay);
-      lastDay.setDate(lastDay.getDate() + 6);
+      const periodKey = `week-${getWeekNumber(weekStart)}`;
 
-      // Create period
-      const periodKey = getPeriodKey(RepetitionPattern.Weekly, currentDate);
       periods.push({
         key: periodKey,
-        startDate: firstDay.toISOString().split("T")[0],
-        endDate: lastDay.toISOString().split("T")[0],
+        startDate: weekStart.toISOString(),
+        endDate: weekEnd.toISOString(),
       });
-
-      // Move to next week
-      currentDate.setDate(currentDate.getDate() + 7);
     }
-  } else if (habit.repetition === RepetitionPattern.Monthly) {
-    // Generate all months from start to end
-    const currentDate = new Date(startDate);
-    currentDate.setDate(1); // Set to first day of month
+  }
+  // For monthly habits
+  else if (habit.repetition === RepetitionPattern.Monthly) {
+    // Get periods for the last 12 months
+    for (let i = 0; i < 12; i++) {
+      const monthStart = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthEnd = new Date(
+        monthStart.getFullYear(),
+        monthStart.getMonth() + 1,
+        0
+      );
 
-    while (currentDate <= endDate) {
-      // Get first day of the month
-      const firstDay = new Date(currentDate);
+      const month = monthStart.getMonth() + 1; // getMonth() returns 0-11
+      const periodKey = `month-${monthStart.getFullYear()}-${month
+        .toString()
+        .padStart(2, "0")}`;
 
-      // Get last day of the month
-      const lastDay = new Date(currentDate);
-      lastDay.setMonth(lastDay.getMonth() + 1);
-      lastDay.setDate(0);
-
-      // Create period
-      const periodKey = getPeriodKey(RepetitionPattern.Monthly, currentDate);
       periods.push({
         key: periodKey,
-        startDate: firstDay.toISOString().split("T")[0],
-        endDate: lastDay.toISOString().split("T")[0],
+        startDate: monthStart.toISOString(),
+        endDate: monthEnd.toISOString(),
       });
-
-      // Move to next month
-      currentDate.setMonth(currentDate.getMonth() + 1);
     }
   }
 
