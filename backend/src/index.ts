@@ -6,6 +6,7 @@ import morgan from "morgan";
 import habitRoutes from "./routes/habitRoutes";
 import analyticsRoutes from "./routes/analyticsRoutes";
 import noteRoutes from "./routes/noteRoutes";
+import recordsRoutes from "./routes/recordsRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api/habits", habitRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notes", noteRoutes);
+app.use("/api/records", recordsRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

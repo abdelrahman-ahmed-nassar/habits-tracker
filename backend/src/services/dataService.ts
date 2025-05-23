@@ -204,33 +204,242 @@ export const createCompletion = async (
 };
 
 /**
+ * Delete a completion record
+ * @param id The ID of the completion record to delete
+ * @returns Whether the deletion was successful
+ */
+export const deleteCompletion = async (id: string): Promise<boolean> => {
+  const completions = await getCompletions();
+  const initialLength = completions.length;
+  
+  const filteredCompletions = completions.filter(c => c.id !== id);
+  
+  if (filteredCompletions.length === initialLength) {
+    return false;
+  }
+  
+  await writeData(COMPLETIONS_FILE, filteredCompletions);
+  return true;
+};
+
+/**
  * Update a habit's current and best streak values
+ * Public version of the internal updateHabitStreaks function
  * @param habitId The habit ID to update streaks for
  */
-const updateHabitStreaks = async (habitId: string): Promise<void> => {
+export const updateHabitStreaks = async (habitId: string): Promise<void> => {
   const habit = await getHabitById(habitId);
   if (!habit) return;
-
-  const completions = await getCompletionsByHabitId(habitId);
-  completions.sort((a, b) => a.date.localeCompare(b.date));
-
+  
   let currentStreak = 0;
   let bestStreak = habit.bestStreak;
+  
+  // For counter-type habits vs streak-type habits, we calculate differently
+  if (habit.goalType === 'streak') {
+    const completions = await getCompletionsByHabitId(habitId);
+    
+    // Sort by date (oldest first)
+    completions.sort((a, b) => a.date.localeCompare(b.date));
+    
+    const dailyCompletions = getDailyCompletionStatus(habit, completions);
+    
+    // Calculate current streak - counting back from today or the last record
+    currentStreak = calculateCurrentStreak(dailyCompletions, habit.repetition, habit.specificDays);
+    
+    // Calculate best streak
+    const allStreaks = calculateAllStreaks(dailyCompletions, habit.repetition, habit.specificDays);
+    bestStreak = Math.max(...allStreaks, 0, habit.bestStreak); // Include existing bestStreak
+  } else if (habit.goalType === 'counter') {
+    // For counter-type habits, streak is consecutive days where value >= goalValue
+    const completions = await getCompletionsByHabitId(habitId);
+    
+    // Sort by date (oldest first)
+    completions.sort((a, b) => a.date.localeCompare(b.date));
+    
+    // Calculate current streak
+    currentStreak = calculateCounterStreak(completions, habit.goalValue);
+    
+    // Update best streak if current is greater
+    if (currentStreak > bestStreak) {
+      bestStreak = currentStreak;
+    }
+  }
+  
+  // Update the habit with new streak values
+  await updateHabit(habitId, { currentStreak, bestStreak });
+};
 
-  // Simple calculation for streaks - can be improved with repetition pattern logic
-  for (let i = completions.length - 1; i >= 0; i--) {
-    if (completions[i].completed) {
+/**
+ * Convert completion records to a daily status map
+ * @param habit The habit
+ * @param completions Completion records for the habit
+ * @returns Map of dates to completion status
+ */
+const getDailyCompletionStatus = (
+  habit: Habit,
+  completions: CompletionRecord[]
+): Map<string, boolean> => {
+  const statusMap = new Map<string, boolean>();
+  
+  completions.forEach(completion => {
+    // For counter-type habits, check if the value meets the goal
+    if (habit.goalType === 'counter') {
+      statusMap.set(
+        completion.date, 
+        completion.completed && (completion.value !== undefined ? completion.value >= habit.goalValue : false)
+      );
+    } else {
+      statusMap.set(completion.date, completion.completed);
+    }
+  });
+  
+  return statusMap;
+};
+
+/**
+ * Calculate current streak based on daily completion status
+ * @param dailyCompletions Map of dates to completion status
+ * @param repetition Habit repetition type
+ * @param specificDays Specific days for weekly/monthly habits
+ * @returns Current streak count
+ */
+const calculateCurrentStreak = (
+  dailyCompletions: Map<string, boolean>,
+  repetition: 'daily' | 'weekly' | 'monthly',
+  specificDays?: number[]
+): number => {
+  // Convert map to array of [date, completed] pairs and sort by date (most recent first)
+  const sortedCompletions = Array.from(dailyCompletions.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]));
+  
+  if (sortedCompletions.length === 0) return 0;
+  
+  let streak = 0;
+  let currentDate = new Date(sortedCompletions[0][0]);
+  
+  // Go backwards from the most recent date
+  for (let i = 0; i < sortedCompletions.length; i++) {
+    const [dateStr, completed] = sortedCompletions[i];
+    const date = new Date(dateStr);
+    
+    // If there's a gap in consecutive dates, or the habit wasn't completed, break
+    if (i > 0) {
+      const prevDate = new Date(sortedCompletions[i-1][0]);
+      const dayDiff = Math.floor((prevDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // For non-daily habits, need to handle differently
+      if (repetition === 'weekly' && dayDiff > 7) break;
+      if (repetition === 'monthly' && dayDiff > 31) break;
+      if (repetition === 'daily' && dayDiff > 1) break;
+    }
+    
+    // If completed, increment streak
+    if (completed) {
+      streak++;
+    } else {
+      break; // Break on first non-completion
+    }
+  }
+  
+  return streak;
+};
+
+/**
+ * Calculate all streaks in the history
+ * @param dailyCompletions Map of dates to completion status
+ * @param repetition Habit repetition type
+ * @param specificDays Specific days for weekly/monthly habits
+ * @returns Array of streak lengths
+ */
+const calculateAllStreaks = (
+  dailyCompletions: Map<string, boolean>,
+  repetition: 'daily' | 'weekly' | 'monthly',
+  specificDays?: number[]
+): number[] => {
+  // Convert map to array of [date, completed] pairs and sort by date (oldest first)
+  const sortedCompletions = Array.from(dailyCompletions.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]));
+  
+  const streaks: number[] = [];
+  let currentStreak = 0;
+  
+  for (let i = 0; i < sortedCompletions.length; i++) {
+    const [dateStr, completed] = sortedCompletions[i];
+    
+    if (completed) {
       currentStreak++;
+    } else {
+      if (currentStreak > 0) {
+        streaks.push(currentStreak);
+        currentStreak = 0;
+      }
+    }
+    
+    // Check if there's a gap to the next date
+    if (i < sortedCompletions.length - 1) {
+      const currentDate = new Date(dateStr);
+      const nextDate = new Date(sortedCompletions[i+1][0]);
+      const dayDiff = Math.floor((nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      // For non-daily habits, need to handle differently
+      if ((repetition === 'daily' && dayDiff > 1) ||
+          (repetition === 'weekly' && dayDiff > 7) ||
+          (repetition === 'monthly' && dayDiff > 31)) {
+        if (currentStreak > 0) {
+          streaks.push(currentStreak);
+          currentStreak = 0;
+        }
+      }
+    }
+  }
+  
+  // Add the last streak if there is one
+  if (currentStreak > 0) {
+    streaks.push(currentStreak);
+  }
+  
+  return streaks;
+};
+
+/**
+ * Calculate streak for counter-type habits
+ * @param completions Completion records
+ * @param goalValue The goal value to meet or exceed
+ * @returns Current streak count
+ */
+const calculateCounterStreak = (
+  completions: CompletionRecord[],
+  goalValue: number
+): number => {
+  // Sort by date (most recent first)
+  const sortedCompletions = [...completions].sort((a, b) => b.date.localeCompare(a.date));
+  
+  if (sortedCompletions.length === 0) return 0;
+  
+  let streak = 0;
+  
+  // Go backwards from the most recent date
+  for (let i = 0; i < sortedCompletions.length; i++) {
+    const completion = sortedCompletions[i];
+    
+    // If there's a gap in consecutive dates, break
+    if (i > 0) {
+      const currentDate = new Date(completion.date);
+      const prevDate = new Date(sortedCompletions[i-1].date);
+      const dayDiff = Math.floor((prevDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (dayDiff > 1) break;
+    }
+    
+    // Check if the goal was met
+    if (completion.completed && (completion.value !== undefined ? completion.value >= goalValue : false)) {
+      streak++;
     } else {
       break;
     }
   }
-
-  if (currentStreak > bestStreak) {
-    bestStreak = currentStreak;
-  }
-
-  await updateHabit(habitId, { currentStreak, bestStreak });
+  
+  return streak;
 };
 
 /**

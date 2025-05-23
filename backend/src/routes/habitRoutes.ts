@@ -25,5 +25,8 @@ router.get("/:id/records", completionController.getHabitCompletions);
 // POST /api/habits/:id/complete - Mark habit as complete for a date
 router.post("/:id/complete", completionController.markHabitComplete);
 
+// DELETE /api/habits/:id/complete/:date - Unmark completion
+router.delete("/:id/complete/:date", completionController.deleteCompletion);
+
 // Export routes
 export default router;
