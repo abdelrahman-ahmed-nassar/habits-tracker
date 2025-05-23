@@ -14,6 +14,7 @@ import {
   BulkCompleteDto,
 } from "../../../shared/src/api";
 import { AppError } from "./errorMiddleware";
+import { isValidDate } from "../utils/dateUtils";
 
 /**
  * Validates that request body contains all required fields for habit creation
@@ -283,4 +284,75 @@ function isValidDateString(dateString: string): boolean {
   if (isNaN(timestamp)) return false;
 
   return date.toISOString().split("T")[0] === dateString;
+}
+
+/**
+ * Middleware to validate time range parameters
+ */
+export function validateTimeRange(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const { startDate, endDate } = req.query;
+
+  // If no dates provided, use default (last 30 days)
+  if (!startDate && !endDate) {
+    // Create default dates (last 30 days)
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - 30);
+
+    req.query.startDate = start.toISOString().split("T")[0];
+    req.query.endDate = end.toISOString().split("T")[0];
+    return next();
+  }
+
+  // Validate startDate if provided
+  if (startDate && typeof startDate === "string") {
+    if (!isValidDate(startDate)) {
+      return next(
+        new AppError(
+          `Invalid startDate format: ${startDate}. Use YYYY-MM-DD format.`,
+          400
+        )
+      );
+    }
+  }
+
+  // Validate endDate if provided
+  if (endDate && typeof endDate === "string") {
+    if (!isValidDate(endDate)) {
+      return next(
+        new AppError(
+          `Invalid endDate format: ${endDate}. Use YYYY-MM-DD format.`,
+          400
+        )
+      );
+    }
+  }
+
+  // If only one date is provided, set the other
+  if (startDate && !endDate) {
+    // Default to today for endDate
+    req.query.endDate = new Date().toISOString().split("T")[0];
+  } else if (!startDate && endDate) {
+    // Default to 30 days before endDate for startDate
+    const end = new Date(endDate as string);
+    const start = new Date(end);
+    start.setDate(start.getDate() - 30);
+    req.query.startDate = start.toISOString().split("T")[0];
+  }
+
+  // Ensure startDate is before endDate
+  if (req.query.startDate && req.query.endDate) {
+    const start = new Date(req.query.startDate as string);
+    const end = new Date(req.query.endDate as string);
+
+    if (start > end) {
+      return next(new AppError("startDate must be before endDate", 400));
+    }
+  }
+
+  next();
 }
