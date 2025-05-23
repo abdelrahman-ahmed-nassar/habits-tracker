@@ -7,7 +7,12 @@ import {
   GoalType,
   PriorityLevel,
 } from "../../../shared/src/habits";
-import { CreateHabitDto, UpdateHabitDto } from "../../../shared/src/api";
+import {
+  CreateHabitDto,
+  UpdateHabitDto,
+  CompleteHabitDto,
+  BulkCompleteDto,
+} from "../../../shared/src/api";
 import { AppError } from "./errorMiddleware";
 
 /**
@@ -160,4 +165,122 @@ export function validateUpdateHabit(
   }
 
   next();
+}
+
+/**
+ * Validates that request body contains valid fields for marking a habit as complete
+ */
+export function validateCompleteHabit(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const completionData = req.body as CompleteHabitDto;
+
+  // Check for required date field
+  if (!completionData.date) {
+    return next(new AppError("Date is required", 400));
+  }
+
+  // Validate date format
+  if (!isValidDateString(completionData.date)) {
+    return next(
+      new AppError("Invalid date format. Use YYYY-MM-DD format", 400)
+    );
+  }
+
+  // If value is provided, ensure it's a positive number
+  if (
+    completionData.value !== undefined &&
+    (typeof completionData.value !== "number" || completionData.value < 0)
+  ) {
+    return next(new AppError("Value must be a non-negative number", 400));
+  }
+
+  // If notes are provided, ensure they're a string
+  if (
+    completionData.notes !== undefined &&
+    typeof completionData.notes !== "string"
+  ) {
+    return next(new AppError("Notes must be a string", 400));
+  }
+
+  next();
+}
+
+/**
+ * Validates that a date parameter is in the correct format
+ */
+export function validateDateParam(paramName: string) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const dateParam = req.params[paramName];
+
+    if (!dateParam) {
+      return next(new AppError(`${paramName} parameter is required`, 400));
+    }
+
+    if (!isValidDateString(dateParam)) {
+      return next(
+        new AppError(`Invalid ${paramName} format. Use YYYY-MM-DD format`, 400)
+      );
+    }
+
+    next();
+  };
+}
+
+/**
+ * Validates that startDate and endDate query parameters are in the correct format
+ */
+export function validateDateRange(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate) {
+    return next(new AppError("startDate query parameter is required", 400));
+  }
+
+  if (!endDate) {
+    return next(new AppError("endDate query parameter is required", 400));
+  }
+
+  if (!isValidDateString(startDate as string)) {
+    return next(
+      new AppError("Invalid startDate format. Use YYYY-MM-DD format", 400)
+    );
+  }
+
+  if (!isValidDateString(endDate as string)) {
+    return next(
+      new AppError("Invalid endDate format. Use YYYY-MM-DD format", 400)
+    );
+  }
+
+  // Ensure startDate is not after endDate
+  const start = new Date(startDate as string);
+  const end = new Date(endDate as string);
+
+  if (start > end) {
+    return next(new AppError("startDate cannot be later than endDate", 400));
+  }
+
+  next();
+}
+
+/**
+ * Validates if a string is in YYYY-MM-DD format
+ */
+function isValidDateString(dateString: string): boolean {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(dateString)) return false;
+
+  // Further validate that it's a valid date
+  const date = new Date(dateString);
+  const timestamp = date.getTime();
+  if (isNaN(timestamp)) return false;
+
+  return date.toISOString().split("T")[0] === dateString;
 }

@@ -3,7 +3,12 @@
  */
 
 import { Habit, HabitFilter } from "./habits";
-import { Completion, CompletionFilter } from "./completions";
+import {
+  Completion,
+  CompletionFilter,
+  StreakInfo,
+  DailyCompletionStatus,
+} from "./completions";
 import { DailyNote, HabitMotivation, NoteFilter } from "./notes";
 import { AnalyticsParams, AnalyticsSummary } from "./analytics";
 import { AppSettings, UserSettings } from "./settings";
@@ -134,11 +139,186 @@ export type UpdateCompletionDto = Partial<
 >;
 
 /**
+ * DTO for completing a habit
+ */
+export interface CompleteHabitDto {
+  /**
+   * Date for the completion in ISO format (YYYY-MM-DD)
+   */
+  date: string;
+
+  /**
+   * Optional value for counter-type habits
+   */
+  value?: number;
+
+  /**
+   * Optional notes for the completion
+   */
+  notes?: string;
+}
+
+/**
+ * DTO for bulk habit completion
+ */
+export interface BulkCompleteDto {
+  /**
+   * Habit ID to mark as complete
+   */
+  habitId: string;
+
+  /**
+   * Date for the completion in ISO format (YYYY-MM-DD)
+   */
+  date: string;
+
+  /**
+   * Whether to mark as completed (true) or uncompleted (false)
+   */
+  completed?: boolean;
+
+  /**
+   * Optional value for counter-type habits
+   */
+  value?: number;
+
+  /**
+   * Optional notes for the completion
+   */
+  notes?: string;
+}
+
+/**
  * Response for completions list endpoint
  */
 export interface CompletionsListResponse {
   completions: Completion[];
   filter?: CompletionFilter;
+}
+
+/**
+ * Statistics for completion history
+ */
+export interface CompletionStatistics {
+  /**
+   * Total number of completions
+   */
+  totalCompletions: number;
+
+  /**
+   * Completion rate as a decimal (0-1)
+   */
+  completionRate: number;
+
+  /**
+   * Streak information for the habit
+   */
+  streakData: StreakInfo;
+}
+
+/**
+ * Response for habit completion history
+ */
+export interface CompletionHistoryResponse {
+  /**
+   * The habit details
+   */
+  habit: Habit;
+
+  /**
+   * Array of completion records
+   */
+  completions: Completion[];
+
+  /**
+   * Completion statistics
+   */
+  statistics: CompletionStatistics;
+}
+
+/**
+ * Response for daily completions
+ */
+export interface DailyCompletionsResponse {
+  /**
+   * The date in ISO format (YYYY-MM-DD)
+   */
+  date: string;
+
+  /**
+   * Array of completion records for the day
+   */
+  completions: Completion[];
+
+  /**
+   * Summary of completions for the day
+   */
+  summary: {
+    /**
+     * Total number of habits scheduled for this date
+     */
+    totalHabits: number;
+
+    /**
+     * Number of completed habits
+     */
+    completedHabits: number;
+
+    /**
+     * Completion rate as a decimal (0-1)
+     */
+    completionRate: number;
+  };
+}
+
+/**
+ * Aggregate statistics for a date range of completions
+ */
+export interface CompletionRangeStats {
+  /**
+   * Total number of habits tracked in this period
+   */
+  totalHabits: number;
+
+  /**
+   * Total number of completions in this period
+   */
+  totalCompletions: number;
+
+  /**
+   * Average completion rate across the period
+   */
+  averageCompletionRate: number;
+}
+
+/**
+ * Response for completions in a date range
+ */
+export interface CompletionRangeResponse {
+  /**
+   * Start date of the range in ISO format (YYYY-MM-DD)
+   */
+  startDate: string;
+
+  /**
+   * End date of the range in ISO format (YYYY-MM-DD)
+   */
+  endDate: string;
+
+  /**
+   * All completions in the date range
+   */
+  completions: Completion[];
+
+  /**
+   * Daily summaries for each day in the range
+   */
+  dailySummaries: DailyCompletionStatus[];
+
+  /**
+   * Aggregate statistics for the date range
+   */
+  aggregateStats: CompletionRangeStats;
 }
 
 // ===================
