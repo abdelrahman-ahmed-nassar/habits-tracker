@@ -1,0 +1,41 @@
+{
+  "name": "@ultimate-habits-tracker/frontend",
+  "version": "1.0.0",
+  "description": "React frontend for Ultimate Habits Tracker",
+  "scripts": {
+    "start": "vite preview",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ultimate-habits-tracker/shared": "1.0.0",
+    "axios": "^1.6.5",
+    "chart.js": "^4.4.1",
+    "date-fns": "^3.2.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-router-dom": "^6.21.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.2.0",
+    "@testing-library/react": "^14.1.2",
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "jsdom": "^23.2.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vitest": "^1.2.0"
+  }
+}
