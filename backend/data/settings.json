@@ -1,0 +1,9 @@
+{
+  "userId": "f664c928-23b3-4671-b180-e2513691119d",
+  "theme": "system",
+  "reminderEnabled": true,
+  "reminderTime": "20:00",
+  "backupEnabled": true,
+  "backupFrequency": "weekly",
+  "lastBackupDate": "2025-05-23"
+}

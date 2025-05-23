@@ -1,0 +1,75 @@
+[
+  {
+    "id": "04af4e06-3209-4baa-89a4-fcb038fb4c03",
+    "name": "Daily Exercise",
+    "description": "At least 30 minutes of physical activity",
+    "tag": "health",
+    "repetition": "daily",
+    "goalType": "streak",
+    "goalValue": 1,
+    "currentStreak": 3,
+    "bestStreak": 5,
+    "createdAt": "2025-04-23",
+    "motivationNote": "Exercise improves mood and energy levels",
+    "isActive": true
+  },
+  {
+    "id": "b5c718b4-73c6-44ab-9de2-7ec73ac8252d",
+    "name": "Read a book",
+    "description": "Read at least 30 pages",
+    "tag": "learning",
+    "repetition": "daily",
+    "goalType": "counter",
+    "goalValue": 30,
+    "currentStreak": 0,
+    "bestStreak": 7,
+    "createdAt": "2025-04-08",
+    "isActive": true
+  },
+  {
+    "id": "8ac1d55c-9281-48b3-ad32-e0ed8bf10978",
+    "name": "Weekly Review",
+    "description": "Review goals and plan for next week",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 1,
+    "currentStreak": 2,
+    "bestStreak": 4,
+    "createdAt": "2025-03-24",
+    "motivationNote": "Planning ahead leads to better results",
+    "isActive": true
+  },
+  {
+    "id": "cf76ffe8-8a8f-4715-8e07-d6040b2aeb5b",
+    "name": "Drink Water",
+    "description": "Drink at least 2 liters of water",
+    "tag": "health",
+    "repetition": "daily",
+    "goalType": "counter",
+    "goalValue": 8,
+    "currentStreak": 1,
+    "bestStreak": 12,
+    "createdAt": "2025-05-08",
+    "isActive": true
+  },
+  {
+    "id": "59c04328-8efe-4221-8212-87924f9261ee",
+    "name": "Monthly Budget Review",
+    "description": "Review expenses and update budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 1,
+    "currentStreak": 2,
+    "bestStreak": 3,
+    "createdAt": "2025-02-22",
+    "isActive": true
+  }
+]
