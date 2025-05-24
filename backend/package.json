@@ -9,7 +9,8 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "init-db": "ts-node src/scripts/initDb.ts",
-    "backup": "ts-node src/scripts/backup.ts"
+    "backup": "ts-node src/scripts/backup.ts",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "cors": "^2.8.5",

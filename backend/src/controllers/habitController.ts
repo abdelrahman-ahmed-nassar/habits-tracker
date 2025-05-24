@@ -94,14 +94,8 @@ export const createHabit = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError("Invalid habit data", 400, errors);
   }
 
-  // Create habit with current streak and best streak set to 0
-  const habit = await dataService.createHabit({
-    ...habitData,
-    currentStreak: 0,
-    bestStreak: 0,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  });
+  // Create habit with all required fields
+  const habit = await dataService.createHabit(habitData);
 
   res.status(201).json({
     success: true,

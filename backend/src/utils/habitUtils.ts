@@ -69,6 +69,11 @@ export const sortHabits = (
 
     const multiplier = direction === "asc" ? 1 : -1;
 
+    // Handle undefined values
+    if (aVal === undefined && bVal === undefined) return 0;
+    if (aVal === undefined) return 1 * multiplier;
+    if (bVal === undefined) return -1 * multiplier;
+
     if (aVal < bVal) return -1 * multiplier;
     if (aVal > bVal) return 1 * multiplier;
     return 0;
