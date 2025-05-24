@@ -1,9 +1,9 @@
 {
   "userId": "38ae7e2d-ab34-4991-908a-ca70bf457e19",
-  "theme": "system",
+  "theme": "dark",
   "reminderEnabled": true,
-  "reminderTime": "20:00",
+  "reminderTime": "09:00",
   "backupEnabled": true,
-  "backupFrequency": "weekly",
+  "backupFrequency": "daily",
   "lastBackupDate": "2025-05-16"
 }

@@ -1,30 +1,21 @@
 import express from "express";
+import * as noteController from "../controllers/noteController";
 
 const router = express.Router();
 
 // GET /api/notes - Get all notes
-router.get("/", (req, res) => {
-  res.json({ message: "Get all notes" });
-});
+router.get("/", noteController.getAllNotes);
 
 // GET /api/notes/:date - Get notes for a specific date
-router.get("/:date", (req, res) => {
-  res.json({ message: `Get notes for date ${req.params.date}` });
-});
+router.get("/:date", noteController.getNoteByDate);
 
 // POST /api/notes - Create a new note
-router.post("/", (req, res) => {
-  res.json({ message: "Create new note" });
-});
+router.post("/", noteController.createNote);
 
 // PUT /api/notes/:id - Update a note
-router.put("/:id", (req, res) => {
-  res.json({ message: `Update note ${req.params.id}` });
-});
+router.put("/:id", noteController.updateNote);
 
 // DELETE /api/notes/:id - Delete a note
-router.delete("/:id", (req, res) => {
-  res.json({ message: `Delete note ${req.params.id}` });
-});
+router.delete("/:id", noteController.deleteNote);
 
 export default router;
