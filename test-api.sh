@@ -165,7 +165,7 @@ echo -e "\n"
 
 # Update note
 echo -e "\nTesting PUT /notes/1"
-curl -X PUT http://localhost:5000/api/notes/1 \
+curl -X PUT http://localhost:5000/api/notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed \
   -H "Content-Type: application/json" \
   -d '{
     "content": "Updated daily note",
@@ -174,8 +174,8 @@ curl -X PUT http://localhost:5000/api/notes/1 \
 echo -e "\n"
 
 # Delete note
-echo -e "\nTesting DELETE /notes/1"
-curl -X DELETE http://localhost:5000/api/notes/1 | cat
+echo -e "\nTesting DELETE /notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed"
+curl -X DELETE http://localhost:5000/api/notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed | cat
 echo -e "\n"
 
 echo "=== Testing Settings ==="

@@ -365,6 +365,37 @@ export const getDailyAnalytics = asyncHandler(
         })
       );
 
+      // Calculate tag-based analytics
+      const tagAnalytics = new Map<
+        string,
+        { total: number; completed: number }
+      >();
+
+      // Initialize tag analytics
+      habitsForDate.forEach((habit) => {
+        if (!tagAnalytics.has(habit.tag)) {
+          tagAnalytics.set(habit.tag, { total: 0, completed: 0 });
+        }
+        const tagStats = tagAnalytics.get(habit.tag)!;
+        tagStats.total++;
+        if (completedHabitIds.has(habit.id)) {
+          tagStats.completed++;
+        }
+      });
+
+      // Convert tag analytics to array with completion rates
+      const tagStats = Array.from(tagAnalytics.entries()).map(
+        ([tag, stats]) => ({
+          tag,
+          totalHabits: stats.total,
+          completedHabits: stats.completed,
+          completionRate: stats.total > 0 ? stats.completed / stats.total : 0,
+        })
+      );
+
+      // Sort tag stats by completion rate (descending)
+      tagStats.sort((a, b) => b.completionRate - a.completionRate);
+
       // Get daily note if exists
       const note = await dataService.getNoteByDate(date);
 
@@ -374,6 +405,7 @@ export const getDailyAnalytics = asyncHandler(
         totalHabits: habitsForDate.length,
         completedHabits: completedHabitIds.size,
         habitDetails,
+        tagStats,
         note: note
           ? {
               id: note.id,
