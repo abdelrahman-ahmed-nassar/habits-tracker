@@ -272,6 +272,15 @@ export const getHabitAnalytics = asyncHandler(
           currentStreak: habit.currentStreak,
           bestStreak: habit.bestStreak,
         },
+        counterStats: habit.goalType === "counter" ? {
+          totalValue: filteredCompletions.reduce((sum, c) => sum + (c.value || 0), 0),
+          goalValue: habit.goalValue,
+          progress: filteredCompletions.reduce((sum, c) => sum + (c.value || 0), 0) / habit.goalValue,
+          completions: filteredCompletions.map(c => ({
+            date: c.date,
+            value: c.value || 0
+          }))
+        } : null,
         dayOfWeekStats,
         bestDay:
           best !== -1

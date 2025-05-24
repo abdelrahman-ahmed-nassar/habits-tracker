@@ -730,5 +730,29 @@
     "date": "2025-05-24",
     "completed": true,
     "completedAt": "2025-05-24T10:46:55.259Z"
+  },
+  {
+    "id": "383248ae-0914-4fbc-8ece-56d28dced978",
+    "habitId": "88f77ef9-a51b-4338-884d-243d4ff97063",
+    "date": "2025-05-24",
+    "completed": true,
+    "value": 5,
+    "completedAt": "2025-05-24T11:18:59.703Z"
+  },
+  {
+    "id": "8fededf7-6920-45bf-bbad-cc0fff707769",
+    "habitId": "88f77ef9-a51b-4338-884d-243d4ff97063",
+    "date": "2025-05-25",
+    "completed": true,
+    "value": 3,
+    "completedAt": "2025-05-24T11:19:03.329Z"
+  },
+  {
+    "id": "83167a15-7481-4937-98f0-46dda5ce6ff8",
+    "habitId": "88f77ef9-a51b-4338-884d-243d4ff97063",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 4,
+    "completedAt": "2025-05-24T11:19:11.602Z"
   }
 ]

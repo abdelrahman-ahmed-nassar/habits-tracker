@@ -216,5 +216,24 @@
     "bestStreak": 1,
     "isActive": true,
     "createdAt": "2025-05-24T09:42:51.291Z"
+  },
+  {
+    "id": "88f77ef9-a51b-4338-884d-243d4ff97063",
+    "name": "Weekend and Monday Exercise",
+    "description": "Workout on weekend and start of week",
+    "tag": "fitness",
+    "repetition": "weekly",
+    "specificDays": [
+      0,
+      6,
+      1
+    ],
+    "goalType": "counter",
+    "goalValue": 30,
+    "motivationNote": "Stay consistent with weekend and Monday workouts",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-24T11:17:19.589Z"
   }
 ]
