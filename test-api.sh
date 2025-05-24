@@ -140,6 +140,40 @@ echo -e "\nTesting GET /analytics/monthly/2025/5"
 curl -X GET http://localhost:5000/api/analytics/monthly/2025/5 | cat
 echo -e "\n"
 
+# Test analytics cache control
+echo -e "\nTesting POST /analytics/clear-cache"
+curl -X POST http://localhost:5000/api/analytics/clear-cache | cat
+echo -e "\n"
+
+# Test analytics cache settings
+echo -e "\nTesting PUT /settings (analytics cache)"
+curl -X PUT http://localhost:5000/api/settings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "analytics": {
+      "cacheEnabled": false,
+      "cacheDuration": 10
+    }
+  }' | cat
+echo -e "\n"
+
+# Test analytics with cache disabled
+echo -e "\nTesting GET /analytics/overview (with cache disabled)"
+curl -X GET http://localhost:5000/api/analytics/overview | cat
+echo -e "\n"
+
+# Re-enable analytics cache
+echo -e "\nTesting PUT /settings (re-enable analytics cache)"
+curl -X PUT http://localhost:5000/api/settings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "analytics": {
+      "cacheEnabled": true,
+      "cacheDuration": 5
+    }
+  }' | cat
+echo -e "\n"
+
 echo "=== Testing Notes ==="
 
 # Get all notes
