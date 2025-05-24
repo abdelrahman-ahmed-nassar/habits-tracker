@@ -35,17 +35,17 @@ export const getDailyCompletions = asyncHandler(
  */
 export const getHabitCompletions = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const { habitId } = req.params;
     const { startDate, endDate } = req.query;
 
     // Check if habit exists
-    const habit = await dataService.getHabitById(id);
+    const habit = await dataService.getHabitById(habitId);
     if (!habit) {
-      throw new AppError(`Habit with ID ${id} not found`, 404);
+      throw new AppError(`Habit with ID ${habitId} not found`, 404);
     }
 
     // Get completion records for this habit
-    let completions = await dataService.getCompletionsByHabitId(id);
+    let completions = await dataService.getCompletionsByHabitId(habitId);
 
     // Filter by date range if provided
     if (startDate && typeof startDate === "string") {
@@ -177,6 +177,33 @@ export const deleteCompletion = asyncHandler(
     res.status(200).json({
       success: true,
       message: `Completion record for habit ${targetHabitId} on date ${date} deleted successfully`,
+    });
+  }
+);
+
+/**
+ * Get completion records for a date range
+ * @route GET /api/completions/range/:startDate/:endDate
+ */
+export const getCompletionsInRange = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { startDate, endDate } = req.params;
+
+    // Validate date formats
+    if (!isValidDateFormat(startDate) || !isValidDateFormat(endDate)) {
+      throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
+    }
+
+    // Get all completions
+    const completions = await dataService.getCompletions();
+    // Filter by date range (inclusive)
+    const filtered = completions.filter(
+      (c) => c.date >= startDate && c.date <= endDate
+    );
+
+    res.status(200).json({
+      success: true,
+      data: filtered,
     });
   }
 );

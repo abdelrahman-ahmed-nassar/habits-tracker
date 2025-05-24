@@ -27,19 +27,10 @@ router.get("/date/:date", async (req, res, next) => {
 router.get("/habit/:habitId", completionController.getHabitCompletions);
 
 // GET /api/completions/range/:startDate/:endDate - Get completions for a date range
-router.get("/range/:startDate/:endDate", async (req, res, next) => {
-  const { startDate, endDate } = req.params;
-  try {
-    // Forward to records controller that handles date ranges
-    return res.redirect(`/api/records/weekly/${startDate}?endDate=${endDate}`);
-  } catch (error) {
-    if (error instanceof Error) {
-      next(new AppError(error.message, 500));
-    } else {
-      next(new AppError("An unknown error occurred", 500));
-    }
-  }
-});
+router.get(
+  "/range/:startDate/:endDate",
+  completionController.getCompletionsInRange
+);
 
 // POST /api/completions - Create a new completion
 router.post("/", completionController.markHabitComplete);

@@ -201,5 +201,20 @@
     "bestStreak": 0,
     "isActive": true,
     "createdAt": "2025-05-24T09:41:39.153Z"
+  },
+  {
+    "id": "b8fc42b2-87ff-4972-90bd-40cf3c43c34e",
+    "name": "Test Habit",
+    "description": "Test habit for completions",
+    "tag": "test",
+    "repetition": "daily",
+    "specificDays": [],
+    "goalType": "streak",
+    "goalValue": 7,
+    "motivationNote": "Testing completions",
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "isActive": true,
+    "createdAt": "2025-05-24T09:42:51.291Z"
   }
 ]
