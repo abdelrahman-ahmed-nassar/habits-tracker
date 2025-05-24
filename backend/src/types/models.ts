@@ -28,8 +28,15 @@ export interface BackupData {
 export interface Settings {
   userId: string;
   theme: "light" | "dark" | "system";
-  reminderEnabled: boolean;
-  reminderTime?: string; // HH:MM format
+  language: string;
+  notifications: {
+    enabled: boolean;
+    reminderTime: string;
+  };
+  analytics: {
+    cacheEnabled: boolean;
+    cacheDuration: number; // in minutes
+  };
   backupEnabled: boolean;
   backupFrequency: "daily" | "weekly" | "monthly";
   lastBackupDate?: string;

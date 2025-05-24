@@ -2,30 +2,69 @@
  * Simple in-memory cache utility for analytics data
  */
 
+import { Settings } from "../types/models";
+import * as dataService from "../services/dataService";
+
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
-  expiry: number; // Time in milliseconds when this entry expires
 }
 
-class AnalyticsCache {
-  private cache: Map<string, CacheEntry<any>> = new Map();
-  private defaultTTL: number = 5 * 60 * 1000; // 5 minutes in milliseconds
+export class AnalyticsCache {
+  private cache: Map<string, CacheEntry<any>>;
+  private settings: Settings | null;
+  private settingsPromise: Promise<Settings> | null;
+
+  constructor() {
+    this.cache = new Map();
+    this.settings = null;
+    this.settingsPromise = null;
+    this.initializeSettings();
+  }
+
+  private async initializeSettings() {
+    this.settingsPromise = dataService.getSettings();
+    this.settings = await this.settingsPromise;
+  }
+
+  private async getSettings(): Promise<Settings> {
+    if (this.settings) {
+      return this.settings;
+    }
+    if (this.settingsPromise) {
+      return await this.settingsPromise;
+    }
+    await this.initializeSettings();
+    return this.settings!;
+  }
+
+  private async isCacheEnabled(): Promise<boolean> {
+    const settings = await this.getSettings();
+    return settings.analytics.cacheEnabled;
+  }
+
+  private async getCacheDuration(): Promise<number> {
+    const settings = await this.getSettings();
+    return settings.analytics.cacheDuration * 60 * 1000; // Convert minutes to milliseconds
+  }
+
+  private isExpired(timestamp: number, duration: number): boolean {
+    return Date.now() - timestamp > duration;
+  }
 
   /**
    * Set a value in the cache
    * @param key Cache key
    * @param data Data to cache
-   * @param ttl Time to live in milliseconds (optional, defaults to 5 minutes)
+   * @param ttl Time to live in milliseconds
    */
-  set<T>(key: string, data: T, ttl: number = this.defaultTTL): void {
+  async set<T>(key: string, data: T, ttl?: number): Promise<void> {
     const timestamp = Date.now();
-    const expiry = timestamp + ttl;
+    const duration = ttl ?? (await this.getCacheDuration());
 
     this.cache.set(key, {
       data,
       timestamp,
-      expiry,
     });
   }
 
@@ -34,7 +73,7 @@ class AnalyticsCache {
    * @param key Cache key
    * @returns Cached data or null if not found or expired
    */
-  get<T>(key: string): T | null {
+  async get<T>(key: string): Promise<T | null> {
     const entry = this.cache.get(key);
 
     if (!entry) {
@@ -42,7 +81,8 @@ class AnalyticsCache {
     }
 
     // Check if entry has expired
-    if (Date.now() > entry.expiry) {
+    const duration = await this.getCacheDuration();
+    if (this.isExpired(entry.timestamp, duration)) {
       this.cache.delete(key);
       return null;
     }
@@ -55,7 +95,7 @@ class AnalyticsCache {
    * @param key Cache key
    * @returns Whether key exists in cache
    */
-  has(key: string): boolean {
+  async has(key: string): Promise<boolean> {
     const entry = this.cache.get(key);
 
     if (!entry) {
@@ -63,7 +103,8 @@ class AnalyticsCache {
     }
 
     // Check if entry has expired
-    if (Date.now() > entry.expiry) {
+    const duration = await this.getCacheDuration();
+    if (this.isExpired(entry.timestamp, duration)) {
       this.cache.delete(key);
       return false;
     }
@@ -91,12 +132,15 @@ class AnalyticsCache {
    * @param prefix Key prefix to match
    * @returns Array of matching keys
    */
-  getKeysByPrefix(prefix: string): string[] {
-    const now = Date.now();
+  async getKeysByPrefix(prefix: string): Promise<string[]> {
+    const duration = await this.getCacheDuration();
     const keys: string[] = [];
 
     for (const [key, entry] of this.cache.entries()) {
-      if (key.startsWith(prefix) && entry.expiry > now) {
+      if (
+        key.startsWith(prefix) &&
+        !this.isExpired(entry.timestamp, duration)
+      ) {
         keys.push(key);
       }
     }
@@ -108,9 +152,16 @@ class AnalyticsCache {
    * Invalidate all cache entries with keys matching a prefix
    * @param prefix Key prefix to match
    */
-  invalidateByPrefix(prefix: string): void {
-    const keys = this.getKeysByPrefix(prefix);
-    keys.forEach((key) => this.cache.delete(key));
+  async invalidateByPrefix(prefix: string): Promise<void> {
+    const duration = await this.getCacheDuration();
+    for (const key of this.cache.keys()) {
+      if (key.startsWith(prefix)) {
+        const entry = this.cache.get(key);
+        if (entry && this.isExpired(entry.timestamp, duration)) {
+          this.cache.delete(key);
+        }
+      }
+    }
   }
 
   /**
@@ -118,23 +169,32 @@ class AnalyticsCache {
    * computes and caches the result of the factory function
    * @param key Cache key
    * @param factory Function to produce value if not in cache
-   * @param ttl Time to live in milliseconds
    * @returns Cached or computed value
    */
-  async getOrSet<T>(
-    key: string,
-    factory: () => Promise<T>,
-    ttl: number = this.defaultTTL
-  ): Promise<T> {
-    const cachedValue = this.get<T>(key);
-
-    if (cachedValue !== null) {
-      return cachedValue;
+  async getOrSet<T>(key: string, fetchFn: () => Promise<T>): Promise<T> {
+    // If cache is disabled, always fetch fresh data
+    if (!(await this.isCacheEnabled())) {
+      return fetchFn();
     }
 
-    const value = await factory();
-    this.set(key, value, ttl);
-    return value;
+    const cached = this.cache.get(key);
+    const duration = await this.getCacheDuration();
+
+    if (cached && !this.isExpired(cached.timestamp, duration)) {
+      return cached.data;
+    }
+
+    const data = await fetchFn();
+    await this.set(key, data);
+    return data;
+  }
+
+  // Update settings when they change
+  async updateSettings(settings: Settings): Promise<void> {
+    this.settings = settings;
+    this.settingsPromise = Promise.resolve(settings);
+    // Clear cache when settings change
+    this.clear();
   }
 }
 

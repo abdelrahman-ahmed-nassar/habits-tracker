@@ -3,6 +3,7 @@ import { asyncHandler } from "../middleware/errorHandler";
 import * as dataService from "../services/dataService";
 import { AppError } from "../middleware/errorHandler";
 import { Settings } from "../types/models";
+import { analyticsCache } from "../utils/cacheUtils";
 
 /**
  * Get current settings
@@ -47,8 +48,10 @@ export const updateSettings = asyncHandler(
     }
 
     if (
-      settingsData.reminderTime &&
-      !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(settingsData.reminderTime)
+      settingsData.notifications?.reminderTime &&
+      !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(
+        settingsData.notifications.reminderTime
+      )
     ) {
       throw new AppError(
         "Invalid reminder time format. Must be in HH:MM format",
@@ -56,7 +59,31 @@ export const updateSettings = asyncHandler(
       );
     }
 
+    // Validate analytics settings
+    if (settingsData.analytics) {
+      if (
+        typeof settingsData.analytics.cacheEnabled !== "undefined" &&
+        typeof settingsData.analytics.cacheEnabled !== "boolean"
+      ) {
+        throw new AppError("analytics.cacheEnabled must be a boolean", 400);
+      }
+
+      if (
+        typeof settingsData.analytics.cacheDuration !== "undefined" &&
+        (typeof settingsData.analytics.cacheDuration !== "number" ||
+          settingsData.analytics.cacheDuration < 1)
+      ) {
+        throw new AppError(
+          "analytics.cacheDuration must be a positive number",
+          400
+        );
+      }
+    }
+
     const updatedSettings = await dataService.updateSettings(settingsData);
+
+    // Update analytics cache settings
+    await analyticsCache.updateSettings(updatedSettings);
 
     res.status(200).json({
       success: true,
