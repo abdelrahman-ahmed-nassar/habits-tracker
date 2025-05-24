@@ -1,5 +1,6 @@
 import express from "express";
 import * as completionController from "../controllers/completionController";
+import { toggleHabitCompletion } from "../controllers/toggleController";
 import { AppError } from "../middleware/errorHandler";
 
 const router = express.Router();
@@ -36,7 +37,7 @@ router.get(
 router.post("/", completionController.markHabitComplete);
 
 // POST /api/completions/toggle - Toggle a completion
-router.post("/toggle", completionController.markHabitComplete);
+router.post("/toggle", toggleHabitCompletion);
 
 // DELETE /api/completions/:habitId/:date - Delete a completion
 router.delete("/:habitId/:date", completionController.deleteCompletion);
