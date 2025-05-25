@@ -54,14 +54,5 @@
     "content": "Invalid mood test",
     "createdAt": "2025-05-25T14:00:41.192Z",
     "updatedAt": "2025-05-25T14:00:41.192Z"
-  },
-  {
-    "id": "612b30ba-0206-4bdf-9e39-ebf833da10ba",
-    "date": "2025-05-24",
-    "content": "Feeling motivated today!",
-    "mood": "Happy",
-    "productivityLevel": "High",
-    "createdAt": "2025-05-25T14:21:19.562Z",
-    "updatedAt": "2025-05-25T14:23:12.717Z"
   }
 ]

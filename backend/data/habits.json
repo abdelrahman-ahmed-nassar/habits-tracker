@@ -365,5 +365,156 @@
     "bestStreak": 0,
     "isActive": true,
     "createdAt": "2025-05-25T14:23:09.565Z"
+  },
+  {
+    "id": "5eaae777-1bea-4c0c-a71d-0b072bf0a7cd",
+    "name": "Daily Exercise",
+    "description": "30 minutes workout",
+    "tag": "fitness",
+    "repetition": "daily",
+    "specificDays": [],
+    "goalType": "streak",
+    "goalValue": 21,
+    "motivationNote": "Stay healthy and fit",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:28:53.019Z"
+  },
+  {
+    "id": "df372d3c-b0ce-4786-a11c-093d4d765c03",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:28:53.171Z"
+  },
+  {
+    "id": "407d70ed-24d9-434f-b0bd-6c2c0afd2e19",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:28:53.322Z"
+  },
+  {
+    "id": "cb50535a-ef39-4020-a8ba-39b26db142eb",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:29:48.542Z"
+  },
+  {
+    "id": "2b780b9e-7e0f-4eba-8bb1-6d599d06facc",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:29:48.693Z"
+  },
+  {
+    "id": "f3803b9b-1439-4660-8c4e-cfd15df60855",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:30:29.444Z"
+  },
+  {
+    "id": "f551feed-0b21-4b1c-87f9-fe77023b7606",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:30:29.782Z"
+  },
+  {
+    "id": "0cabb159-d3bd-4bcd-85c3-437f72175715",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:31:02.578Z"
+  },
+  {
+    "id": "f1121b20-7889-41a7-9c0b-d0d8f655ed0e",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:31:02.971Z"
   }
 ]

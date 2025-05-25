@@ -4,17 +4,21 @@ echo "=== Testing Habit Management ==="
 
 # Get all habits
 echo -e "\nTesting GET /habits"
-curl -X GET http://localhost:5000/api/habits | cat
+HABITS_RESPONSE=$(curl -X GET http://localhost:5000/api/habits | cat)
+echo "$HABITS_RESPONSE"
 echo -e "\n"
 
-# Get habit by ID (using the first habit's ID from previous response)
+# Extract the first habit ID from the response
+FIRST_HABIT_ID=$(echo $HABITS_RESPONSE | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+# Get habit by ID
 echo -e "\nTesting GET /habits/:id"
-curl -X GET http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
+curl -X GET http://localhost:5000/api/habits/$FIRST_HABIT_ID | cat
 echo -e "\n"
 
 # Create daily habit
 echo -e "\nTesting POST /habits (daily)"
-curl -X POST http://localhost:5000/api/habits \
+DAILY_HABIT_RESPONSE=$(curl -X POST http://localhost:5000/api/habits \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Daily Exercise",
@@ -25,12 +29,16 @@ curl -X POST http://localhost:5000/api/habits \
     "goalType": "streak",
     "goalValue": 21,
     "motivationNote": "Stay healthy and fit"
-  }' | cat
+  }' | cat)
+echo "$DAILY_HABIT_RESPONSE"
 echo -e "\n"
+
+# Extract the ID of the newly created daily habit
+DAILY_HABIT_ID=$(echo $DAILY_HABIT_RESPONSE | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
 
 # Create weekly habit
 echo -e "\nTesting POST /habits (weekly)"
-curl -X POST http://localhost:5000/api/habits \
+WEEKLY_HABIT_RESPONSE=$(curl -X POST http://localhost:5000/api/habits \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Weekly Review",
@@ -41,12 +49,13 @@ curl -X POST http://localhost:5000/api/habits \
     "goalType": "streak",
     "goalValue": 4,
     "motivationNote": "Stay on track with goals"
-  }' | cat
+  }' | cat)
+echo "$WEEKLY_HABIT_RESPONSE"
 echo -e "\n"
 
 # Create monthly habit
 echo -e "\nTesting POST /habits (monthly)"
-curl -X POST http://localhost:5000/api/habits \
+MONTHLY_HABIT_RESPONSE=$(curl -X POST http://localhost:5000/api/habits \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Monthly Budget Review",
@@ -57,12 +66,13 @@ curl -X POST http://localhost:5000/api/habits \
     "goalType": "streak",
     "goalValue": 12,
     "motivationNote": "Maintain financial health"
-  }' | cat
+  }' | cat)
+echo "$MONTHLY_HABIT_RESPONSE"
 echo -e "\n"
 
 # Update habit
 echo -e "\nTesting PUT /habits/:id"
-curl -X PUT http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f \
+curl -X PUT http://localhost:5000/api/habits/$DAILY_HABIT_ID \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Morning Meditation Updated",
@@ -78,8 +88,8 @@ curl -X GET http://localhost:5000/api/completions/date/2025-05-24 | cat
 echo -e "\n"
 
 # Get habit completions
-echo -e "\nTesting GET /completions/habit/f86abb24-107d-4d63-878f-0ccd5097569f"
-curl -X GET http://localhost:5000/api/completions/habit/f86abb24-107d-4d63-878f-0ccd5097569f | cat
+echo -e "\nTesting GET /completions/habit/$DAILY_HABIT_ID"
+curl -X GET http://localhost:5000/api/completions/habit/$DAILY_HABIT_ID | cat
 echo -e "\n"
 
 # Get completions for date range
@@ -92,7 +102,7 @@ echo -e "\nTesting POST /completions"
 curl -X POST http://localhost:5000/api/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "habitId": "f86abb24-107d-4d63-878f-0ccd5097569f",
+    "habitId": "'$DAILY_HABIT_ID'",
     "date": "2025-05-24",
     "value": 1
   }' | cat
@@ -103,14 +113,14 @@ echo -e "\nTesting POST /completions/toggle"
 curl -X POST http://localhost:5000/api/completions/toggle \
   -H "Content-Type: application/json" \
   -d '{
-    "habitId": "f86abb24-107d-4d63-878f-0ccd5097569f",
+    "habitId": "'$DAILY_HABIT_ID'",
     "date": "2025-05-24"
   }' | cat
 echo -e "\n"
 
 # Delete completion
 echo -e "\nTesting DELETE /completions/:habitId/:date"
-curl -X DELETE http://localhost:5000/api/completions/f86abb24-107d-4d63-878f-0ccd5097569f/2025-05-24 | cat
+curl -X DELETE http://localhost:5000/api/completions/$DAILY_HABIT_ID/2025-05-24 | cat
 echo -e "\n"
 
 echo "=== Testing Analytics ==="
@@ -121,8 +131,8 @@ curl -X GET http://localhost:5000/api/analytics/overview | cat
 echo -e "\n"
 
 # Get habit analytics
-echo -e "\nTesting GET /analytics/habits/f86abb24-107d-4d63-878f-0ccd5097569f"
-curl -X GET http://localhost:5000/api/analytics/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
+echo -e "\nTesting GET /analytics/habits/$DAILY_HABIT_ID"
+curl -X GET http://localhost:5000/api/analytics/habits/$DAILY_HABIT_ID | cat
 echo -e "\n"
 
 # Get daily analytics
@@ -178,8 +188,12 @@ echo "=== Testing Notes ==="
 
 # Get all notes
 echo -e "\nTesting GET /notes"
-curl -X GET http://localhost:5000/api/notes | cat
+NOTES_RESPONSE=$(curl -X GET http://localhost:5000/api/notes | cat)
+echo "$NOTES_RESPONSE"
 echo -e "\n"
+
+# Extract the first note ID from the response
+FIRST_NOTE_ID=$(echo $NOTES_RESPONSE | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
 
 # Get notes for date
 echo -e "\nTesting GET /notes/2025-05-24"
@@ -198,13 +212,28 @@ echo -e "\n"
 
 # Create note with valid mood and productivity level
 echo -e "\nTesting POST /notes (with valid mood and productivity level)"
-curl -X POST http://localhost:5000/api/notes \
+NOTE_RESPONSE=$(curl -X POST http://localhost:5000/api/notes \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2025-05-24",
     "content": "Feeling motivated today!",
     "mood": "Happy",
     "productivityLevel": "High"
+  }' | cat)
+echo "$NOTE_RESPONSE"
+echo -e "\n"
+
+# Extract the ID of the newly created note
+NEW_NOTE_ID=$(echo $NOTE_RESPONSE | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+# Update note with new mood and productivity level
+echo -e "\nTesting PUT /notes/:id (update mood and productivity level)"
+curl -X PUT http://localhost:5000/api/notes/$NEW_NOTE_ID \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Updated daily note with new mood",
+    "mood": "Motivated",
+    "productivityLevel": "Very High"
   }' | cat
 echo -e "\n"
 
@@ -229,17 +258,6 @@ curl -X POST http://localhost:5000/api/notes \
     "content": "Invalid productivity level test",
     "mood": "Happy",
     "productivityLevel": "InvalidLevel"
-  }' | cat
-echo -e "\n"
-
-# Update note with new mood and productivity level
-echo -e "\nTesting PUT /notes/:id (update mood and productivity level)"
-curl -X PUT http://localhost:5000/api/notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed \
-  -H "Content-Type: application/json" \
-  -d '{
-    "content": "Updated daily note with new mood",
-    "mood": "Motivated",
-    "productivityLevel": "Very High"
   }' | cat
 echo -e "\n"
 
@@ -268,8 +286,8 @@ curl -X DELETE http://localhost:5000/api/options/productivity-levels/Extreme | c
 echo -e "\n"
 
 # Delete note
-echo -e "\nTesting DELETE /notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed"
-curl -X DELETE http://localhost:5000/api/notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed | cat
+echo -e "\nTesting DELETE /notes/$NEW_NOTE_ID"
+curl -X DELETE http://localhost:5000/api/notes/$NEW_NOTE_ID | cat
 echo -e "\n"
 
 echo "=== Testing Settings ==="
@@ -293,6 +311,6 @@ curl -X PUT http://localhost:5000/api/settings \
 echo -e "\n"
 
 # Delete habit (cleanup)
-echo -e "\nTesting DELETE /habits/f86abb24-107d-4d63-878f-0ccd5097569f"
-curl -X DELETE http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
+echo -e "\nTesting DELETE /habits/$DAILY_HABIT_ID"
+curl -X DELETE http://localhost:5000/api/habits/$DAILY_HABIT_ID | cat
 echo -e "\n" 
