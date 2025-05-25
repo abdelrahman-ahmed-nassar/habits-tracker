@@ -1,12 +1,17 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Home, Calendar, BarChart2, Settings, BookOpen } from "lucide-react";
+import ThemeToggle from "../ThemeToggle";
 
 const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+          <h1 className="text-xl font-bold">Habits Tracker</h1>
+          <ThemeToggle />
+        </div>
         <nav className="p-4">
           <ul className="space-y-2">
             <li>
@@ -59,7 +64,7 @@ const MainLayout: React.FC = () => {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1">
+      <main className="flex-1 p-8 bg-gray-50 dark:bg-gray-900">
         <Outlet />
       </main>
     </div>
