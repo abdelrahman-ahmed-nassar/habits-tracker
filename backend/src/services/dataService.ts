@@ -29,8 +29,11 @@ const DEFAULT_SETTINGS: Settings = {
     cacheEnabled: true,
     cacheDuration: 5, // 5 minutes default
   },
+  reminderEnabled: true,
+  reminderTime: "20:00",
   backupEnabled: true,
   backupFrequency: "weekly",
+  lastBackupDate: new Date().toISOString(),
 };
 
 /**

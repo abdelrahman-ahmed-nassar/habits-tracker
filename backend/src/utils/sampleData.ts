@@ -204,6 +204,15 @@ export const generateDefaultSettings = (): Settings => {
   return {
     userId: uuidv4(),
     theme: "system",
+    language: "en",
+    notifications: {
+      enabled: true,
+      reminderTime: "09:00",
+    },
+    analytics: {
+      cacheEnabled: true,
+      cacheDuration: 5,
+    },
     reminderEnabled: true,
     reminderTime: "20:00",
     backupEnabled: true,

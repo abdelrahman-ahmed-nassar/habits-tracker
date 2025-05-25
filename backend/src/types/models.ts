@@ -37,9 +37,11 @@ export interface Settings {
     cacheEnabled: boolean;
     cacheDuration: number; // in minutes
   };
+  reminderEnabled: boolean;
+  reminderTime: string;
   backupEnabled: boolean;
   backupFrequency: "daily" | "weekly" | "monthly";
-  lastBackupDate?: string;
+  lastBackupDate: string;
 }
 
 export interface ValidationError {
