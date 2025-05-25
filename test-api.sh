@@ -333,11 +333,50 @@ curl -X PUT http://localhost:5000/api/settings \
   }' | cat
 echo -e "\n"
 
-echo "=== Testing Backup ==="
+echo "=== Testing Backup System ==="
 
 # Create a backup
 echo -e "\nTesting POST /backup"
+BACKUP_RESPONSE=$(curl -X POST http://localhost:5000/api/backup | cat)
+echo "$BACKUP_RESPONSE"
+echo -e "\n"
+
+# Extract the backup filename from the response
+BACKUP_FILE=$(echo $BACKUP_RESPONSE | grep -o 'backup-[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\.json' | head -1)
+
+# Restore from backup
+echo -e "\nTesting POST /backup/restore"
+curl -X POST http://localhost:5000/api/backup/restore \
+  -H "Content-Type: application/json" \
+  -d '{
+    "backupFile": "'$BACKUP_FILE'"
+  }' | cat
+echo -e "\n"
+
+# Test restore with invalid backup file
+echo -e "\nTesting POST /backup/restore (invalid file)"
+curl -X POST http://localhost:5000/api/backup/restore \
+  -H "Content-Type: application/json" \
+  -d '{
+    "backupFile": "nonexistent-backup.json"
+  }' | cat
+echo -e "\n"
+
+# Test restore without backup file
+echo -e "\nTesting POST /backup/restore (missing file)"
+curl -X POST http://localhost:5000/api/backup/restore \
+  -H "Content-Type: application/json" \
+  -d '{}' | cat
+echo -e "\n"
+
+# Create another backup to test multiple backups
+echo -e "\nTesting POST /backup (second backup)"
 curl -X POST http://localhost:5000/api/backup | cat
+echo -e "\n"
+
+# List backup files
+echo -e "\nListing backup files in data/backups directory"
+ls -l backend/data/backups/
 echo -e "\n"
 
 # Delete habit (cleanup)

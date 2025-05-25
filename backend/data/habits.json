@@ -1,14 +1,14 @@
 [
   {
     "id": "fe64efe6-4e77-41a6-8e5c-b310a8fdcea4",
-    "name": "Daily Exercise",
-    "description": "At least 30 minutes of physical activity",
+    "name": "Updated Exercise",
+    "description": "Updated description",
     "tag": "health",
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 3,
-    "bestStreak": 5,
+    "currentStreak": 1,
+    "bestStreak": 6,
     "createdAt": "2025-04-23",
     "motivationNote": "Exercise improves mood and energy levels",
     "isActive": true
