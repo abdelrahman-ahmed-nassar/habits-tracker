@@ -9,17 +9,20 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"
-
   },
   "dependencies": {
+    "@types/uuid": "^10.0.0",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.12.2",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.1",
-    "recharts": "^2.15.3"
+    "recharts": "^2.15.3",
+    "tailwind-merge": "^3.3.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
