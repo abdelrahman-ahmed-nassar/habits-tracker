@@ -9,7 +9,7 @@ echo -e "\n"
 
 # Get habit by ID (using the first habit's ID from previous response)
 echo -e "\nTesting GET /habits/:id"
-curl -X GET http://localhost:5000/api/habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e | cat
+curl -X GET http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
 echo -e "\n"
 
 # Create daily habit
@@ -62,7 +62,7 @@ echo -e "\n"
 
 # Update habit
 echo -e "\nTesting PUT /habits/:id"
-curl -X PUT http://localhost:5000/api/habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e \
+curl -X PUT http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Morning Meditation Updated",
@@ -78,8 +78,8 @@ curl -X GET http://localhost:5000/api/completions/date/2025-05-24 | cat
 echo -e "\n"
 
 # Get habit completions
-echo -e "\nTesting GET /completions/habit/b8fc42b2-87ff-4972-90bd-40cf3c43c34e"
-curl -X GET http://localhost:5000/api/completions/habit/b8fc42b2-87ff-4972-90bd-40cf3c43c34e | cat
+echo -e "\nTesting GET /completions/habit/f86abb24-107d-4d63-878f-0ccd5097569f"
+curl -X GET http://localhost:5000/api/completions/habit/f86abb24-107d-4d63-878f-0ccd5097569f | cat
 echo -e "\n"
 
 # Get completions for date range
@@ -92,7 +92,7 @@ echo -e "\nTesting POST /completions"
 curl -X POST http://localhost:5000/api/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "habitId": "b8fc42b2-87ff-4972-90bd-40cf3c43c34e",
+    "habitId": "f86abb24-107d-4d63-878f-0ccd5097569f",
     "date": "2025-05-24",
     "value": 1
   }' | cat
@@ -103,14 +103,14 @@ echo -e "\nTesting POST /completions/toggle"
 curl -X POST http://localhost:5000/api/completions/toggle \
   -H "Content-Type: application/json" \
   -d '{
-    "habitId": "b8fc42b2-87ff-4972-90bd-40cf3c43c34e",
+    "habitId": "f86abb24-107d-4d63-878f-0ccd5097569f",
     "date": "2025-05-24"
   }' | cat
 echo -e "\n"
 
 # Delete completion
 echo -e "\nTesting DELETE /completions/:habitId/:date"
-curl -X DELETE http://localhost:5000/api/completions/b8fc42b2-87ff-4972-90bd-40cf3c43c34e/2025-05-24 | cat
+curl -X DELETE http://localhost:5000/api/completions/f86abb24-107d-4d63-878f-0ccd5097569f/2025-05-24 | cat
 echo -e "\n"
 
 echo "=== Testing Analytics ==="
@@ -121,8 +121,8 @@ curl -X GET http://localhost:5000/api/analytics/overview | cat
 echo -e "\n"
 
 # Get habit analytics
-echo -e "\nTesting GET /analytics/habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e"
-curl -X GET http://localhost:5000/api/analytics/habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e | cat
+echo -e "\nTesting GET /analytics/habits/f86abb24-107d-4d63-878f-0ccd5097569f"
+curl -X GET http://localhost:5000/api/analytics/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
 echo -e "\n"
 
 # Get daily analytics
@@ -293,6 +293,6 @@ curl -X PUT http://localhost:5000/api/settings \
 echo -e "\n"
 
 # Delete habit (cleanup)
-echo -e "\nTesting DELETE /habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e"
-curl -X DELETE http://localhost:5000/api/habits/b8fc42b2-87ff-4972-90bd-40cf3c43c34e | cat
+echo -e "\nTesting DELETE /habits/f86abb24-107d-4d63-878f-0ccd5097569f"
+curl -X DELETE http://localhost:5000/api/habits/f86abb24-107d-4d63-878f-0ccd5097569f | cat
 echo -e "\n" 

@@ -272,15 +272,25 @@ export const getHabitAnalytics = asyncHandler(
           currentStreak: habit.currentStreak,
           bestStreak: habit.bestStreak,
         },
-        counterStats: habit.goalType === "counter" ? {
-          totalValue: filteredCompletions.reduce((sum, c) => sum + (c.value || 0), 0),
-          goalValue: habit.goalValue,
-          progress: filteredCompletions.reduce((sum, c) => sum + (c.value || 0), 0) / habit.goalValue,
-          completions: filteredCompletions.map(c => ({
-            date: c.date,
-            value: c.value || 0
-          }))
-        } : null,
+        counterStats:
+          habit.goalType === "counter"
+            ? {
+                totalValue: filteredCompletions.reduce(
+                  (sum, c) => sum + (c.value || 0),
+                  0
+                ),
+                goalValue: habit.goalValue,
+                progress:
+                  filteredCompletions.reduce(
+                    (sum, c) => sum + (c.value || 0),
+                    0
+                  ) / habit.goalValue,
+                completions: filteredCompletions.map((c) => ({
+                  date: c.date,
+                  value: c.value || 0,
+                })),
+              }
+            : null,
         dayOfWeekStats,
         bestDay:
           best !== -1
@@ -771,6 +781,21 @@ export const getMonthlyAnalytics = asyncHandler(
     res.status(200).json({
       success: true,
       data,
+    });
+  }
+);
+
+/**
+ * Clear analytics cache
+ * @route POST /api/analytics/clear-cache
+ */
+export const clearAnalyticsCache = asyncHandler(
+  async (req: Request, res: Response) => {
+    analyticsCache.clear();
+
+    res.status(200).json({
+      success: true,
+      message: "Analytics cache cleared successfully",
     });
   }
 );

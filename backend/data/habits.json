@@ -235,21 +235,6 @@
     "createdAt": "2025-05-25T13:27:05.614Z"
   },
   {
-    "id": "f86abb24-107d-4d63-878f-0ccd5097569f",
-    "name": "Daily Exercise",
-    "description": "30 minutes workout",
-    "tag": "fitness",
-    "repetition": "daily",
-    "specificDays": [],
-    "goalType": "streak",
-    "goalValue": 21,
-    "motivationNote": "Stay healthy and fit",
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "isActive": true,
-    "createdAt": "2025-05-25T14:11:44.951Z"
-  },
-  {
     "id": "797a4017-9d28-4ac6-bacf-6f6d7b048b5c",
     "name": "Weekly Review",
     "description": "Review weekly goals and progress",
@@ -282,5 +267,103 @@
     "bestStreak": 0,
     "isActive": true,
     "createdAt": "2025-05-25T14:11:45.218Z"
+  },
+  {
+    "id": "9fb7a0aa-ef26-4801-9a38-3e90ae549405",
+    "name": "Daily Exercise",
+    "description": "30 minutes workout",
+    "tag": "fitness",
+    "repetition": "daily",
+    "specificDays": [],
+    "goalType": "streak",
+    "goalValue": 21,
+    "motivationNote": "Stay healthy and fit",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:21:15.525Z"
+  },
+  {
+    "id": "86a61494-bc20-4ce6-8a52-473177c01d00",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:21:15.658Z"
+  },
+  {
+    "id": "6caafe34-9e7c-4f1d-b5d2-503c8f225b2b",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:21:15.796Z"
+  },
+  {
+    "id": "43729536-e34d-4923-9731-c1974063efb5",
+    "name": "Daily Exercise",
+    "description": "30 minutes workout",
+    "tag": "fitness",
+    "repetition": "daily",
+    "specificDays": [],
+    "goalType": "streak",
+    "goalValue": 21,
+    "motivationNote": "Stay healthy and fit",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:23:08.955Z"
+  },
+  {
+    "id": "d80981c8-c124-42b1-95de-87832afae471",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:23:09.212Z"
+  },
+  {
+    "id": "131bb68b-f46b-4542-9f56-06a6fe34b35d",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:23:09.565Z"
   }
 ]

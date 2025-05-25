@@ -18,4 +18,7 @@ router.get("/weekly/:startDate", analyticsController.getWeeklyAnalytics);
 // GET /api/analytics/monthly/:year/:month - Monthly analytics
 router.get("/monthly/:year/:month", analyticsController.getMonthlyAnalytics);
 
+// POST /api/analytics/clear-cache - Clear analytics cache
+router.post("/clear-cache", analyticsController.clearAnalyticsCache);
+
 export default router;
