@@ -203,21 +203,6 @@
     "createdAt": "2025-05-24T09:41:39.153Z"
   },
   {
-    "id": "b8fc42b2-87ff-4972-90bd-40cf3c43c34e",
-    "name": "Morning Meditation Updated",
-    "description": "Test habit for completions",
-    "tag": "test",
-    "repetition": "daily",
-    "specificDays": [],
-    "goalType": "streak",
-    "goalValue": 60,
-    "motivationNote": "Testing completions",
-    "currentStreak": 1,
-    "bestStreak": 1,
-    "isActive": true,
-    "createdAt": "2025-05-24T09:42:51.291Z"
-  },
-  {
     "id": "88f77ef9-a51b-4338-884d-243d4ff97063",
     "name": "Weekend and Monday Exercise",
     "description": "Workout on weekend and start of week",
@@ -248,5 +233,54 @@
     "currentStreak": 3,
     "bestStreak": 3,
     "createdAt": "2025-05-25T13:27:05.614Z"
+  },
+  {
+    "id": "f86abb24-107d-4d63-878f-0ccd5097569f",
+    "name": "Daily Exercise",
+    "description": "30 minutes workout",
+    "tag": "fitness",
+    "repetition": "daily",
+    "specificDays": [],
+    "goalType": "streak",
+    "goalValue": 21,
+    "motivationNote": "Stay healthy and fit",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:11:44.951Z"
+  },
+  {
+    "id": "797a4017-9d28-4ac6-bacf-6f6d7b048b5c",
+    "name": "Weekly Review",
+    "description": "Review weekly goals and progress",
+    "tag": "productivity",
+    "repetition": "weekly",
+    "specificDays": [
+      0
+    ],
+    "goalType": "streak",
+    "goalValue": 4,
+    "motivationNote": "Stay on track with goals",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:11:45.095Z"
+  },
+  {
+    "id": "956ae5dc-6ff5-4c53-985b-6e2623e1e4c0",
+    "name": "Monthly Budget Review",
+    "description": "Review and plan monthly budget",
+    "tag": "finance",
+    "repetition": "monthly",
+    "specificDays": [
+      1
+    ],
+    "goalType": "streak",
+    "goalValue": 12,
+    "motivationNote": "Maintain financial health",
+    "currentStreak": 0,
+    "bestStreak": 0,
+    "isActive": true,
+    "createdAt": "2025-05-25T14:11:45.218Z"
   }
 ]

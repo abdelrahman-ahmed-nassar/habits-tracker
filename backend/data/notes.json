@@ -42,10 +42,17 @@
     "updatedAt": "2025-05-16T04:20:38.860Z"
   },
   {
-    "id": "a99f83c7-3fc6-4257-bcf7-dc62500668ed",
-    "date": "2025-05-24",
-    "content": "Feeling motivated today!",
-    "createdAt": "2025-05-24T10:27:14.850Z",
-    "updatedAt": "2025-05-24T10:30:02.999Z"
+    "id": "c8527445-b908-4dd1-afa3-5aa30ef1ab0a",
+    "date": "2024-03-20",
+    "content": "Today was a great day!",
+    "createdAt": "2025-05-25T13:58:57.772Z",
+    "updatedAt": "2025-05-25T13:58:57.772Z"
+  },
+  {
+    "id": "9ef7039a-419b-42f8-9be5-4d172e6181a7",
+    "date": "2024-03-21",
+    "content": "Invalid mood test",
+    "createdAt": "2025-05-25T14:00:41.192Z",
+    "updatedAt": "2025-05-25T14:00:41.192Z"
   }
 ]

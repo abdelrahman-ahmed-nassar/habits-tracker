@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DailyNote } from "../../../shared/types";
 import * as dataService from "../services/dataService";
 import { AppError, asyncHandler } from "../middleware/errorHandler";
-import { isValidDateFormat } from "../utils/validation";
+import { isValidDateFormat, validateDailyNote } from "../utils/validation";
 
 /**
  * Get all notes
@@ -47,7 +47,7 @@ export const getNoteByDate = asyncHandler(
  * @route POST /api/notes
  */
 export const createNote = asyncHandler(async (req: Request, res: Response) => {
-  const { date, content } = req.body;
+  const { date, content, mood, productivityLevel } = req.body;
 
   // Validate date format
   if (!isValidDateFormat(date)) {
@@ -57,7 +57,15 @@ export const createNote = asyncHandler(async (req: Request, res: Response) => {
   const noteData: Omit<DailyNote, "id" | "createdAt" | "updatedAt"> = {
     date,
     content,
+    mood,
+    productivityLevel,
   };
+
+  // Validate note data
+  const validationErrors = await validateDailyNote(noteData);
+  if (validationErrors.length > 0) {
+    throw new AppError(validationErrors[0].message, 400);
+  }
 
   const note = await dataService.saveNote(noteData);
   res.status(201).json({
@@ -72,7 +80,7 @@ export const createNote = asyncHandler(async (req: Request, res: Response) => {
  */
 export const updateNote = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { content } = req.body;
+  const { content, mood, productivityLevel } = req.body;
 
   const notes = await dataService.getNotes();
   const note = notes.find((n) => n.id === id);
@@ -84,7 +92,15 @@ export const updateNote = asyncHandler(async (req: Request, res: Response) => {
   const noteData: Omit<DailyNote, "id" | "createdAt" | "updatedAt"> = {
     date: note.date,
     content,
+    mood,
+    productivityLevel,
   };
+
+  // Validate note data
+  const validationErrors = await validateDailyNote(noteData);
+  if (validationErrors.length > 0) {
+    throw new AppError(validationErrors[0].message, 400);
+  }
 
   const updatedNote = await dataService.saveNote(noteData);
   res.status(200).json({

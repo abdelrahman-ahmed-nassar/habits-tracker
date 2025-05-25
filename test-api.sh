@@ -186,25 +186,85 @@ echo -e "\nTesting GET /notes/2025-05-24"
 curl -X GET http://localhost:5000/api/notes/2025-05-24 | cat
 echo -e "\n"
 
-# Create note
-echo -e "\nTesting POST /notes"
+# Test mood options
+echo -e "\nTesting GET /options/moods"
+curl -X GET http://localhost:5000/api/options/moods | cat
+echo -e "\n"
+
+# Test productivity level options
+echo -e "\nTesting GET /options/productivity-levels"
+curl -X GET http://localhost:5000/api/options/productivity-levels | cat
+echo -e "\n"
+
+# Create note with valid mood and productivity level
+echo -e "\nTesting POST /notes (with valid mood and productivity level)"
 curl -X POST http://localhost:5000/api/notes \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2025-05-24",
     "content": "Feeling motivated today!",
-    "type": "daily"
+    "mood": "Happy",
+    "productivityLevel": "High"
   }' | cat
 echo -e "\n"
 
-# Update note
-echo -e "\nTesting PUT /notes/1"
+# Create note with invalid mood
+echo -e "\nTesting POST /notes (with invalid mood)"
+curl -X POST http://localhost:5000/api/notes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "date": "2025-05-24",
+    "content": "Invalid mood test",
+    "mood": "InvalidMood",
+    "productivityLevel": "High"
+  }' | cat
+echo -e "\n"
+
+# Create note with invalid productivity level
+echo -e "\nTesting POST /notes (with invalid productivity level)"
+curl -X POST http://localhost:5000/api/notes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "date": "2025-05-24",
+    "content": "Invalid productivity level test",
+    "mood": "Happy",
+    "productivityLevel": "InvalidLevel"
+  }' | cat
+echo -e "\n"
+
+# Update note with new mood and productivity level
+echo -e "\nTesting PUT /notes/:id (update mood and productivity level)"
 curl -X PUT http://localhost:5000/api/notes/a99f83c7-3fc6-4257-bcf7-dc62500668ed \
   -H "Content-Type: application/json" \
   -d '{
-    "content": "Updated daily note",
-    "type": "daily"
+    "content": "Updated daily note with new mood",
+    "mood": "Motivated",
+    "productivityLevel": "Very High"
   }' | cat
+echo -e "\n"
+
+# Test adding new mood
+echo -e "\nTesting POST /options/moods"
+curl -X POST http://localhost:5000/api/options/moods \
+  -H "Content-Type: application/json" \
+  -d '{"mood": "Focused"}' | cat
+echo -e "\n"
+
+# Test adding new productivity level
+echo -e "\nTesting POST /options/productivity-levels"
+curl -X POST http://localhost:5000/api/options/productivity-levels \
+  -H "Content-Type: application/json" \
+  -d '{"level": "Extreme"}' | cat
+echo -e "\n"
+
+# Test removing mood
+echo -e "\nTesting DELETE /options/moods/Focused"
+curl -X DELETE http://localhost:5000/api/options/moods/Focused | cat
+echo -e "\n"
+
+# Test removing productivity level
+echo -e "\nTesting DELETE /options/productivity-levels/Extreme"
+curl -X DELETE http://localhost:5000/api/options/productivity-levels/Extreme | cat
 echo -e "\n"
 
 # Delete note

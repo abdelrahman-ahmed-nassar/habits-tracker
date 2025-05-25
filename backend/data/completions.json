@@ -725,14 +725,6 @@
     "completedAt": "2025-05-01T04:20:38.855Z"
   },
   {
-    "id": "16fc8ec2-f5d0-4005-92c7-6e4ec33f0b6d",
-    "habitId": "b8fc42b2-87ff-4972-90bd-40cf3c43c34e",
-    "date": "2025-05-24",
-    "completed": true,
-    "value": 1,
-    "completedAt": "2025-05-24T11:42:48.085Z"
-  },
-  {
     "id": "383248ae-0914-4fbc-8ece-56d28dced978",
     "habitId": "88f77ef9-a51b-4338-884d-243d4ff97063",
     "date": "2025-05-24",

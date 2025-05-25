@@ -5,6 +5,7 @@ import {
   CreateHabitDto,
 } from "../../../shared/types";
 import { ValidationError } from "../types/models";
+import * as optionsService from "../services/optionsService";
 
 /**
  * Validates a habit creation DTO
@@ -153,9 +154,9 @@ export const validateCompletion = (
  * @param noteData The daily note to validate
  * @returns Array of validation errors, empty if valid
  */
-export const validateDailyNote = (
+export const validateDailyNote = async (
   noteData: Partial<DailyNote>
-): ValidationError[] => {
+): Promise<ValidationError[]> => {
   const errors: ValidationError[] = [];
 
   if (!noteData.date) {
@@ -174,6 +175,28 @@ export const validateDailyNote = (
       field: "content",
       message: "Content cannot exceed 5000 characters",
     });
+  }
+
+  // Validate mood if provided
+  if (noteData.mood !== undefined) {
+    const moods = await optionsService.getMoods();
+    if (!moods.includes(noteData.mood)) {
+      errors.push({
+        field: "mood",
+        message: "Invalid mood value",
+      });
+    }
+  }
+
+  // Validate productivity level if provided
+  if (noteData.productivityLevel !== undefined) {
+    const levels = await optionsService.getProductivityLevels();
+    if (!levels.includes(noteData.productivityLevel)) {
+      errors.push({
+        field: "productivityLevel",
+        message: "Invalid productivity level value",
+      });
+    }
   }
 
   return errors;
