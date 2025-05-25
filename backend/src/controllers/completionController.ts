@@ -119,6 +119,9 @@ export const markHabitComplete = asyncHandler(
     // Save completion
     const completion = await dataService.createCompletion(completionData);
 
+    // Update the habit streaks after completion
+    await dataService.updateHabitStreaks(targetHabitId);
+
     res.status(200).json({
       success: true,
       data: completion,

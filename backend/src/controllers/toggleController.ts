@@ -57,6 +57,9 @@ export const toggleHabitCompletion = asyncHandler(
     // Save completion
     const completion = await dataService.createCompletion(completionData);
 
+    // Update the habit streaks after completion
+    await dataService.updateHabitStreaks(habitId);
+
     res.status(200).json({
       success: true,
       data: completion,

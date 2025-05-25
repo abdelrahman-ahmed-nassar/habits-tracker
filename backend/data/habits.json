@@ -228,12 +228,25 @@
       6,
       1
     ],
-    "goalType": "counter",
+    "goalType": "streak",
     "goalValue": 30,
     "motivationNote": "Stay consistent with weekend and Monday workouts",
     "currentStreak": 0,
     "bestStreak": 0,
     "isActive": true,
     "createdAt": "2025-05-24T11:17:19.589Z"
+  },
+  {
+    "id": "5ab6cd5e-9423-4091-a5e3-a3350da10fcc",
+    "name": "Test Counter Habit",
+    "description": "Testing counter habit streaks",
+    "tag": "test",
+    "repetition": "daily",
+    "goalType": "counter",
+    "goalValue": 5,
+    "isActive": true,
+    "currentStreak": 3,
+    "bestStreak": 3,
+    "createdAt": "2025-05-25T13:27:05.614Z"
   }
 ]
