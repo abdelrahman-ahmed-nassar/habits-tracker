@@ -70,6 +70,29 @@ MONTHLY_HABIT_RESPONSE=$(curl -X POST http://localhost:5000/api/habits \
 echo "$MONTHLY_HABIT_RESPONSE"
 echo -e "\n"
 
+# Extract the ID of the newly created monthly habit
+MONTHLY_HABIT_ID=$(echo $MONTHLY_HABIT_RESPONSE | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+# Test archiving a habit
+echo -e "\nTesting POST /habits/:id/archive"
+curl -X POST http://localhost:5000/api/habits/$MONTHLY_HABIT_ID/archive | cat
+echo -e "\n"
+
+# Verify habit is archived by getting it
+echo -e "\nVerifying habit is archived"
+curl -X GET http://localhost:5000/api/habits/$MONTHLY_HABIT_ID | cat
+echo -e "\n"
+
+# Test restoring a habit
+echo -e "\nTesting POST /habits/:id/restore"
+curl -X POST http://localhost:5000/api/habits/$MONTHLY_HABIT_ID/restore | cat
+echo -e "\n"
+
+# Verify habit is restored by getting it
+echo -e "\nVerifying habit is restored"
+curl -X GET http://localhost:5000/api/habits/$MONTHLY_HABIT_ID | cat
+echo -e "\n"
+
 # Update habit
 echo -e "\nTesting PUT /habits/:id"
 curl -X PUT http://localhost:5000/api/habits/$DAILY_HABIT_ID \

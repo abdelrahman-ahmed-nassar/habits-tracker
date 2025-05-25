@@ -28,5 +28,11 @@ router.post("/:id/complete", completionController.markHabitComplete);
 // DELETE /api/habits/:id/complete/:date - Unmark completion
 router.delete("/:id/complete/:date", completionController.deleteCompletion);
 
+// POST /api/habits/:id/archive - Archive a habit
+router.post("/:id/archive", habitController.archiveHabit);
+
+// POST /api/habits/:id/restore - Restore a habit
+router.post("/:id/restore", habitController.restoreHabit);
+
 // Export routes
 export default router;

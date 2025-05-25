@@ -70,6 +70,8 @@ The frontend development server will run on port 3000 by default.
 - `DELETE /api/habits/:id` - Delete habit
 - `GET /api/habits/:id/records` - Get habit completion records
 - `POST /api/habits/:id/complete` - Mark habit as complete for a date
+- `POST /api/habits/:id/archive` - Archive a habit (make it inactive)
+- `POST /api/habits/:id/restore` - Restore a habit (make it active)
 - `GET /api/analytics` - Get analytics data
 - `GET/POST /api/notes` - Handle daily notes
 

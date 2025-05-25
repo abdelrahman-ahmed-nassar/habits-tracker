@@ -17,7 +17,8 @@ export const getAllHabits = asyncHandler(
     const habits = await dataService.getHabits();
 
     // Parse query params for filtering and sorting
-    const { sort, filter, tag, active } = req.query;
+    let { sort, filter, tag, active } = req.query;
+    active = "true";
 
     // Set up filter options
     const filterOptions: {
@@ -166,3 +167,55 @@ export const deleteHabit = asyncHandler(async (req: Request, res: Response) => {
     message: "Habit and associated records deleted successfully",
   });
 });
+
+/**
+ * Archive a habit (make it inactive)
+ * @route POST /api/habits/:id/archive
+ */
+export const archiveHabit = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    // Find existing habit
+    const existingHabit = await dataService.getHabitById(id);
+
+    if (!existingHabit) {
+      throw new AppError(`Habit with ID ${id} not found`, 404);
+    }
+
+    // Update the habit to be inactive
+    const updatedHabit = await dataService.updateHabit(id, { isActive: false });
+
+    res.status(200).json({
+      success: true,
+      data: updatedHabit,
+      message: "Habit archived successfully",
+    });
+  }
+);
+
+/**
+ * Restore a habit (make it active)
+ * @route POST /api/habits/:id/restore
+ */
+export const restoreHabit = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    // Find existing habit
+    const existingHabit = await dataService.getHabitById(id);
+
+    if (!existingHabit) {
+      throw new AppError(`Habit with ID ${id} not found`, 404);
+    }
+
+    // Update the habit to be active
+    const updatedHabit = await dataService.updateHabit(id, { isActive: true });
+
+    res.status(200).json({
+      success: true,
+      data: updatedHabit,
+      message: "Habit restored successfully",
+    });
+  }
+);
