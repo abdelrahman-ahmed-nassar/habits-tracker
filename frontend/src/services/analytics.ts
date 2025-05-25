@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "http://localhost:5000/api";
 
 interface AnalyticsOverview {
   totalHabits: number;
@@ -81,6 +81,16 @@ interface MonthlyAnalytics {
   }>;
 }
 
+interface QuarterAnalytics {
+  startDate: string;
+  endDate: string;
+  totalDays: number;
+  dailyData: Array<{
+    date: string;
+    completionRate: number;
+  }>;
+}
+
 class AnalyticsService {
   /**
    * Get overall analytics data
@@ -95,7 +105,9 @@ class AnalyticsService {
    * @param habitId - The ID of the habit
    */
   async getHabitAnalytics(habitId: string): Promise<HabitAnalytics> {
-    const response = await axios.get(`${API_BASE_URL}/analytics/habits/${habitId}`);
+    const response = await axios.get(
+      `${API_BASE_URL}/analytics/habits/${habitId}`
+    );
     return response.data.data;
   }
 
@@ -113,7 +125,9 @@ class AnalyticsService {
    * @param startDate - The start date in ISO format
    */
   async getWeeklyAnalytics(startDate: string): Promise<WeeklyAnalytics> {
-    const response = await axios.get(`${API_BASE_URL}/analytics/weekly/${startDate}`);
+    const response = await axios.get(
+      `${API_BASE_URL}/analytics/weekly/${startDate}`
+    );
     return response.data.data;
   }
 
@@ -122,8 +136,24 @@ class AnalyticsService {
    * @param year - The year
    * @param month - The month (1-12)
    */
-  async getMonthlyAnalytics(year: number, month: number): Promise<MonthlyAnalytics> {
-    const response = await axios.get(`${API_BASE_URL}/analytics/monthly/${year}/${month}`);
+  async getMonthlyAnalytics(
+    year: number,
+    month: number
+  ): Promise<MonthlyAnalytics> {
+    const response = await axios.get(
+      `${API_BASE_URL}/analytics/monthly/${year}/${month}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get analytics for a quarter period starting from a specific date
+   * @param startDate - The start date in YYYY-MM-DD format
+   */
+  async getQuarterAnalytics(startDate: string): Promise<QuarterAnalytics> {
+    const response = await axios.get(
+      `${API_BASE_URL}/analytics/quarter/${startDate}`
+    );
     return response.data.data;
   }
 

@@ -435,7 +435,7 @@ export const getDailyAnalytics = asyncHandler(
 
       return {
         date,
-        completionRate,
+        completionRate: Number(completionRate.toFixed(2)), // Round to 2 decimal places after percentage calculation
         totalHabits: habitsForDate.length,
         completedHabits: completedHabitIds.size,
         habitDetails,
@@ -515,17 +515,22 @@ export const getWeeklyAnalytics = asyncHandler(
             dayCompletions.filter((c) => c.completed).map((c) => c.habitId)
           );
 
+          // Calculate completion rate for this date
+          const completionRate =
+            relevantHabits.length > 0
+              ? (relevantHabits.filter((h) => completedHabitIds.has(h.id))
+                  .length /
+                  relevantHabits.length) *
+                100
+              : 0;
+
           return {
             date,
             dayOfWeek: parseDate(date).getDay(),
             dayName: getDayName(parseDate(date).getDay()),
             totalHabits: relevantHabits.length,
             completedHabits: completedHabitIds.size,
-            completionRate:
-              relevantHabits.length > 0
-                ? relevantHabits.filter((h) => completedHabitIds.has(h.id))
-                    .length / relevantHabits.length
-                : 0,
+            completionRate: Number(completionRate.toFixed(2)), // Round to 2 decimal places after percentage calculation
           };
         })
       );
@@ -792,6 +797,96 @@ export const getMonthlyAnalytics = asyncHandler(
           bestDay,
           worstDay,
         },
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  }
+);
+
+/**
+ * Get quarter year analytics (91 days)
+ * @route GET /api/analytics/quarter/:startDate
+ */
+export const getQuarterAnalytics = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { startDate } = req.params;
+
+    // Validate date format
+    if (!isValidDateFormat(startDate)) {
+      throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
+    }
+
+    const cacheKey = `analytics:quarter:${startDate}`;
+
+    const data = await analyticsCache.getOrSet(cacheKey, async () => {
+      // Calculate end date (start date + 90 days for a total of 91 days)
+      const start = parseDate(startDate);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 90);
+      const endDate = end.toISOString().split("T")[0];
+
+      // Get date range for the quarter (91 days)
+      const dateRange = getDatesBetween(startDate, endDate);
+
+      // Get habits and completions
+      const habits = await dataService.getHabits();
+      const activeHabits = habits.filter((h) => h.isActive);
+      const allCompletions = await dataService.getCompletions();
+
+      // Filter completions within quarter range
+      const quarterCompletions = allCompletions.filter(
+        (c) =>
+          c.date >= startDate &&
+          c.date <= endDate &&
+          activeHabits.some((h) => h.id === c.habitId)
+      );
+
+      // Calculate completion rate for each day
+      const dailyData = dateRange.map((date) => {
+        // Only count habits that were created before or on this date
+        const relevantHabits = activeHabits.filter(
+          (h) =>
+            h.createdAt.split("T")[0] <= date &&
+            (h.repetition === "daily" ||
+              (h.repetition === "weekly" &&
+                h.specificDays?.includes(parseDate(date).getDay())) ||
+              (h.repetition === "monthly" &&
+                h.specificDays?.includes(parseDate(date).getDate())))
+        );
+
+        const dayCompletions = quarterCompletions.filter(
+          (c) => c.date === date
+        );
+
+        // Get unique habit IDs for this day
+        const uniqueHabitIds = new Set(dayCompletions.map((c) => c.habitId));
+
+        // Count completed habits
+        const completedHabitIds = new Set(
+          dayCompletions.filter((c) => c.completed).map((c) => c.habitId)
+        );
+
+        // Calculate completion rate for this date
+        const completionRate =
+          uniqueHabitIds.size > 0
+            ? (completedHabitIds.size / uniqueHabitIds.size) * 100
+            : 0;
+
+        return {
+          date,
+          completionRate: Number(completionRate.toFixed(2)),
+        };
+      });
+
+      return {
+        startDate,
+        endDate,
+        totalDays: dateRange.length,
+        dailyData,
       };
     });
 

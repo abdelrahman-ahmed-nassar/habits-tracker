@@ -18,6 +18,9 @@ router.get("/weekly/:startDate", analyticsController.getWeeklyAnalytics);
 // GET /api/analytics/monthly/:year/:month - Monthly analytics
 router.get("/monthly/:year/:month", analyticsController.getMonthlyAnalytics);
 
+// GET /api/analytics/quarter/:startDate - Quarter year analytics (91 days)
+router.get("/quarter/:startDate", analyticsController.getQuarterAnalytics);
+
 // POST /api/analytics/clear-cache - Clear analytics cache
 router.post("/clear-cache", analyticsController.clearAnalyticsCache);
 

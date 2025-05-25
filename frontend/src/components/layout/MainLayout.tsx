@@ -27,7 +27,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 ">
+    <div className="w-screen min-h-screen bg-gray-50 dark:bg-gray-900 ">
       {/* Fixed header */}
       <div className="fixed top-0 left-0 right-0 z-50 h-16">
         <Header onMenuClick={toggleSidebar} />

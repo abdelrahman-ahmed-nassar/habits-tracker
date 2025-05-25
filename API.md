@@ -605,6 +605,37 @@ GET /analytics/monthly/:year/:month
 }
 ```
 
+#### Get Quarter Analytics
+
+```http
+GET /analytics/quarter/:startDate
+```
+
+**Parameters:**
+
+- `startDate`: The start date in YYYY-MM-DD format for the 91-day quarter period
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "startDate": "string (ISO date)",
+    "endDate": "string (ISO date)",
+    "totalDays": 91,
+    "dailyData": [
+      {
+        "date": "string (ISO date)",
+        "completionRate": number
+      }
+    ]
+  }
+}
+```
+
+**Note:** Returns exactly 91 objects representing each day in the quarter period, with completion rates calculated as a percentage (0-100) rounded to 2 decimal places. If no completions exist for a day, the completion rate will be 0.
+
 #### Clear Analytics Cache
 
 ```http
