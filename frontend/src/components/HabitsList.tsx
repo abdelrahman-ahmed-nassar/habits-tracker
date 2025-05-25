@@ -10,7 +10,7 @@ export default function HabitsList() {
   useEffect(() => {
     const fetchHabits = async () => {
       try {
-        const response = await habitsService.getAllHabits();
+        const response = await habitsService.getAll();
         setHabits(response.data);
         setError(null);
       } catch (err) {

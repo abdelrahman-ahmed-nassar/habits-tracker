@@ -1,61 +1,70 @@
-import { ApiService } from "@/services/api";
-import type { Habit } from "@shared/types/habit";
-import type { CreateHabitDto } from "@shared/types/api";
+import { Habit } from "../../../shared/types";
+import { ApiResponse } from "../types";
+import apiService from "./api";
 
-interface UpdateHabitDto extends Partial<CreateHabitDto> {}
-
-interface HabitRecord {
-  id: string;
-  habitId: string;
-  date: string;
-  completed: boolean;
-  completedAt: string;
+// Frontend-specific types
+interface HabitCreate {
+  name: string;
+  description?: string;
+  tag: string;
+  repetition: "daily" | "weekly" | "monthly";
+  specificDays?: number[];
+  goalType: "counter" | "streak";
+  goalValue: number;
+  motivationNote?: string;
 }
 
-interface CreateCompletionDto {
-  date: string;
-}
+type HabitUpdate = Partial<HabitCreate>;
 
-class HabitsService extends ApiService {
-  async getAllHabits() {
-    return this.get<Habit[]>("/habits");
+class HabitsService {
+  private readonly baseUrl = "/habits";
+
+  async getAll(): Promise<ApiResponse<Habit[]>> {
+    return apiService.get<Habit[]>(this.baseUrl);
   }
 
-  async getHabit(id: string) {
-    return this.get<Habit>(`/habits/${id}`);
+  async getById(id: string): Promise<ApiResponse<Habit>> {
+    return apiService.get<Habit>(`${this.baseUrl}/${id}`);
   }
 
-  async createHabit(data: CreateHabitDto) {
-    return this.post<Habit>("/habits", data);
+  async create(habit: HabitCreate): Promise<ApiResponse<Habit>> {
+    return apiService.post<Habit>(this.baseUrl, habit);
   }
 
-  async updateHabit(id: string, data: UpdateHabitDto) {
-    return this.put<Habit>(`/habits/${id}`, data);
+  async update(id: string, habit: HabitUpdate): Promise<ApiResponse<Habit>> {
+    return apiService.put<Habit>(`${this.baseUrl}/${id}`, habit);
   }
 
-  async deleteHabit(id: string) {
-    return this.delete<void>(`/habits/${id}`);
+  async delete(id: string): Promise<ApiResponse<void>> {
+    return apiService.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  async getHabitRecords(id: string) {
-    return this.get<HabitRecord[]>(`/habits/${id}/records`);
+  async getByCategory(categoryId: string): Promise<ApiResponse<Habit[]>> {
+    return apiService.get<Habit[]>(`${this.baseUrl}/category/${categoryId}`);
   }
 
-  async completeHabit(id: string, data: CreateCompletionDto) {
-    return this.post<HabitRecord>(`/habits/${id}/complete`, data);
+  async search(query: string): Promise<ApiResponse<Habit[]>> {
+    return apiService.get<Habit[]>(`${this.baseUrl}/search`, {
+      params: { q: query },
+    });
   }
 
-  async deleteCompletion(id: string, date: string) {
-    return this.delete<void>(`/habits/${id}/complete/${date}`);
+  async getActive(): Promise<ApiResponse<Habit[]>> {
+    return apiService.get<Habit[]>(`${this.baseUrl}/active`);
   }
 
-  async archiveHabit(id: string) {
-    return this.post<Habit>(`/habits/${id}/archive`);
+  async getArchived(): Promise<ApiResponse<Habit[]>> {
+    return apiService.get<Habit[]>(`${this.baseUrl}/archived`);
   }
 
-  async restoreHabit(id: string) {
-    return this.post<Habit>(`/habits/${id}/restore`);
+  async archive(id: string): Promise<ApiResponse<Habit>> {
+    return apiService.patch<Habit>(`${this.baseUrl}/${id}/archive`);
+  }
+
+  async unarchive(id: string): Promise<ApiResponse<Habit>> {
+    return apiService.patch<Habit>(`${this.baseUrl}/${id}/unarchive`);
   }
 }
 
 export const habitsService = new HabitsService();
+export default habitsService;

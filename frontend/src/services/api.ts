@@ -1,25 +1,28 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
-import type { ApiResponse } from "@shared/types/api";
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosHeaders,
+} from "axios";
+import { ApiConfig, ApiError, ApiResponse, RequestConfig } from "../types";
 
-const API_BASE_URL = "http://localhost:5000/api";
-
-class ApiError extends Error {
-  constructor(
-    message: string,
-    public status?: number,
-    public errors?: Array<{ field: string; message: string }>
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
-
-export class ApiService {
+class ApiService {
   private api: AxiosInstance;
+  private config: ApiConfig;
+  private retryCount: number = 0;
 
-  constructor() {
+  constructor(config: ApiConfig) {
+    this.config = {
+      baseURL: config.baseURL || "http://localhost:5000/api",
+      timeout: config.timeout || 10000,
+      retryAttempts: config.retryAttempts || 3,
+      retryDelay: config.retryDelay || 1000,
+    };
+
     this.api = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: this.config.baseURL,
+      timeout: this.config.timeout,
       headers: {
         "Content-Type": "application/json",
       },
@@ -28,48 +31,125 @@ export class ApiService {
     this.setupInterceptors();
   }
 
-  private setupInterceptors() {
-    this.api.interceptors.response.use(
-      (response) => response,
-      (
-        error: AxiosError<
-          ApiResponse<unknown> & {
-            errors?: Array<{ field: string; message: string }>;
-          }
-        >
-      ) => {
-        if (error.response) {
-          const { data, status } = error.response;
-          throw new ApiError(
-            data.message || "An error occurred",
-            status,
-            data.errors
-          );
+  private setupInterceptors(): void {
+    // Request interceptor
+    this.api.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        // Add auth token if available
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+          const headers = new AxiosHeaders(config.headers);
+          headers.set("Authorization", `Bearer ${token}`);
+          config.headers = headers;
         }
-        throw new ApiError("Network error");
+        return config;
+      },
+      (error: AxiosError) => {
+        return Promise.reject(this.handleError(error));
+      }
+    );
+
+    // Response interceptor
+    this.api.interceptors.response.use(
+      (response: AxiosResponse) => {
+        return response;
+      },
+      async (error: AxiosError) => {
+        if (
+          (error.config as any)?.retry !== false &&
+          this.retryCount < (this.config.retryAttempts || 3)
+        ) {
+          this.retryCount++;
+          await this.delay(this.config.retryDelay || 1000);
+          return this.api(error.config as InternalAxiosRequestConfig);
+        }
+        return Promise.reject(this.handleError(error));
       }
     );
   }
 
-  protected async get<T>(url: string, params?: Record<string, unknown>) {
-    const response = await this.api.get<ApiResponse<T>>(url, { params });
-    return response.data;
+  private async delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  protected async post<T>(url: string, data?: unknown) {
-    const response = await this.api.post<ApiResponse<T>>(url, data);
-    return response.data;
+  private handleError(error: AxiosError): ApiError {
+    const apiError: ApiError = new Error(error.message);
+    apiError.status = error.response?.status;
+    apiError.code = error.code;
+    apiError.response = error.response?.data;
+    return apiError;
   }
 
-  protected async put<T>(url: string, data?: unknown) {
-    const response = await this.api.put<ApiResponse<T>>(url, data);
-    return response.data;
+  public async get<T>(
+    url: string,
+    config?: RequestConfig
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.api.get<ApiResponse<T>>(url, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
   }
 
-  protected async delete<T>(url: string) {
-    const response = await this.api.delete<ApiResponse<T>>(url);
-    return response.data;
+  public async post<T>(
+    url: string,
+    data?: any,
+    config?: RequestConfig
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.api.post<ApiResponse<T>>(url, data, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
+  }
+
+  public async put<T>(
+    url: string,
+    data?: any,
+    config?: RequestConfig
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.api.put<ApiResponse<T>>(url, data, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
+  }
+
+  public async delete<T>(
+    url: string,
+    config?: RequestConfig
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.api.delete<ApiResponse<T>>(url, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
+  }
+
+  public async patch<T>(
+    url: string,
+    data?: any,
+    config?: RequestConfig
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.api.patch<ApiResponse<T>>(url, data, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error as AxiosError);
+    }
   }
 }
 
-export const apiService = new ApiService();
+// Create and export a singleton instance
+export const apiService = new ApiService({
+  baseURL: "http://localhost:5000/api",
+  timeout: 10000,
+  retryAttempts: 3,
+  retryDelay: 1000,
+});
+
+export default apiService;
