@@ -787,5 +787,12 @@
     "completed": true,
     "value": 5,
     "completedAt": "2025-05-25T13:27:13.695Z"
+  },
+  {
+    "id": "92163074-e400-4ad2-85ed-271314f22578",
+    "habitId": "797a4017-9d28-4ac6-bacf-6f6d7b048b5c",
+    "date": "2025-05-26",
+    "completed": false,
+    "completedAt": "2025-05-25T14:39:55.403Z"
   }
 ]

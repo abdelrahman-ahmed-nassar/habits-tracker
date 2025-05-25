@@ -247,7 +247,7 @@
     "goalValue": 4,
     "motivationNote": "Stay on track with goals",
     "currentStreak": 0,
-    "bestStreak": 0,
+    "bestStreak": 1,
     "isActive": true,
     "createdAt": "2025-05-25T14:11:45.095Z"
   },

@@ -1,341 +1,59 @@
-# Local Habits Tracker API Documentation
-
-## Overview
-
-The Local Habits Tracker API is a RESTful service that provides endpoints for managing habits, tracking completions, analyzing progress, and managing notes. All data is stored locally in JSON files.
+# Habits Tracker API Documentation
 
 ## Base URL
 
-```
-http://localhost:5000/api
-```
+All routes are prefixed with `/api`
 
-## Authentication
+## Routes
 
-This is a local-first application, so no authentication is required. All data is stored on the user's machine.
+### Habits
 
-## Common Response Formats
+- `GET /habits` - Get all habits
+- `GET /habits/:id` - Get a specific habit
+- `POST /habits` - Create new habit
+- `PUT /habits/:id` - Update habit
+- `DELETE /habits/:id` - Delete habit
+- `GET /habits/:id/records` - Get habit completion records
+- `POST /habits/:id/complete` - Mark habit as complete for a date
+- `DELETE /habits/:id/complete/:date` - Unmark completion
 
-### Success Response
+### Completions
 
-```json
-{
-  "success": true,
-  "data": {
-    // Response data here
-  }
-}
-```
+- `GET /completions/date/:date` - Get all completions for a specific date
+- `GET /completions/habit/:habitId` - Get completions for a specific habit
+- `GET /completions/range/:startDate/:endDate` - Get completions for a date range
+- `POST /completions` - Create a new completion
+- `POST /completions/toggle` - Toggle a completion
+- `DELETE /completions/:habitId/:date` - Delete a completion
 
-### Error Response
+### Analytics
 
-```json
-{
-  "success": false,
-  "error": {
-    "message": "Error description",
-    "code": "ERROR_CODE"
-  }
-}
-```
+- `GET /analytics/overview` - Overall statistics and trends
+- `GET /analytics/habits/:id` - Individual habit analytics
+- `GET /analytics/daily/:date` - Daily completion analytics
+- `GET /analytics/weekly/:startDate` - Weekly analytics
+- `GET /analytics/monthly/:year/:month` - Monthly analytics
+- `POST /analytics/clear-cache` - Clear analytics cache
 
-## Habit Management
+### Notes
 
-### Get All Habits
+- `GET /notes` - Get all notes
+- `GET /notes/:date` - Get notes for a specific date
+- `POST /notes` - Create a new note
+- `PUT /notes/:id` - Update a note
+- `DELETE /notes/:id` - Delete a note
 
-```http
-GET /habits
-```
+### Settings
 
-**Response**
+- `GET /settings` - Get current settings
+- `PUT /settings` - Update settings
 
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "string",
-      "name": "string",
-      "description": "string",
-      "tag": "string",
-      "repetition": "daily" | "weekly" | "monthly",
-      "specificDays": [0, 1, 2, 3, 4, 5, 6],
-      "goalType": "counter" | "streak",
-      "goalValue": number,
-      "currentStreak": number,
-      "bestStreak": number,
-      "createdAt": "string",
-      "motivationNote": "string",
-      "isActive": boolean
-    }
-  ]
-}
-```
+### Options
 
-### Get Habit by ID
+- `GET /options/moods` - Get all available moods
+- `POST /options/moods` - Add a new mood
+- `DELETE /options/moods/:mood` - Remove a mood
 
-```http
-GET /habits/:id
-```
-
-**Response**
-
-```json
-{
-  "success": true,
-  "data": {
-    // Single habit object
-  }
-}
-```
-
-### Create Habit
-
-```http
-POST /habits
-```
-
-**Request Body**
-
-```json
-{
-  "name": "string",
-  "description": "string",
-  "tag": "string",
-  "repetition": "daily" | "weekly" | "monthly",
-  "specificDays": [0, 1, 2, 3, 4, 5, 6],
-  "goalType": "counter" | "streak",
-  "goalValue": number,
-  "motivationNote": "string"
-}
-```
-
-### Update Habit
-
-```http
-PUT /habits/:id
-```
-
-**Request Body**
-
-```json
-{
-  // Same as create, all fields optional
-}
-```
-
-### Delete Habit
-
-```http
-DELETE /habits/:id
-```
-
-## Completion Tracking
-
-### Get Daily Completions
-
-```http
-GET /completions/date/:date
-```
-
-**Parameters**
-
-- `date`: YYYY-MM-DD format
-
-**Response**
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "string",
-      "habitId": "string",
-      "date": "string",
-      "completed": boolean,
-      "value": number,
-      "completedAt": "string"
-    }
-  ]
-}
-```
-
-### Get Habit Completions
-
-```http
-GET /completions/habit/:habitId
-```
-
-### Get Completions for Date Range
-
-```http
-GET /completions/range/:startDate/:endDate
-```
-
-### Mark Habit Complete
-
-```http
-POST /completions
-```
-
-**Request Body**
-
-```json
-{
-  "habitId": "string",
-  "date": "string",
-  "value": number
-}
-```
-
-### Toggle Completion
-
-```http
-POST /completions/toggle
-```
-
-**Request Body**
-
-```json
-{
-  "habitId": "string",
-  "date": "string"
-}
-```
-
-### Delete Completion
-
-```http
-DELETE /completions/:habitId/:date
-```
-
-## Analytics
-
-### Get Overall Analytics
-
-```http
-GET /analytics/overview
-```
-
-**Response**
-
-```json
-{
-  "success": true,
-  "data": {
-    "totalHabits": number,
-    "activeHabits": number,
-    "completionRate": number,
-    "currentStreaks": {
-      "average": number,
-      "longest": number
-    },
-    "recentTrends": {
-      "daily": number,
-      "weekly": number,
-      "monthly": number
-    }
-  }
-}
-```
-
-### Get Habit Analytics
-
-```http
-GET /analytics/habits/:id
-```
-
-### Get Daily Analytics
-
-```http
-GET /analytics/daily/:date
-```
-
-### Get Weekly Analytics
-
-```http
-GET /analytics/weekly/:startDate
-```
-
-### Get Monthly Analytics
-
-```http
-GET /analytics/monthly/:year/:month
-```
-
-## Notes
-
-### Get All Notes
-
-```http
-GET /notes
-```
-
-### Get Notes for Date
-
-```http
-GET /notes/:date
-```
-
-### Create Note
-
-```http
-POST /notes
-```
-
-**Request Body**
-
-```json
-{
-  "date": "string",
-  "content": "string",
-  "type": "daily" | "motivation"
-}
-```
-
-### Update Note
-
-```http
-PUT /notes/:id
-```
-
-### Delete Note
-
-```http
-DELETE /notes/:id
-```
-
-## Error Codes
-
-| Code | Description                            |
-| ---- | -------------------------------------- |
-| 400  | Bad Request - Invalid input parameters |
-| 404  | Not Found - Resource doesn't exist     |
-| 500  | Internal Server Error                  |
-
-## Rate Limiting
-
-No rate limiting is implemented as this is a local-first application.
-
-## Performance Considerations
-
-1. Analytics endpoints use caching to improve performance
-2. Date-based queries are optimized for local JSON storage
-3. Bulk operations are supported for better performance
-
-## Data Validation
-
-1. Dates must be in YYYY-MM-DD format
-2. Habit names must be non-empty strings
-3. Goal values must be positive numbers
-4. Specific days must be valid for the repetition type:
-   - Daily: No specific days
-   - Weekly: 0-6 (Sunday-Saturday)
-   - Monthly: 1-31
-
-## Relationships
-
-1. Habits have many Completions
-2. Completions belong to one Habit
-3. Notes can be associated with either a specific date or a habit
-4. Analytics are calculated from Completions data
+- `GET /options/productivity-levels` - Get all available productivity levels
+- `POST /options/productivity-levels` - Add a new productivity level
+- `DELETE /options/productivity-levels/:level` - Remove a productivity level
