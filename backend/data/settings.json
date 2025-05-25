@@ -7,7 +7,7 @@
   "backupFrequency": "daily",
   "lastBackupDate": "2025-05-25",
   "analytics": {
-    "cacheEnabled": true,
-    "cacheDuration": 5
+    "cacheEnabled": false,
+    "cacheDuration":0.0000001
   }
 }

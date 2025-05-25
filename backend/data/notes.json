@@ -63,5 +63,14 @@
     "productivityLevel": "High",
     "createdAt": "2025-05-25T15:04:20.642Z",
     "updatedAt": "2025-05-25T15:04:20.642Z"
+  },
+  {
+    "id": "8cdead0b-8bd5-4230-9271-b3a8e57e91f6",
+    "date": "2025-05-25",
+    "content": "Great day! Completed several prayer habits and feeling spiritually centered.",
+    "mood": "Happy",
+    "productivityLevel": "High",
+    "createdAt": "2025-05-25T20:18:40.959Z",
+    "updatedAt": "2025-05-25T20:18:40.959Z"
   }
 ]
