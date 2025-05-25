@@ -1,70 +1,67 @@
-import React from "react";
-import { Link, Outlet } from "react-router-dom";
-import { Home, Calendar, BarChart2, Settings, BookOpen } from "lucide-react";
-import ThemeToggle from "../ThemeToggle";
+import { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
-const MainLayout: React.FC = () => {
+const MainLayout = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-        <div className="p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold">Habits Tracker</h1>
-          <ThemeToggle />
-        </div>
-        <nav className="p-4">
-          <ul className="space-y-2">
-            <li>
-              <Link
-                to="/"
-                className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Home className="w-5 h-5" />
-                <span>Home</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/daily"
-                className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Calendar className="w-5 h-5" />
-                <span>Daily</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/analytics"
-                className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <BarChart2 className="w-5 h-5" />
-                <span>Analytics</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/notes"
-                className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <BookOpen className="w-5 h-5" />
-                <span>Notes</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/settings"
-                className="flex items-center space-x-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Settings className="w-5 h-5" />
-                <span>Settings</span>
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 ">
+      {/* Fixed header */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-16">
+        <Header onMenuClick={toggleSidebar} />
+      </div>
 
-      {/* Main content */}
-      <main className="flex-1 p-8 bg-gray-50 dark:bg-gray-900">
+      {/* Sidebar overlay for mobile */}
+      {isMobile && isSidebarOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          <div className="fixed top-16 left-0 z-50 w-64 h-[calc(100vh-4rem)]">
+            <Sidebar
+              isMobile={isMobile}
+              onClose={() => setIsSidebarOpen(false)}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Sidebar static for desktop */}
+      {!isMobile && isSidebarOpen && (
+        <div className="fixed top-16 left-0 z-30 w-64 h-[calc(100vh-4rem)] lg:block hidden">
+          <Sidebar isMobile={false} />
+        </div>
+      )}
+
+      {/* Main content always full width, with left padding on desktop if sidebar is open, and top padding for header */}
+      <main
+        className={`transition-all duration-300 pt-16 ${
+          !isMobile && isSidebarOpen ? "lg:pl-64" : ""
+        }`}
+      >
         <Outlet />
       </main>
     </div>
