@@ -10,8 +10,8 @@ export default function HabitsList() {
   useEffect(() => {
     const fetchHabits = async () => {
       try {
-        const response = await habitsService.getAll();
-        setHabits(response.data);
+        const response = await habitsService.getAllHabits();
+        setHabits(response);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch habits");

@@ -6,7 +6,6 @@ export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
-  errors?: Array<{ field: string; message: string }>;
 }
 
 export interface LoadingState {
@@ -16,7 +15,7 @@ export interface LoadingState {
 
 // API service configuration
 export interface ApiConfig {
-  baseURL: string;
+  baseURL?: string;
   timeout?: number;
   retryAttempts?: number;
   retryDelay?: number;
@@ -24,9 +23,8 @@ export interface ApiConfig {
 
 // Request configuration
 export interface RequestConfig {
+  params?: Record<string, any>;
   headers?: Record<string, string>;
-  params?: Record<string, string | number | boolean>;
-  timeout?: number;
   retry?: boolean;
 }
 

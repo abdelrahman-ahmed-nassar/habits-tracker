@@ -1,76 +1,195 @@
-import { DailyNote } from "../../../shared/types";
-import { ApiResponse } from "../types";
-import apiService from "./api";
+import { DailyNote } from '@shared/types/note';
 
-interface NoteCreate {
-  date: string;
-  content: string;
-  mood: string;
-  productivityLevel: string;
+const API_BASE_URL = 'http://localhost:5000/api';
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
 }
 
-interface NoteUpdate {
-  content: string;
-  mood: string;
-  productivityLevel: string;
+
+
+export class NotesService {
+  /**
+   * Get all notes
+   */
+  static async getAllNotes(): Promise<DailyNote[]> {
+    const response = await fetch(`${API_BASE_URL}/notes`);
+    const result: ApiResponse<DailyNote[]> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to fetch notes');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Get note by date
+   * @param date - Date in YYYY-MM-DD format
+   */
+  static async getNoteByDate(date: string): Promise<DailyNote> {
+    const response = await fetch(`${API_BASE_URL}/notes/${date}`);
+    const result: ApiResponse<DailyNote> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to fetch note');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Create a new note
+   */
+  static async createNote(note: Omit<DailyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<DailyNote> {
+    const response = await fetch(`${API_BASE_URL}/notes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(note),
+    });
+    
+    const result: ApiResponse<DailyNote> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to create note');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Update an existing note
+   */
+  static async updateNote(id: string, note: Partial<Omit<DailyNote, 'id' | 'date' | 'createdAt' | 'updatedAt'>>): Promise<DailyNote> {
+    const response = await fetch(`${API_BASE_URL}/notes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(note),
+    });
+    
+    const result: ApiResponse<DailyNote> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to update note');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Delete a note
+   */
+  static async deleteNote(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/notes/${id}`, {
+      method: 'DELETE',
+    });
+    
+    const result: ApiResponse<void> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to delete note');
+    }
+  }
+
+  /**
+   * Get available moods
+   */
+  static async getMoods(): Promise<string[]> {
+    const response = await fetch(`${API_BASE_URL}/options/moods`);
+    const result: ApiResponse<string[]> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to fetch moods');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Add a new mood
+   */
+  static async addMood(mood: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/options/moods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ mood }),
+    });
+    
+    const result: ApiResponse<void> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to add mood');
+    }
+  }
+
+  /**
+   * Remove a mood
+   */
+  static async removeMood(mood: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/options/moods/${encodeURIComponent(mood)}`, {
+      method: 'DELETE',
+    });
+    
+    const result: ApiResponse<void> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to remove mood');
+    }
+  }
+
+  /**
+   * Get available productivity levels
+   */
+  static async getProductivityLevels(): Promise<string[]> {
+    const response = await fetch(`${API_BASE_URL}/options/productivity-levels`);
+    const result: ApiResponse<string[]> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to fetch productivity levels');
+    }
+    
+    return result.data;
+  }
+
+  /**
+   * Add a new productivity level
+   */
+  static async addProductivityLevel(level: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/options/productivity-levels`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ level }),
+    });
+    
+    const result: ApiResponse<void> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to add productivity level');
+    }
+  }
+
+  /**
+   * Remove a productivity level
+   */
+  static async removeProductivityLevel(level: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/options/productivity-levels/${encodeURIComponent(level)}`, {
+      method: 'DELETE',
+    });
+    
+    const result: ApiResponse<void> = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to remove productivity level');
+    }
+  }
 }
-
-class NotesService {
-  private readonly baseUrl = "/notes";
-
-  async getAll(): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(this.baseUrl);
-  }
-
-  async getById(id: string): Promise<ApiResponse<DailyNote>> {
-    return apiService.get<DailyNote>(`${this.baseUrl}/${id}`);
-  }
-
-  async getByHabit(habitId: string): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/habit/${habitId}`);
-  }
-
-  async getByDate(date: string): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/date/${date}`);
-  }
-
-  async getByDateRange(
-    startDate: string,
-    endDate: string
-  ): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/range`, {
-      params: { startDate, endDate },
-    });
-  }
-
-  async create(note: NoteCreate): Promise<ApiResponse<DailyNote>> {
-    return apiService.post<DailyNote>(this.baseUrl, note);
-  }
-
-  async update(id: string, note: NoteUpdate): Promise<ApiResponse<DailyNote>> {
-    return apiService.put<DailyNote>(`${this.baseUrl}/${id}`, note);
-  }
-
-  async delete(id: string): Promise<ApiResponse<void>> {
-    return apiService.delete<void>(`${this.baseUrl}/${id}`);
-  }
-
-  async search(query: string): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/search`, {
-      params: { q: query },
-    });
-  }
-
-  async getLatest(limit: number = 10): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/latest`, {
-      params: { limit },
-    });
-  }
-
-  async getByTag(tag: string): Promise<ApiResponse<DailyNote[]>> {
-    return apiService.get<DailyNote[]>(`${this.baseUrl}/tag/${tag}`);
-  }
-}
-
-export const notesService = new NotesService();
-export default notesService;

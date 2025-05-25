@@ -1,70 +1,119 @@
-import { Habit } from "../../../shared/types";
-import { ApiResponse } from "../types";
-import apiService from "./api";
+import axios from "axios";
+import { Habit } from "@shared/types/habit";
 
-// Frontend-specific types
-interface HabitCreate {
+const API_BASE_URL = "http://localhost:5000/api";
+
+interface CreateHabitRequest {
   name: string;
   description?: string;
-  tag: string;
   repetition: "daily" | "weekly" | "monthly";
-  specificDays?: number[];
-  goalType: "counter" | "streak";
+  tag: string;
+  goalType: "streak" | "counter";
   goalValue: number;
-  motivationNote?: string;
 }
 
-type HabitUpdate = Partial<HabitCreate>;
+type UpdateHabitRequest = CreateHabitRequest;
+
+interface HabitRecord {
+  id: string;
+  habitId: string;
+  date: string;
+  completed: boolean;
+  completedAt: string;
+}
 
 class HabitsService {
-  private readonly baseUrl = "/habits";
-
-  async getAll(): Promise<ApiResponse<Habit[]>> {
-    return apiService.get<Habit[]>(this.baseUrl);
+  /**
+   * Get all habits
+   */
+  async getAllHabits(): Promise<Habit[]> {
+    const response = await axios.get(`${API_BASE_URL}/habits`);
+    return response.data.data;
   }
 
-  async getById(id: string): Promise<ApiResponse<Habit>> {
-    return apiService.get<Habit>(`${this.baseUrl}/${id}`);
+  /**
+   * Get a single habit by ID
+   * @param id - The ID of the habit
+   */
+  async getHabit(id: string): Promise<Habit> {
+    const response = await axios.get(`${API_BASE_URL}/habits/${id}`);
+    return response.data.data;
   }
 
-  async create(habit: HabitCreate): Promise<ApiResponse<Habit>> {
-    return apiService.post<Habit>(this.baseUrl, habit);
+  /**
+   * Create a new habit
+   * @param habit - The habit data
+   */
+  async createHabit(habit: CreateHabitRequest): Promise<Habit> {
+    const response = await axios.post(`${API_BASE_URL}/habits`, habit);
+    return response.data.data;
   }
 
-  async update(id: string, habit: HabitUpdate): Promise<ApiResponse<Habit>> {
-    return apiService.put<Habit>(`${this.baseUrl}/${id}`, habit);
+  /**
+   * Update an existing habit
+   * @param id - The ID of the habit
+   * @param habit - The updated habit data
+   */
+  async updateHabit(id: string, habit: UpdateHabitRequest): Promise<Habit> {
+    const response = await axios.put(`${API_BASE_URL}/habits/${id}`, habit);
+    return response.data.data;
   }
 
-  async delete(id: string): Promise<ApiResponse<void>> {
-    return apiService.delete<void>(`${this.baseUrl}/${id}`);
+  /**
+   * Delete a habit
+   * @param id - The ID of the habit
+   */
+  async deleteHabit(id: string): Promise<void> {
+    await axios.delete(`${API_BASE_URL}/habits/${id}`);
   }
 
-  async getByCategory(categoryId: string): Promise<ApiResponse<Habit[]>> {
-    return apiService.get<Habit[]>(`${this.baseUrl}/category/${categoryId}`);
+  /**
+   * Get all records for a habit
+   * @param id - The ID of the habit
+   */
+  async getHabitRecords(id: string): Promise<HabitRecord[]> {
+    const response = await axios.get(`${API_BASE_URL}/habits/${id}/records`);
+    return response.data.data;
   }
 
-  async search(query: string): Promise<ApiResponse<Habit[]>> {
-    return apiService.get<Habit[]>(`${this.baseUrl}/search`, {
-      params: { q: query },
+  /**
+   * Mark a habit as complete for a specific date
+   * @param id - The ID of the habit
+   * @param date - The date in ISO format
+   */
+  async markHabitComplete(id: string, date: string): Promise<HabitRecord> {
+    const response = await axios.post(`${API_BASE_URL}/habits/${id}/complete`, {
+      date,
     });
+    return response.data.data;
   }
 
-  async getActive(): Promise<ApiResponse<Habit[]>> {
-    return apiService.get<Habit[]>(`${this.baseUrl}/active`);
+  /**
+   * Delete a habit completion for a specific date
+   * @param id - The ID of the habit
+   * @param date - The date in ISO format
+   */
+  async deleteHabitCompletion(id: string, date: string): Promise<void> {
+    await axios.delete(`${API_BASE_URL}/habits/${id}/complete/${date}`);
   }
 
-  async getArchived(): Promise<ApiResponse<Habit[]>> {
-    return apiService.get<Habit[]>(`${this.baseUrl}/archived`);
+  /**
+   * Archive a habit
+   * @param id - The ID of the habit
+   */
+  async archiveHabit(id: string): Promise<Habit> {
+    const response = await axios.post(`${API_BASE_URL}/habits/${id}/archive`);
+    return response.data.data;
   }
 
-  async archive(id: string): Promise<ApiResponse<Habit>> {
-    return apiService.patch<Habit>(`${this.baseUrl}/${id}/archive`);
-  }
-
-  async unarchive(id: string): Promise<ApiResponse<Habit>> {
-    return apiService.patch<Habit>(`${this.baseUrl}/${id}/unarchive`);
+  /**
+   * Restore an archived habit
+   * @param id - The ID of the habit
+   */
+  async restoreHabit(id: string): Promise<Habit> {
+    const response = await axios.post(`${API_BASE_URL}/habits/${id}/restore`);
+    return response.data.data;
   }
 }
 
 export const habitsService = new HabitsService();
-export default habitsService;
