@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Habit, CompletionRecord, DailyNote } from "../../../shared/types";
+import { Habit, CompletionRecord, DailyNote } from "@shared/types";
 import { Settings } from "../types/models";
 import {
   getTodayDateString,

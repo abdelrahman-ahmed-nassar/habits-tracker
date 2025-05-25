@@ -7,3 +7,6 @@ export interface HabitAnalytics {
   totalCompletions: number;
   averageCompletionsPerWeek: number;
 }
+
+// Re-export for backward compatibility
+export type { HabitAnalytics as default };

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { DailyNote } from "../../../shared/types";
+import { DailyNote } from "@shared/types";
 import * as dataService from "../services/dataService";
 import { AppError, asyncHandler } from "../middleware/errorHandler";
 import { isValidDateFormat, validateDailyNote } from "../utils/validation";

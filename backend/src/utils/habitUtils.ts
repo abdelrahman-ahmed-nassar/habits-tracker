@@ -1,4 +1,4 @@
-import { Habit } from "../../../shared/types";
+import { Habit } from "@shared/types";
 
 /**
  * Filter habits by search term

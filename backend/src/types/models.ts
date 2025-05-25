@@ -3,7 +3,7 @@ import {
   CompletionRecord,
   DailyNote,
   HabitAnalytics,
-} from "../../../shared/types";
+} from "@shared/types";
 
 // Extend shared types for backend-specific functionality
 

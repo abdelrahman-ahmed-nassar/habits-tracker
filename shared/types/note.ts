@@ -7,3 +7,6 @@ export interface DailyNote {
   createdAt: string;
   updatedAt: string;
 }
+
+// Re-export for backward compatibility
+export type { DailyNote as default };

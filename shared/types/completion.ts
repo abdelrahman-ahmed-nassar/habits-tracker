@@ -6,3 +6,6 @@ export interface CompletionRecord {
   value?: number; // for counter-type goals
   completedAt: string;
 }
+
+// Re-export for backward compatibility
+export type { CompletionRecord as default };

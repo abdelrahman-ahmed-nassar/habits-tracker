@@ -1,4 +1,4 @@
-import { Habit, CompletionRecord } from "../../../shared/types";
+import { Habit, CompletionRecord } from "@shared/types";
 import {
   getDayOfWeek,
   getDatesBetween,

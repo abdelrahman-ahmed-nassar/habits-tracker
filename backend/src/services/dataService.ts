@@ -5,7 +5,7 @@ import {
   CompletionRecord,
   DailyNote,
   HabitAnalytics,
-} from "../../../shared/types";
+} from "@shared/types";
 import { Settings, BackupData } from "../types/models";
 import { getTodayDateString, formatDateToString } from "../utils/dateUtils";
 

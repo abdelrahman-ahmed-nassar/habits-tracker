@@ -13,3 +13,6 @@ export interface Habit {
   motivationNote?: string;
   isActive: boolean;
 }
+
+// Re-export for backward compatibility
+export type { Habit as default };

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { CreateHabitDto, Habit } from "../../../shared/types";
+import { CreateHabitDto, Habit } from "@shared/types";
 import { ValidationError } from "../types/models";
 import { validateHabitCreate } from "../utils/validation";
 import { getTodayDateString } from "../utils/dateUtils";

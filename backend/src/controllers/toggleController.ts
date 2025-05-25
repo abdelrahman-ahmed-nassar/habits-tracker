@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CompletionRecord } from "../../../shared/types";
+import { CompletionRecord } from "@shared/types";
 import { validateCompletion } from "../utils/validation";
 import * as dataService from "../services/dataService";
 import { AppError, asyncHandler } from "../middleware/errorHandler";

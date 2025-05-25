@@ -3,7 +3,7 @@ import {
   CompletionRecord,
   DailyNote,
   CreateHabitDto,
-} from "../../../shared/types";
+} from "@shared/types";
 import { ValidationError } from "../types/models";
 import * as optionsService from "../services/optionsService";
 

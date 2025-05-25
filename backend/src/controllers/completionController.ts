@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { CompletionRecord } from "../../../shared/types";
+import { CompletionRecord } from "@shared/types";
 import { validateCompletion } from "../utils/validation";
 import * as dataService from "../services/dataService";
 import { AppError, asyncHandler } from "../middleware/errorHandler";
