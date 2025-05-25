@@ -74,6 +74,43 @@ The frontend development server will run on port 3000 by default.
 - `POST /api/habits/:id/restore` - Restore a habit (make it active)
 - `GET /api/analytics` - Get analytics data
 - `GET/POST /api/notes` - Handle daily notes
+- `POST /api/backup` - Create a backup of all data
+
+## Backup System
+
+The application includes a backup system that allows you to create backups of your data through the API. Backups are stored in the `data/backups` directory with timestamps in the filename.
+
+### Creating a Backup
+
+To create a backup, send a POST request to `/api/backup`. The response will include:
+
+- Success status
+- Timestamp of the backup
+- Number of habits, completions, and notes backed up
+- The path where the backup was saved
+
+Example response:
+
+```json
+{
+  "success": true,
+  "message": "Backup created successfully",
+  "data": {
+    "timestamp": "2024-03-14T12:00:00.000Z",
+    "habits": 5,
+    "completions": 120,
+    "notes": 30,
+    "backupPath": "data/backups/backup-2024-03-14.json"
+  }
+}
+```
+
+### Backup Settings
+
+You can configure backup settings through the settings API:
+
+- Enable/disable automatic backups
+- Set backup frequency (daily, weekly, monthly)
 
 ## License
 

@@ -333,6 +333,13 @@ curl -X PUT http://localhost:5000/api/settings \
   }' | cat
 echo -e "\n"
 
+echo "=== Testing Backup ==="
+
+# Create a backup
+echo -e "\nTesting POST /backup"
+curl -X POST http://localhost:5000/api/backup | cat
+echo -e "\n"
+
 # Delete habit (cleanup)
 echo -e "\nTesting DELETE /habits/$DAILY_HABIT_ID"
 curl -X DELETE http://localhost:5000/api/habits/$DAILY_HABIT_ID | cat

@@ -10,6 +10,7 @@ import recordsRoutes from "./routes/recordsRoutes";
 import completionsRoutes from "./routes/completionsRoutes";
 import settingsRoutes from "./routes/settingsRoutes";
 import optionsRoutes from "./routes/optionsRoutes";
+import backupRoutes from "./routes/backupRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
@@ -34,6 +35,7 @@ app.use("/api/records", recordsRoutes);
 app.use("/api/completions", completionsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/options", optionsRoutes);
+app.use("/api/backup", backupRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
