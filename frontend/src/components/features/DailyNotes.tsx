@@ -186,12 +186,12 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                     </Button>
                   </>
                 )}
-                {!note && !isEditing && (
-                  <Button onClick={handleCreate} variant="primary" size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Note
-                  </Button>
-                )}
+              {!note && !isEditing && (
+                <Button onClick={handleCreate} variant="primary" size="sm" className="ml-4">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Note
+                </Button>
+              )}
               </div>
             </div>
           }

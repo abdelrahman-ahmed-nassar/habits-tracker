@@ -232,17 +232,23 @@ export const updateCompletion = asyncHandler(
     const habit = await dataService.getHabitById(completion.habitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${completion.habitId} not found`, 404);
-    }
-
-    // For counter type habits, ensure value is provided when completed is true
+    }    // For counter type habits, ensure value is provided when completed is true
     if (habit.goalType === "counter" && completed && value === undefined) {
       throw new AppError("Value is required for counter-type habits", 400);
+    }
+
+    // For counter-type habits, automatically determine completion status based on value and goal
+    let finalCompleted = completed;
+    if (habit.goalType === "counter" && value !== undefined) {
+      finalCompleted = value >= habit.goalValue;
+    } else if (completed === undefined) {
+      finalCompleted = completion.completed;
     }
 
     // Update completion data
     const updatedCompletion = {
       ...completion,
-      completed: completed !== undefined ? completed : completion.completed,
+      completed: finalCompleted,
       value: value !== undefined ? value : completion.value,
       completedAt: new Date().toISOString(),
     };

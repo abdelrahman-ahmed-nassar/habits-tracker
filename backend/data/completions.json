@@ -35,11 +35,11 @@
     "completedAt": "2025-05-25T20:57:13.634Z"
   },
   {
-    "id": "fcc06750-e2f4-4078-8cbd-2453a89d10cb",
+    "id": "621dd0e5-ebb8-4cc6-ac2a-694e7400fdec",
     "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
     "date": "2025-05-26",
-    "completed": false,
-    "completedAt": "2025-05-26T12:08:03.483Z"
+    "completed": true,
+    "completedAt": "2025-05-26T12:28:53.047Z"
   },
   {
     "id": "ca840d67-aada-4137-aa76-ab277b6e423e",
@@ -53,15 +53,43 @@
     "habitId": "teeth-1",
     "date": "2025-05-26",
     "completed": true,
-    "value": 1,
-    "completedAt": "2025-05-26T12:13:44.358Z"
+    "value": 2,
+    "completedAt": "2025-05-26T12:29:05.638Z"
   },
   {
     "id": "99fdbfbc-c7d1-4c11-b484-c8be8028cdd5",
     "habitId": "water-1",
     "date": "2025-05-26",
     "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T12:19:13.096Z"
+    "value": 8,
+    "completedAt": "2025-05-26T12:28:51.343Z"
+  },
+  {
+    "id": "11c14c8f-62f0-4143-a4df-8018dab66167",
+    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T12:29:00.294Z"
+  },
+  {
+    "id": "dac38156-3dbc-4a30-a992-c2c2be7c53b8",
+    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T12:29:00.909Z"
+  },
+  {
+    "id": "1b41a178-7c89-49d4-8cbf-2c7a9a1c5551",
+    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T12:29:01.890Z"
+  },
+  {
+    "id": "d864db1f-48ff-48c7-83c6-4f0ee4024666",
+    "habitId": "meditation-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T12:29:05.597Z"
   }
 ]

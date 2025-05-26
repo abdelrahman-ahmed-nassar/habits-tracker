@@ -400,7 +400,6 @@ POST /completions
   "message": "Habit marked as completed"
 }
 ```
-
 #### Toggle Completion
 
 ```http
@@ -431,6 +430,38 @@ POST /completions/toggle
   "message": "Completion toggled successfully"
 }
 ```
+
+#### Update Completion
+
+```http
+PUT /completions/:id
+```
+
+**Request Body:**
+
+```json
+{
+  "completed": boolean,
+  "value": number
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "habitId": "string",
+    "date": "string (ISO date)",
+    "completed": boolean,
+    "value": number,
+    "completedAt": "string (ISO date)"
+  },
+  "message": "Completion updated successfully"
+}
+
 
 #### Delete Completion
 
@@ -1111,6 +1142,121 @@ POST /backup/restore
 {
   "success": true,
   "message": "Backup restored successfully"
+}
+```
+
+### 9. Tags Management (`/tags`)
+
+#### Get All Tags
+
+```http
+GET /tags
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "color": "string (hex color code)"
+    }
+  ]
+}
+```
+
+#### Get Single Tag
+
+```http
+GET /tags/:id
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "color": "string (hex color code)"
+  }
+}
+```
+
+#### Create Tag
+
+```http
+POST /tags
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "color": "string (hex color code)"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "color": "string (hex color code)"
+  },
+  "message": "Tag created successfully"
+}
+```
+
+#### Update Tag
+
+```http
+PUT /tags/:id
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "color": "string (hex color code)"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "color": "string (hex color code)"
+  },
+  "message": "Tag updated successfully"
+}
+```
+
+#### Delete Tag
+
+```http
+DELETE /tags/:id
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Tag deleted successfully"
 }
 ```
 
