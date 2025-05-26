@@ -331,7 +331,6 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
   // Calculate currentCounter from today's completion (if exists)
   const today = new Date().toISOString().split("T")[0];
   const todayCompletion = completions.find((c) => c.date === today);
-
   if (habit.goalType === "counter") {
     // For counter-type habits, currentCounter is today's value
     currentCounter = todayCompletion?.value || 0;
@@ -344,8 +343,8 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
       bestStreak = currentStreak;
     }
   } else {
-    // For streak-type habits, currentCounter is always 0
-    currentCounter = 0;
+    // For streak-type habits, currentCounter tracks total completions (each completion = 1)
+    currentCounter = completions.filter((c) => c.completed).length;
 
     const dailyCompletions = getDailyCompletionStatus(habit, completions);
 
