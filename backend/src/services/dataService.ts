@@ -327,13 +327,12 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
 
   // Sort by date (oldest first for streak calculations)
   completions.sort((a, b) => a.date.localeCompare(b.date));
-
   // Calculate currentCounter from today's completion (if exists)
   const today = new Date().toISOString().split("T")[0];
   const todayCompletion = completions.find((c) => c.date === today);
   if (habit.goalType === "counter") {
-    // For counter-type habits, currentCounter is today's value
-    currentCounter = todayCompletion?.value || 0;
+    // For counter-type habits, currentCounter is the sum of all completion values
+    currentCounter = completions.reduce((sum, completion) => sum + (completion.value || 0), 0);
 
     // Calculate current streak (consecutive days where value >= goalValue)
     currentStreak = calculateCounterStreak(completions, habit.goalValue);
