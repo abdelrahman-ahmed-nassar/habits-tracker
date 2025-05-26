@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, Calendar, BookOpen } from "lucide-react";
+import { toast } from "react-toastify";
 import { RecordsService } from "../services/records";
 import { NotesService } from "../services/notes";
 import { habitsService } from "../services/habits";
 import { completionsService } from "../services/completions";
-import { useToast } from "../contexts/ToastContext";
 import HabitCard from "../components/features/HabitCard";
 import DailyNotes from "../components/features/DailyNotes";
 import Button from "../components/ui/Button";
@@ -52,124 +52,223 @@ const Daily: React.FC = () => {
   const [dailyRecords, setDailyRecords] = useState<DailyRecords | null>(null);
   const [dailyNote, setDailyNote] = useState<DailyNote | null>(null);
   const [loading, setLoading] = useState(true);
+  const [transitioning, setTransitioning] = useState(false);
+  const [updatingHabits, setUpdatingHabits] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<string>("habits");
   const [activeHabitTab, setActiveHabitTab] = useState<string>("All");
-  const { addToast } = useToast();
 
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const displayDate = format(currentDate, "EEEE, MMMM d, yyyy");
-  const fetchDailyData = useCallback(async () => {
-    setLoading(true);
-    try {
-      // First, get all active habits
-      const allHabits = await habitsService.getAllHabits();
-      const activeHabits = allHabits.filter((habit) => habit.isActive);
-
-      // Get existing completions for this date
-      const existingCompletions = await completionsService.getDailyCompletions(
-        formattedDate
-      );
-
-      // Create a map of existing completions for quick lookup
-      const completionMap = new Map(
-        existingCompletions.map((c) => [c.habitId, c])
-      );
-
-      // Create records for all active habits, using existing completions or defaults
-      const records = activeHabits.map((habit) => {
-        const completion = completionMap.get(habit.id);
-        return {
-          id: completion?.id || `temp-${habit.id}`,
-          habitId: habit.id,
-          date: formattedDate,
-          completed: completion?.completed || false,
-          completedAt: completion?.completedAt || "",
-          habitName: habit.name,
-          habitTag: habit.tag,
-          goalType: habit.goalType,
-          goalValue: habit.goalValue,
-          value: completion?.completed ? 1 : 0,
-        };
-      });
-
-      // Calculate stats
-      const completedHabits = records.filter((r) => r.completed).length;
-      const totalHabits = records.length;
-      const completionRate =
-        totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
-
-      // Set the daily records
-      setDailyRecords({
-        date: formattedDate,
-        records,
-        stats: {
-          totalHabits,
-          completedHabits,
-          completionRate,
-        },
-      });
-
-      // Fetch daily note (might not exist)
-      try {
-        const note = await NotesService.getNoteByDate(formattedDate);
-        setDailyNote(note);
-      } catch {
-        // Note doesn't exist for this date, which is fine
-        setDailyNote(null);
+  const fetchDailyData = useCallback(
+    async (showLoading = true) => {
+      if (showLoading) {
+        setLoading(true);
       }
-    } catch (error) {
-      console.error("Error fetching daily data:", error);
-      addToast("Failed to load daily data", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [formattedDate, addToast]);
+      setTransitioning(false); // Clear transitioning state
+      try {
+        // First, get all active habits
+        const allHabits = await habitsService.getAllHabits();
+        const activeHabits = allHabits.filter((habit) => habit.isActive);
+
+        // Get existing completions for this date
+        const existingCompletions =
+          await completionsService.getDailyCompletions(formattedDate);
+
+        // Create a map of existing completions for quick lookup
+        const completionMap = new Map(
+          existingCompletions.map((c) => [c.habitId, c])
+        );
+
+        // Create records for all active habits, using existing completions or defaults
+        const records = activeHabits.map((habit) => {
+          const completion = completionMap.get(habit.id);
+          return {
+            id: completion?.id || `temp-${habit.id}`,
+            habitId: habit.id,
+            date: formattedDate,
+            completed: completion?.completed || false,
+            completedAt: completion?.completedAt || "",
+            habitName: habit.name,
+            habitTag: habit.tag,
+            goalType: habit.goalType,
+            goalValue: habit.goalValue,
+            value: completion?.completed ? 1 : 0,
+          };
+        });
+
+        // Calculate stats
+        const completedHabits = records.filter((r) => r.completed).length;
+        const totalHabits = records.length;
+        const completionRate =
+          totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+
+        // Set the daily records
+        setDailyRecords({
+          date: formattedDate,
+          records,
+          stats: {
+            totalHabits,
+            completedHabits,
+            completionRate,
+          },
+        });
+
+        // Fetch daily note (might not exist)
+        try {
+          const note = await NotesService.getNoteByDate(formattedDate);
+          setDailyNote(note);
+        } catch {
+          // Note doesn't exist for this date, which is fine
+          setDailyNote(null);
+        }
+      } catch (error) {
+        console.error("Error fetching daily data:", error);
+        toast.error("Failed to load daily data");
+      } finally {
+        if (showLoading) {
+          setLoading(false);
+        }
+      }
+    },
+    [formattedDate]
+  );
 
   useEffect(() => {
     fetchDailyData();
   }, [fetchDailyData]);
-
   const goToPreviousDay = () => {
+    setTransitioning(true);
     setCurrentDate(subDays(currentDate, 1));
   };
 
   const goToNextDay = () => {
+    setTransitioning(true);
     setCurrentDate(addDays(currentDate, 1));
   };
 
   const goToToday = () => {
+    setTransitioning(true);
     setCurrentDate(new Date());
   };
-
   const toggleHabitCompletion = async (habitId: string) => {
+    if (!dailyRecords) return;
+
+    // Add habit to updating set to show loading state
+    setUpdatingHabits((prev) => new Set(prev).add(habitId));
+
+    // Optimistic update: Update UI immediately
+    const optimisticRecords = { ...dailyRecords };
+    const recordIndex = optimisticRecords.records.findIndex(
+      (r) => r.habitId === habitId
+    );
+
+    if (recordIndex !== -1) {
+      const currentRecord = optimisticRecords.records[recordIndex];
+      const newCompleted = !currentRecord.completed;
+
+      // Update the record
+      optimisticRecords.records[recordIndex] = {
+        ...currentRecord,
+        completed: newCompleted,
+        completedAt: newCompleted ? new Date().toISOString() : "",
+        value: newCompleted ? 1 : 0,
+      };
+
+      // Recalculate stats
+      const completedHabits = optimisticRecords.records.filter(
+        (r) => r.completed
+      ).length;
+      const totalHabits = optimisticRecords.records.length;
+      const completionRate =
+        totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+
+      optimisticRecords.stats = {
+        totalHabits,
+        completedHabits,
+        completionRate,
+      };
+
+      // Update state immediately for smooth UX
+      setDailyRecords(optimisticRecords);
+    }
+
     try {
+      // Make API call in background
       await RecordsService.toggleCompletion(habitId, formattedDate);
-      // Refresh data after toggle
-      await fetchDailyData();
-      addToast("Habit completion updated", "success");
+      toast("Habit completion updated");
     } catch (error) {
       console.error("Error toggling habit completion:", error);
-      addToast("Failed to update habit completion", "error");
+      toast.error("Failed to update habit completion");
+
+      // Revert optimistic update on error
+      await fetchDailyData(false);
+    } finally {
+      // Remove habit from updating set
+      setUpdatingHabits((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(habitId);
+        return newSet;
+      });
     }
   };
-
   const markAllComplete = async (tag: string) => {
     if (!dailyRecords) return;
 
+    const habitsToComplete = dailyRecords.records.filter(
+      (record) => record.habitTag === tag && !record.completed
+    );
+
+    if (habitsToComplete.length === 0) {
+      toast.info(`All ${tag} habits are already complete`);
+      return;
+    }
+
+    // Optimistic update: Update all habits in the tag immediately
+    const optimisticRecords = { ...dailyRecords };
+    const updatedRecords = optimisticRecords.records.map((record) => {
+      if (record.habitTag === tag && !record.completed) {
+        return {
+          ...record,
+          completed: true,
+          completedAt: new Date().toISOString(),
+          value: 1,
+        };
+      }
+      return record;
+    });
+
+    optimisticRecords.records = updatedRecords;
+
+    // Recalculate stats
+    const completedHabits = updatedRecords.filter((r) => r.completed).length;
+    const totalHabits = updatedRecords.length;
+    const completionRate =
+      totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+
+    optimisticRecords.stats = {
+      totalHabits,
+      completedHabits,
+      completionRate,
+    };
+
+    // Update state immediately
+    setDailyRecords(optimisticRecords);
+
     try {
-      const habitsToComplete = dailyRecords.records.filter(
-        (record) => record.habitTag === tag && !record.completed
+      // Make API calls in background
+      await Promise.all(
+        habitsToComplete.map((habit) =>
+          RecordsService.markHabitComplete(habit.habitId, formattedDate)
+        )
       );
 
-      for (const habit of habitsToComplete) {
-        await RecordsService.markHabitComplete(habit.habitId, formattedDate);
-      }
-
-      await fetchDailyData();
-      addToast(`All ${tag} habits marked as complete`, "success");
+      toast.success(`All ${tag} habits marked as complete`);
     } catch (error) {
       console.error("Error marking all habits complete:", error);
-      addToast("Failed to mark all habits complete", "error");
+      toast.error("Failed to mark all habits complete");
+
+      // Revert optimistic update on error
+      await fetchDailyData(false);
     }
   };
 
@@ -286,31 +385,29 @@ const Daily: React.FC = () => {
             <ChevronRight className="w-5 h-5" />
           </Button>
         </div>
-      </div>
-
+      </div>{" "}
       {/* Overall Progress */}
       {dailyRecords && (
         <Card className="mb-6">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Daily Progress</h2>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 transition-all duration-300">
                 {Math.round(dailyRecords.stats.completionRate)}%
               </div>
             </div>
             <Progress
               value={dailyRecords.stats.completionRate}
-              className="h-3 mb-2"
+              className="h-3 mb-2 transition-all duration-500"
               variant="default"
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 transition-all duration-300">
               {dailyRecords.stats.completedHabits} of{" "}
               {dailyRecords.stats.totalHabits} habits completed
             </p>
           </div>
         </Card>
       )}
-
       {/* Main Tabs */}
       <div className="mb-6">
         <div className="border-b border-gray-200 dark:border-gray-700">
@@ -344,7 +441,6 @@ const Daily: React.FC = () => {
           </nav>
         </div>
       </div>
-
       {/* Tab Content */}
       {activeTab === "habits" && (
         <>
@@ -372,7 +468,6 @@ const Daily: React.FC = () => {
               ))}
             </div>
           )}
-
           {/* Mark All Complete Button */}
           {currentTabData &&
             activeHabitTab !== "All" &&
@@ -386,16 +481,20 @@ const Daily: React.FC = () => {
                   Mark All {activeHabitTab} Complete
                 </Button>
               </div>
-            )}
-
+            )}{" "}
           {/* Habits List */}
           {currentTabData && currentTabData.records.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${
+                transitioning ? "opacity-50" : "opacity-100"
+              }`}
+            >
               {currentTabData.records.map((record) => (
                 <HabitCard
                   key={record.habitId}
                   record={record}
                   onToggleCompletion={toggleHabitCompletion}
+                  isUpdating={updatingHabits.has(record.habitId)}
                 />
               ))}
             </div>
@@ -410,7 +509,6 @@ const Daily: React.FC = () => {
           )}
         </>
       )}
-
       {activeTab === "notes" && (
         <DailyNotes
           date={formattedDate}

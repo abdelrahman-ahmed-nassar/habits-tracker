@@ -11,7 +11,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@types/uuid": "^10.0.0",
     "apexcharts": "^4.7.0",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
@@ -23,14 +22,15 @@
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.1",
-    "tailwind-merge": "^3.3.0",
-    "uuid": "^11.1.0"
+    "react-toastify": "^11.0.5",
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@tailwindcss/forms": "^0.5.7",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/react-toastify": "^4.0.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.17",
     "eslint": "^9.25.0",

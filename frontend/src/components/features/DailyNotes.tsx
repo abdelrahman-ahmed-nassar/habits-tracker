@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Save, Edit3, Plus, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 import Card, { CardContent, CardHeader } from "../ui/Card";
 import Button from "../ui/Button";
 import { NotesService } from "../../services/notes";
-import { useToast } from "../../contexts/ToastContext";
 import { DailyNote } from "@shared/types/note";
 
 interface DailyNotesProps {
@@ -26,7 +26,6 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const [availableProductivityLevels, setAvailableProductivityLevels] =
     useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const { addToast } = useToast();
 
   useEffect(() => {
     setNote(initialNote);
@@ -75,7 +74,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
   const handleSave = async () => {
     if (!content.trim()) {
-      addToast("Please enter some content for your note", "warning");
+      toast.warning("Please enter some content for your note");
       return;
     }
 
@@ -89,7 +88,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(updatedNote);
-        addToast("Note updated successfully", "success");
+        toast.success("Note updated successfully");
       } else {
         // Create new note
         const newNote = await NotesService.createNote({
@@ -99,13 +98,13 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(newNote);
-        addToast("Note created successfully", "success");
+        toast.success("Note created successfully");
       }
       setIsEditing(false);
       onNoteUpdate();
     } catch (error) {
       console.error("Error saving note:", error);
-      addToast("Failed to save note", "error");
+      toast.error("Failed to save note");
     } finally {
       setLoading(false);
     }
@@ -124,11 +123,11 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
       setMood("");
       setProductivityLevel("");
       setIsEditing(false);
-      addToast("Note deleted successfully", "success");
+      toast.success("Note deleted successfully");
       onNoteUpdate();
     } catch (error) {
       console.error("Error deleting note:", error);
-      addToast("Failed to delete note", "error");
+      toast.error("Failed to delete note");
     } finally {
       setLoading(false);
     }
@@ -333,4 +332,4 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   );
 };
 
-export default DailyNotes;
+export default React.memo(DailyNotes);

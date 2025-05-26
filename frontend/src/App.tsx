@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import MainLayout from "./components/layout/MainLayout";
 import Home from "./pages/Home";
 import Daily from "./pages/Daily";
-import { ToastProvider } from "./contexts/ToastContext";
 import Streaks from "./pages/Streaks";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <ToastProvider>
+    <>
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -23,7 +24,20 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </ToastProvider>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        toastClassName="rounded-lg"
+      />
+    </>
   );
 }
 
