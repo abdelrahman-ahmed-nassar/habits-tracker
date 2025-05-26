@@ -12,6 +12,7 @@ interface AnalyticsOverview {
     successRate: number;
     currentStreak: number;
     bestStreak: number;
+    currentCounter: number;
   }>;
   longestStreakHabit: {
     habitName: string;
@@ -38,6 +39,7 @@ interface HabitAnalytics {
   successRate: number;
   currentStreak: number;
   bestStreak: number;
+  currentCounter: number;
   completionHistory: Array<{
     date: string;
     completed: boolean;

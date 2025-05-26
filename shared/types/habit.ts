@@ -9,6 +9,7 @@ export interface Habit {
   goalValue: number;
   currentStreak: number;
   bestStreak: number;
+  currentCounter: number;
   createdAt: string;
   motivationNote?: string;
   isActive: boolean;

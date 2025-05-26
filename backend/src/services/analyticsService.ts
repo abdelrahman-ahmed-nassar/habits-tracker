@@ -22,6 +22,7 @@ export interface HabitAnalytics {
   averageCompletionsPerWeek: number;
   currentStreak: number;
   bestStreak: number;
+  currentCounter: number;
   goalType: "streak" | "counter";
   goalValue: number;
   isActive: boolean;
@@ -107,9 +108,7 @@ export const calculateAllHabitsAnalytics = async (
           (7 * 24 * 60 * 60 * 1000)
       );
       const averageCompletionsPerWeek =
-        weeksInPeriod > 0 ? totalCompletions / weeksInPeriod : 0;
-
-      return {
+        weeksInPeriod > 0 ? totalCompletions / weeksInPeriod : 0;      return {
         habitId: habit.id,
         habitName: habit.name,
         tag: habit.tag,
@@ -122,6 +121,7 @@ export const calculateAllHabitsAnalytics = async (
         averageCompletionsPerWeek,
         currentStreak: habit.currentStreak,
         bestStreak: habit.bestStreak,
+        currentCounter: habit.currentCounter,
         goalType: habit.goalType,
         goalValue: habit.goalValue,
         isActive: habit.isActive,
@@ -223,7 +223,6 @@ export const calculateHabitAnalytics = async (
   );
   const averageCompletionsPerWeek =
     weeksInPeriod > 0 ? totalCompletions / weeksInPeriod : 0;
-
   return {
     habitId: habit.id,
     habitName: habit.name,
@@ -237,6 +236,7 @@ export const calculateHabitAnalytics = async (
     averageCompletionsPerWeek,
     currentStreak: habit.currentStreak,
     bestStreak: habit.bestStreak,
+    currentCounter: habit.currentCounter,
     goalType: habit.goalType,
     goalValue: habit.goalValue,
     isActive: habit.isActive,

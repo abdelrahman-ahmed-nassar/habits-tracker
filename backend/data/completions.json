@@ -1,594 +1,132 @@
 [
   {
-    "id": "269c7367-1880-41bd-b5bb-74af5152914e",
-    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-25",
-    "completed": true,
-    "completedAt": "2025-05-25T20:54:28.091Z"
-  },
-  {
-    "id": "b06a6347-60ba-4e5d-9802-873a6cd41e90",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-25",
-    "completed": true,
-    "completedAt": "2025-05-25T20:54:29.480Z"
-  },
-  {
-    "id": "9582182a-7539-42fd-aeb1-5bf6c6afd0fe",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-25",
-    "completed": true,
-    "completedAt": "2025-05-25T20:54:31.449Z"
-  },
-  {
-    "id": "a1ff5cbb-7052-46ac-924b-5c50cdef442f",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-25",
-    "completed": true,
-    "completedAt": "2025-05-25T20:48:20.771Z"
-  },
-  {
-    "id": "6857e2f1-0f15-474b-9488-a6a3e324fe78",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-27",
-    "completed": false,
-    "completedAt": "2025-05-25T20:57:13.634Z"
-  },
-  {
-    "id": "4dc4be3f-e797-4d90-8db2-12ec2d5f386f",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-26",
-    "completed": true,
-    "completedAt": "2025-05-26T15:57:06.908Z"
-  },
-  {
-    "id": "adeb7ada-3bf7-40c4-9054-df1e0b127fc9",
+    "id": "475203fb-98d5-4a88-bd94-96ad05297565",
     "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
     "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:42:28.700Z"
+    "completedAt": "2025-05-26T16:42:25.812Z"
   },
   {
-    "id": "3f23815d-6479-4f02-b484-2b2a5617de9d",
-    "habitId": "teeth-1",
-    "date": "2025-05-26",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T15:42:18.309Z"
-  },
-  {
-    "id": "99fdbfbc-c7d1-4c11-b484-c8be8028cdd5",
-    "habitId": "water-1",
-    "date": "2025-05-26",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T15:41:17.708Z"
-  },
-  {
-    "id": "4a4ed48f-7c24-4118-8611-5cd95d46fab1",
+    "id": "e7f1f4f2-bf2d-44ae-a157-63613ecbc111",
     "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
     "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:42:24.247Z"
+    "completedAt": "2025-05-26T16:42:25.813Z"
   },
   {
-    "id": "290ecf25-3ac6-42b7-9a61-cd7ac8830db1",
+    "id": "e272e845-e977-4ff2-b803-a525de0134ec",
     "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
     "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:15:25.590Z"
+    "completedAt": "2025-05-26T16:42:25.813Z"
   },
   {
-    "id": "08840f2b-efd3-4be1-a92e-9c4ba1b38f6c",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-26",
-    "completed": true,
-    "completedAt": "2025-05-26T15:40:53.153Z"
-  },
-  {
-    "id": "d864db1f-48ff-48c7-83c6-4f0ee4024666",
-    "habitId": "meditation-1",
-    "date": "2025-05-26",
-    "completed": true,
-    "completedAt": "2025-05-26T12:29:05.597Z"
-  },
-  {
-    "id": "203ef4fc-e804-4769-bdee-950d1925c2d6",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-28",
-    "completed": true,
-    "completedAt": "2025-05-26T13:16:22.291Z"
-  },
-  {
-    "id": "a2553c52-5017-4aac-865a-f01738986530",
-    "habitId": "reading-1",
-    "date": "2025-05-26",
-    "completed": true,
-    "completedAt": "2025-05-26T15:42:13.285Z"
-  },
-  {
-    "id": "f062c1a4-d151-4ee1-b117-63e843424eca",
+    "id": "7d5ab1dc-9951-444a-89b1-a87f89133e9e",
     "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
     "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:38:55.212Z"
+    "completedAt": "2025-05-26T16:42:25.813Z"
   },
   {
-    "id": "2fdd4325-f0bd-40de-8b4d-a0bb98f467d1",
+    "id": "ba911de4-6838-4f00-a1cb-dfabb60e4dff",
+    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T16:42:25.813Z"
+  },
+  {
+    "id": "f09fa757-e876-4e94-96cb-0e759bafdbfc",
     "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-24",
+    "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:41:50.812Z"
+    "completedAt": "2025-05-26T16:42:29.160Z"
   },
   {
-    "id": "ae32d401-336e-490d-9f43-432ecf12d193",
+    "id": "f00c2360-9f9b-4ff3-ad93-b78c394fbe98",
+    "habitId": "teeth-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 2,
+    "completedAt": "2025-05-26T16:42:29.160Z"
+  },
+  {
+    "id": "c97e170e-d1ad-404b-8506-76a797379690",
+    "habitId": "water-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 8,
+    "completedAt": "2025-05-26T16:42:29.160Z"
+  },
+  {
+    "id": "1310756d-2cc8-4fa6-bb17-af7c231bb3ba",
     "habitId": "reading-1",
-    "date": "2025-05-24",
+    "date": "2025-05-26",
     "completed": true,
-    "completedAt": "2025-05-26T15:41:52.439Z"
+    "completedAt": "2025-05-26T16:42:29.160Z"
   },
   {
-    "id": "6b729e5e-25d1-4442-b016-f29335cb00f3",
+    "id": "14f32e60-0228-475f-ba6b-f835bfa38d3f",
     "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-23",
+    "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T15:48:16.031Z"
+    "completedAt": "2025-05-26T16:42:34.557Z"
   },
   {
-    "id": "4cdf79a4-280a-4171-aa34-256646c66a35",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-23",
-    "completed": true,
-    "completedAt": "2025-05-26T15:48:16.034Z"
-  },
-  {
-    "id": "9e0a5638-edc6-44ab-9e45-1e725f95bc97",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-21",
-    "completed": true,
-    "completedAt": "2025-05-26T15:48:25.151Z"
-  },
-  {
-    "id": "80977581-137c-4bf2-b494-173304c9e534",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-21",
-    "completed": true,
-    "completedAt": "2025-05-26T15:48:25.156Z"
-  },
-  {
-    "id": "14a1e39f-8479-4b8f-979e-7c6eb5a3f255",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-19",
-    "completed": true,
-    "completedAt": "2025-05-26T15:48:31.415Z"
-  },
-  {
-    "id": "452a0cfa-de2c-4454-9355-2cba4013b862",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-19",
-    "completed": true,
-    "completedAt": "2025-05-26T15:48:31.419Z"
-  },
-  {
-    "id": "44032790-ce85-497f-904b-eceaea105b85",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-19",
-    "completed": true,
-    "completedAt": "2025-05-26T15:50:34.154Z"
-  },
-  {
-    "id": "bf8aaadf-7c38-4199-90c0-ab07b49d561a",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-19",
-    "completed": true,
-    "completedAt": "2025-05-26T15:50:36.415Z"
-  },
-  {
-    "id": "bcda0a5f-593d-414e-8ee4-9c5a7a030c48",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-21",
-    "completed": true,
-    "completedAt": "2025-05-26T15:50:48.248Z"
-  },
-  {
-    "id": "427c379d-3ee8-4d14-b303-9594f016190b",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-16",
-    "completed": true,
-    "completedAt": "2025-05-26T15:51:08.307Z"
-  },
-  {
-    "id": "c95b429c-a499-4322-93b7-3ec7097fefc1",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-15",
-    "completed": true,
-    "completedAt": "2025-05-26T15:51:12.150Z"
-  },
-  {
-    "id": "874bf9e3-0c8d-4399-929b-579a8814f6cb",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-13",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:03.324Z"
-  },
-  {
-    "id": "0a45ddf6-54f5-4209-b727-bae2001ca1bf",
+    "id": "d560fcf2-1a4d-4274-b960-0e4c029517b3",
     "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-13",
+    "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T15:56:03.324Z"
+    "completedAt": "2025-05-26T16:42:34.557Z"
   },
   {
-    "id": "43417219-2197-4f21-aefd-ce0ee51bcf22",
+    "id": "de4f02da-c90b-4af4-8591-cfb8fa6989da",
     "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-13",
+    "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T15:56:03.324Z"
+    "completedAt": "2025-05-26T16:42:34.557Z"
   },
   {
-    "id": "d45a9e53-03c0-4fb2-87e2-37005f520baa",
+    "id": "6815138d-fd4c-41f7-823b-43766cb9b545",
     "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-13",
+    "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T15:56:03.324Z"
+    "completedAt": "2025-05-26T16:42:34.557Z"
   },
   {
-    "id": "e08b11b3-77de-4a01-86d1-8136fecca657",
+    "id": "b479dbe3-fbcf-4223-a488-586f693d02f6",
     "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-13",
+    "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T15:56:03.324Z"
+    "completedAt": "2025-05-26T16:42:34.557Z"
   },
   {
-    "id": "84e3e93b-4fd0-4b4b-95d1-dcf6ffa36429",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-13",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:06.510Z"
-  },
-  {
-    "id": "087eb927-84d5-4525-bec2-02e3019fd694",
-    "habitId": "teeth-1",
-    "date": "2025-05-13",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T15:56:06.510Z"
-  },
-  {
-    "id": "2a96c836-b567-4ba4-8807-0bd4d94c42d5",
-    "habitId": "water-1",
-    "date": "2025-05-13",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T15:56:06.510Z"
-  },
-  {
-    "id": "73e4ff07-7364-48d4-ad9f-750f5f47783f",
-    "habitId": "reading-1",
-    "date": "2025-05-13",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:06.510Z"
-  },
-  {
-    "id": "6494e6d2-b366-4bd7-ad89-1f20581a36d4",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:12.689Z"
-  },
-  {
-    "id": "9c3c36e7-a8b2-4ecc-b887-1bd5e8734f3f",
-    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:12.689Z"
-  },
-  {
-    "id": "eeb776d4-0926-46bc-a682-b744ffe6dea9",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:12.689Z"
-  },
-  {
-    "id": "c7ae5020-2f49-4018-a7e6-8f2c611b2a29",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:12.689Z"
-  },
-  {
-    "id": "c1f4e528-1007-45ed-aa8d-a8b6ac3c0987",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:12.689Z"
-  },
-  {
-    "id": "73dc880f-22a8-4b89-aa55-e56a9d42f99c",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:14.958Z"
-  },
-  {
-    "id": "1a1d2634-03a8-4ad5-93fc-88efce514508",
-    "habitId": "teeth-1",
-    "date": "2025-05-12",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T15:56:14.958Z"
-  },
-  {
-    "id": "a51c9bad-2e00-4bf2-8339-1b0f343ce90c",
-    "habitId": "water-1",
-    "date": "2025-05-12",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T15:56:14.958Z"
-  },
-  {
-    "id": "fed8032a-0ce4-430b-b700-39d9cb933270",
-    "habitId": "reading-1",
-    "date": "2025-05-12",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:14.958Z"
-  },
-  {
-    "id": "bf867fb9-578f-4ae4-ae4b-89006e9b9583",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-10",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:31.389Z"
-  },
-  {
-    "id": "aa5d8287-72cb-4550-8ae0-ccae364cab48",
-    "habitId": "teeth-1",
-    "date": "2025-05-10",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T15:56:31.389Z"
-  },
-  {
-    "id": "ff620b6b-fe41-4187-a526-8bf279ff4cdd",
-    "habitId": "water-1",
-    "date": "2025-05-10",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T15:56:31.389Z"
-  },
-  {
-    "id": "27b5d37c-c08b-44b8-9626-135ce0ecb723",
-    "habitId": "reading-1",
-    "date": "2025-05-10",
-    "completed": true,
-    "completedAt": "2025-05-26T15:56:31.389Z"
-  },
-  {
-    "id": "868a8920-47a6-4f0a-9ea7-45d8d659f37e",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-24",
-    "completed": true,
-    "completedAt": "2025-05-26T15:59:31.985Z"
-  },
-  {
-    "id": "2452cd47-300e-449a-8e9b-bb6c720f9ba0",
-    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-24",
-    "completed": true,
-    "completedAt": "2025-05-26T15:59:31.985Z"
-  },
-  {
-    "id": "04008580-cf5b-41a7-a9be-f79b57334cac",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-24",
-    "completed": true,
-    "completedAt": "2025-05-26T15:57:18.082Z"
-  },
-  {
-    "id": "dabc93db-4aee-4af2-b270-e664a3c68817",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-24",
-    "completed": true,
-    "completedAt": "2025-05-26T15:57:18.082Z"
-  },
-  {
-    "id": "63489dae-3d1b-49d9-9d48-4168d56a26ef",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-24",
-    "completed": true,
-    "completedAt": "2025-05-26T15:57:18.082Z"
-  },
-  {
-    "id": "9a724d72-1e18-4f4e-b918-0cf0b9a4fa42",
-    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:11.504Z"
-  },
-  {
-    "id": "9859b494-14b4-4583-9295-7825c0f2f772",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:14.849Z"
-  },
-  {
-    "id": "1423071e-1d32-47a9-aded-a4ccb222ade5",
-    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:14.849Z"
-  },
-  {
-    "id": "8f7d3126-bd33-4c01-b7ee-f01eb61e7e68",
-    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:14.849Z"
-  },
-  {
-    "id": "905f0dd4-8549-422e-b6e6-ce2bdf8b8291",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:14.849Z"
-  },
-  {
-    "id": "7ad1688b-5215-4eb8-94d8-4bbd168c7782",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:17.293Z"
-  },
-  {
-    "id": "d09ceef1-5042-44c1-9748-d4aa205f1554",
-    "habitId": "teeth-1",
-    "date": "2025-05-22",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T16:04:17.293Z"
-  },
-  {
-    "id": "4e04e817-091c-47e0-83ec-090db024cebe",
-    "habitId": "water-1",
-    "date": "2025-05-22",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T16:04:17.293Z"
-  },
-  {
-    "id": "80c9182a-60ba-4936-901c-092514c010da",
-    "habitId": "reading-1",
-    "date": "2025-05-22",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:17.293Z"
-  },
-  {
-    "id": "921535b9-b447-493c-8d3e-31cf16ec350a",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-20",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:33.114Z"
-  },
-  {
-    "id": "e6f73228-9616-44fa-bff6-903d183041a7",
-    "habitId": "teeth-1",
-    "date": "2025-05-20",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T16:22:26.684Z"
-  },
-  {
-    "id": "65a30a32-4709-480c-a1b6-ec27e30bbb9f",
-    "habitId": "water-1",
-    "date": "2025-05-20",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T16:04:37.352Z"
-  },
-  {
-    "id": "62146f95-0fe0-4e08-8b3f-c42f84d2fee3",
-    "habitId": "reading-1",
-    "date": "2025-05-20",
-    "completed": true,
-    "completedAt": "2025-05-26T16:04:33.115Z"
-  },
-  {
-    "id": "67e05553-4026-4030-9993-6b2fcaa6a8fc",
-    "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
-    "date": "2025-05-17",
-    "completed": true,
-    "completedAt": "2025-05-26T16:08:10.000Z"
-  },
-  {
-    "id": "8b959ce2-c854-4c53-96fe-9709b834fcd2",
-    "habitId": "teeth-1",
-    "date": "2025-05-17",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T16:08:10.000Z"
-  },
-  {
-    "id": "00c2518d-d136-40b6-aefd-a39ec3e73fc7",
-    "habitId": "water-1",
-    "date": "2025-05-17",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T16:08:23.009Z"
-  },
-  {
-    "id": "73356c21-1254-4339-92b5-286aef5aad95",
-    "habitId": "reading-1",
-    "date": "2025-05-17",
-    "completed": true,
-    "completedAt": "2025-05-26T16:08:10.000Z"
-  },
-  {
-    "id": "b801dd75-91f6-45cc-93eb-6e0182e83877",
+    "id": "662d8372-8190-435b-8a2f-5a225581da6a",
     "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
     "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T16:09:25.570Z"
+    "completedAt": "2025-05-26T16:42:36.561Z"
   },
   {
-    "id": "39aff73f-5069-4d66-bb43-7ff47dc5cd26",
+    "id": "03d22b88-abfa-45da-b796-6da5a91d17b3",
     "habitId": "teeth-1",
     "date": "2025-05-25",
     "completed": true,
     "value": 2,
-    "completedAt": "2025-05-26T16:09:25.570Z"
+    "completedAt": "2025-05-26T16:42:36.561Z"
   },
   {
-    "id": "d9095643-ee9c-445b-a6e0-f5c21beced8f",
+    "id": "fae0e6d2-2c54-448c-8e6f-12bd2af20eb2",
     "habitId": "water-1",
     "date": "2025-05-25",
     "completed": true,
     "value": 8,
-    "completedAt": "2025-05-26T16:09:25.570Z"
+    "completedAt": "2025-05-26T16:42:36.561Z"
   },
   {
-    "id": "d716768f-889e-4292-9168-9ddbf972d6d2",
+    "id": "44cf9c8a-3f73-4440-92f6-9efa76f20421",
     "habitId": "reading-1",
     "date": "2025-05-25",
     "completed": true,
-    "completedAt": "2025-05-26T16:09:25.570Z"
-  },
-  {
-    "id": "91c155cf-65eb-44fe-b87c-fbb690e0443f",
-    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
-    "date": "2025-05-25",
-    "completed": true,
-    "completedAt": "2025-05-26T16:09:29.088Z"
-  },
-  {
-    "id": "8366d8be-5092-4d5f-9751-c06124cbc55d",
-    "habitId": "teeth-1",
-    "date": "2025-05-24",
-    "completed": true,
-    "value": 2,
-    "completedAt": "2025-05-26T16:09:36.166Z"
-  },
-  {
-    "id": "dfdac850-38e5-466f-8813-123b93e837cc",
-    "habitId": "water-1",
-    "date": "2025-05-24",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-26T16:09:36.166Z"
-  },
-  {
-    "id": "fc04fd7a-d6d5-4bce-ab70-9310737ce860",
-    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
-    "date": "2025-05-20",
-    "completed": true,
-    "completedAt": "2025-05-26T16:19:29.355Z"
-  },
-  {
-    "id": "a18dcef9-9f51-4676-9d6b-c9fced484805",
-    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
-    "date": "2025-05-20",
-    "completed": true,
-    "completedAt": "2025-05-26T16:19:30.438Z"
+    "completedAt": "2025-05-26T16:42:36.561Z"
   }
 ]

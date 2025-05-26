@@ -15,8 +15,7 @@ import { writeData } from "../services/fileStorageService";
 export const generateSampleHabits = (): Habit[] => {
   const now = new Date().toISOString();
 
-  return [
-    {
+  return [    {
       id: uuidv4(),
       name: "Daily Exercise",
       description: "At least 30 minutes of physical activity",
@@ -26,11 +25,11 @@ export const generateSampleHabits = (): Habit[] => {
       goalValue: 1,
       currentStreak: 3,
       bestStreak: 5,
+      currentCounter: 0,
       createdAt: getDateDaysAgo(30),
       motivationNote: "Exercise improves mood and energy levels",
       isActive: true,
-    },
-    {
+    },    {
       id: uuidv4(),
       name: "Read a book",
       description: "Read at least 30 pages",
@@ -40,10 +39,10 @@ export const generateSampleHabits = (): Habit[] => {
       goalValue: 30,
       currentStreak: 0,
       bestStreak: 7,
+      currentCounter: 25,
       createdAt: getDateDaysAgo(45),
       isActive: true,
-    },
-    {
+    },    {
       id: uuidv4(),
       name: "Weekly Review",
       description: "Review goals and plan for next week",
@@ -54,11 +53,11 @@ export const generateSampleHabits = (): Habit[] => {
       goalValue: 1,
       currentStreak: 2,
       bestStreak: 4,
+      currentCounter: 0,
       createdAt: getDateDaysAgo(60),
       motivationNote: "Planning ahead leads to better results",
       isActive: true,
-    },
-    {
+    },    {
       id: uuidv4(),
       name: "Drink Water",
       description: "Drink at least 2 liters of water",
@@ -68,10 +67,10 @@ export const generateSampleHabits = (): Habit[] => {
       goalValue: 8, // 8 glasses
       currentStreak: 1,
       bestStreak: 12,
+      currentCounter: 6,
       createdAt: getDateDaysAgo(15),
       isActive: true,
-    },
-    {
+    },    {
       id: uuidv4(),
       name: "Monthly Budget Review",
       description: "Review expenses and update budget",
@@ -82,6 +81,7 @@ export const generateSampleHabits = (): Habit[] => {
       goalValue: 1,
       currentStreak: 2,
       bestStreak: 3,
+      currentCounter: 0,
       createdAt: getDateDaysAgo(90),
       isActive: true,
     },

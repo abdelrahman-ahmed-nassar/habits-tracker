@@ -6,6 +6,7 @@ export interface HabitAnalytics {
   longestStreak: number;
   totalCompletions: number;
   averageCompletionsPerWeek: number;
+  currentCounter: number;
 }
 
 // Re-export for backward compatibility

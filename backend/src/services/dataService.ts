@@ -74,7 +74,7 @@ export const getHabitById = async (id: string): Promise<Habit | null> => {
 export const createHabit = async (
   habitData: Omit<
     Habit,
-    "id" | "createdAt" | "currentStreak" | "bestStreak" | "isActive"
+    "id" | "createdAt" | "currentStreak" | "bestStreak" | "currentCounter" | "isActive"
   >
 ): Promise<Habit> => {
   const habits = await getHabits();
@@ -84,6 +84,7 @@ export const createHabit = async (
     ...habitData,
     currentStreak: 0,
     bestStreak: 0,
+    currentCounter: 0,
     isActive: true,
     createdAt: new Date().toISOString(),
   };
@@ -304,7 +305,7 @@ export const updateCompletion = async (
 };
 
 /**
- * Update a habit's current and best streak values
+ * Update a habit's current and best streak values, and current counter
  * Public version of the internal updateHabitStreaks function
  * @param habitId The habit ID to update streaks for
  */
@@ -314,14 +315,33 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
 
   let currentStreak = 0;
   let bestStreak = habit.bestStreak;
+  let currentCounter = 0;
 
-  // For counter-type habits vs streak-type habits, we calculate differently
-  if (habit.goalType === "streak") {
-    const completions = await getCompletionsByHabitId(habitId);
+  // Get all completions for this habit
+  const completions = await getCompletionsByHabitId(habitId);
+  
+  // Sort by date (oldest first for streak calculations)
+  completions.sort((a, b) => a.date.localeCompare(b.date));
 
-    // Sort by date (oldest first)
-    completions.sort((a, b) => a.date.localeCompare(b.date));
+  // Calculate currentCounter from today's completion (if exists)
+  const today = new Date().toISOString().split('T')[0];
+  const todayCompletion = completions.find(c => c.date === today);
+  
+  if (habit.goalType === "counter") {
+    // For counter-type habits, currentCounter is today's value
+    currentCounter = todayCompletion?.value || 0;
+    
+    // Calculate current streak (consecutive days where value >= goalValue)
+    currentStreak = calculateCounterStreak(completions, habit.goalValue);
 
+    // Update best streak if current is greater
+    if (currentStreak > bestStreak) {
+      bestStreak = currentStreak;
+    }
+  } else {
+    // For streak-type habits, currentCounter is always 0
+    currentCounter = 0;
+    
     const dailyCompletions = getDailyCompletionStatus(habit, completions);
 
     // Calculate current streak - counting back from today or the last record
@@ -338,24 +358,10 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
       habit.specificDays
     );
     bestStreak = Math.max(...allStreaks, 0, habit.bestStreak); // Include existing bestStreak
-  } else if (habit.goalType === "counter") {
-    // For counter-type habits, streak is consecutive days where value >= goalValue
-    const completions = await getCompletionsByHabitId(habitId);
-
-    // Sort by date (oldest first)
-    completions.sort((a, b) => a.date.localeCompare(b.date));
-
-    // Calculate current streak
-    currentStreak = calculateCounterStreak(completions, habit.goalValue);
-
-    // Update best streak if current is greater
-    if (currentStreak > bestStreak) {
-      bestStreak = currentStreak;
-    }
   }
 
-  // Update the habit with new streak values
-  await updateHabit(habitId, { currentStreak, bestStreak });
+  // Update the habit with new streak values and currentCounter
+  await updateHabit(habitId, { currentStreak, bestStreak, currentCounter });
 };
 
 /**
