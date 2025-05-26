@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { format, addDays, subDays } from "date-fns";
-import { ChevronLeft, ChevronRight, Calendar, BookOpen } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  BookOpen,
+  Grid3X3,
+  List,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { RecordsService } from "../services/records";
 import { NotesService } from "../services/notes";
@@ -56,6 +65,7 @@ const Daily: React.FC = () => {
   const [updatingHabits, setUpdatingHabits] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<string>("habits");
   const [activeHabitTab, setActiveHabitTab] = useState<string>("All");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const displayDate = format(currentDate, "EEEE, MMMM d, yyyy");
@@ -509,36 +519,48 @@ const Daily: React.FC = () => {
             </p>
           </div>
         </Card>
-      )}
-      {/* Main Tabs */}
-      <div className="mb-6">
-        <div className="border-b border-gray-200 dark:border-gray-700">
-          <nav className="-mb-px flex space-x-8">
+      )}{" "}
+      {/* Modern Main Tabs */}
+      <div className="mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-1 shadow-sm">
+          <nav className="flex space-x-1">
+            {" "}
             <button
               onClick={() => setActiveTab("habits")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                 activeTab === "habits"
-                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
               }`}
             >
-              <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4" />
-                <span>Habits</span>
-              </div>
-            </button>
+              <Calendar className="w-4 h-4" />
+              <span>Habits</span>
+              {dailyRecords && (
+                <Badge
+                  variant={activeTab === "habits" ? "default" : "primary"}
+                  size="sm"
+                  className={
+                    activeTab === "habits" ? "bg-white/20 text-white" : ""
+                  }
+                >
+                  {dailyRecords.stats.completedHabits}/
+                  {dailyRecords.stats.totalHabits}
+                </Badge>
+              )}
+            </button>{" "}
             <button
               onClick={() => setActiveTab("notes")}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                 activeTab === "notes"
-                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
               }`}
             >
-              <div className="flex items-center space-x-2">
-                <BookOpen className="w-4 h-4" />
-                <span>Notes</span>
-              </div>
+              <BookOpen className="w-4 h-4" />
+              <span>Notes</span>
+              {dailyNote && (
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              )}
             </button>
           </nav>
         </div>
@@ -546,68 +568,177 @@ const Daily: React.FC = () => {
       {/* Tab Content */}
       {activeTab === "habits" && (
         <>
-          {/* Habit Tags Navigation */}
+          {/* Enhanced Habit Tags Navigation with View Controls */}
           {tabsData.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-2">
-              {tabsData.map((tab) => (
-                <button
-                  key={tab.tag}
-                  onClick={() => setActiveHabitTab(tab.tag)}
-                  className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
-                    activeHabitTab === tab.tag
-                      ? "bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
-                      : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  <span className="font-medium">{tab.tag}</span>
-                  <Badge
-                    variant={tab.completionRate === 100 ? "success" : "default"}
-                    size="sm"
-                  >
-                    {tab.completed}/{tab.total}
-                  </Badge>
-                </button>
-              ))}
+            <div className="mb-6">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                {/* Tag Pills */}
+                <div className="flex flex-wrap gap-2">
+                  {tabsData.map((tab) => (
+                    <button
+                      key={tab.tag}
+                      onClick={() => setActiveHabitTab(tab.tag)}
+                      className={`group relative inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border-2 transition-all duration-200 ${
+                        activeHabitTab === tab.tag
+                          ? "bg-gradient-to-r from-blue-500 to-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/25 transform scale-105"
+                          : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md hover:scale-102"
+                      }`}
+                    >
+                      <span className="font-semibold">{tab.tag}</span>
+                      <div className="flex items-center space-x-1">
+                        <Badge
+                          variant={
+                            tab.completionRate === 100
+                              ? "success"
+                              : activeHabitTab === tab.tag
+                              ? "default"
+                              : "default"
+                          }
+                          size="sm"
+                          className={`
+                            ${
+                              activeHabitTab === tab.tag
+                                ? "bg-white/20 text-white border-white/30"
+                                : tab.completionRate === 100
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                : ""
+                            }
+                          `}
+                        >
+                          {tab.completed}/{tab.total}
+                        </Badge>
+                        {tab.completionRate === 100 && (
+                          <CheckCircle2
+                            className={`w-4 h-4 ${
+                              activeHabitTab === tab.tag
+                                ? "text-white"
+                                : "text-green-500"
+                            }`}
+                          />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>{" "}
+                {/* Enhanced View Mode Controls */}
+                <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 shadow-sm">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400 px-2">
+                    View:
+                  </span>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-1 flex">
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                        viewMode === "grid"
+                          ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-md border border-blue-200 dark:border-blue-700"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      }`}
+                    >
+                      <Grid3X3 className="w-4 h-4" />
+                      <span>Grid</span>
+                    </button>
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                        viewMode === "list"
+                          ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-md border border-blue-200 dark:border-blue-700"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      }`}
+                    >
+                      <List className="w-4 h-4" />
+                      <span>List</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-          {/* Mark All Complete Button */}
+          )}{" "}
+          {/* Enhanced Mark All Complete Button */}
           {currentTabData &&
             activeHabitTab !== "All" &&
             currentTabData.completed < currentTabData.total && (
-              <div className="mb-4">
-                <Button
-                  onClick={() => markAllComplete(activeHabitTab)}
-                  variant="primary"
-                  size="sm"
-                >
-                  Mark All {activeHabitTab} Complete
-                </Button>
+              <div className="mb-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-full">
+                        <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                          Complete All {activeHabitTab} Habits
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {currentTabData.total - currentTabData.completed}{" "}
+                          habits remaining
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => markAllComplete(activeHabitTab)}
+                      variant="primary"
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25 font-medium"
+                    >
+                      Complete All
+                    </Button>
+                  </div>
+                </div>
               </div>
-            )}{" "}
+            )}
           {/* Habits List */}
           {currentTabData && currentTabData.records.length > 0 ? (
-            <div
-              className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${
-                transitioning ? "opacity-50" : "opacity-100"
-              }`}
-            >
-              {" "}
-              {currentTabData.records.map((record) => (
-                <HabitCard
-                  key={record.habitId}
-                  record={record}
-                  onToggleCompletion={toggleHabitCompletion}
-                  onValueUpdate={updateHabitValue}
-                  isUpdating={updatingHabits.has(record.habitId)}
-                />
-              ))}
-            </div>
+            viewMode === "grid" ? (
+              <div
+                className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${
+                  transitioning ? "opacity-50" : "opacity-100"
+                }`}
+              >
+                {" "}
+                {currentTabData.records.map((record) => (
+                  <HabitCard
+                    key={record.habitId}
+                    record={record}
+                    onToggleCompletion={toggleHabitCompletion}
+                    onValueUpdate={updateHabitValue}
+                    isUpdating={updatingHabits.has(record.habitId)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {currentTabData.records.map((record) => (
+                  <HabitListItem
+                    key={record.habitId}
+                    record={record}
+                    onToggleCompletion={toggleHabitCompletion}
+                    isUpdating={updatingHabits.has(record.habitId)}
+                  />
+                ))}
+              </div>
+            )
           ) : (
-            <Card>
-              <div className="p-8 text-center">
-                <p className="text-gray-500 dark:text-gray-400">
-                  No habits found for this date.
+            <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
+              <div className="p-12 text-center">
+                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full">
+                  <Calendar className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  No habits for this day
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  {activeHabitTab === "All"
+                    ? "You don't have any habits scheduled for this date."
+                    : `No ${activeHabitTab} habits found for this date.`}
                 </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button onClick={goToToday} variant="primary" size="sm">
+                    Go to Today
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    Manage Habits
+                  </Button>
+                </div>
               </div>
             </Card>
           )}
@@ -625,3 +756,129 @@ const Daily: React.FC = () => {
 };
 
 export default Daily;
+
+// HabitListItem Component for minimal checklist view
+interface HabitListItemProps {
+  record: Record;
+  onToggleCompletion: (habitId: string) => void;
+  isUpdating: boolean;
+}
+
+const HabitListItem: React.FC<HabitListItemProps> = ({
+  record,
+  onToggleCompletion,
+  isUpdating,
+}) => {
+  const getProgressValue = () => {
+    if (record.goalType === "counter") {
+      return (record.value / record.goalValue) * 100;
+    }
+    return record.completed ? 100 : 0;
+  };
+
+  const getProgressDisplay = () => {
+    if (record.goalType === "counter") {
+      return `${record.value}/${record.goalValue}`;
+    }
+    return record.completed ? "Complete" : "Incomplete";
+  };
+
+  return (
+    <div
+      className={`flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border transition-all duration-200 hover:shadow-md ${
+        record.completed
+          ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
+          : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
+      }`}
+    >
+      {/* Left side: Checkbox and habit info */}
+      <div className="flex items-center space-x-4 flex-1 min-w-0">
+        {" "}
+        {/* Minimal checkbox-style completion toggle */}
+        <button
+          onClick={() => onToggleCompletion(record.habitId)}
+          disabled={isUpdating}
+          className={`flex-shrink-0 w-6 h-6 border flex items-center justify-center transition-all duration-200 p-0 ${
+            record.completed
+              ? "bg-blue-500 border-blue-500 text-white"
+              : "border-gray-300 dark:border-gray-500 hover:border-blue-400 dark:hover:border-blue-400 bg-white dark:bg-gray-700"
+          } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        >
+          {isUpdating ? (
+            <div className="w-2.5 h-2.5 border border-current border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            record.completed && (
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            )
+          )}
+        </button>
+        {/* Habit name and info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-3">
+            <h3
+              className={`font-medium truncate transition-all duration-200 ${
+                record.completed
+                  ? "line-through text-gray-500 dark:text-gray-400"
+                  : "text-gray-900 dark:text-gray-100"
+              }`}
+            >
+              {record.habitName}
+            </h3>
+            <Badge
+              variant={record.completed ? "success" : "default"}
+              size="sm"
+              className="flex-shrink-0"
+            >
+              {record.habitTag}
+            </Badge>
+          </div>
+
+          {/* Progress bar for counter-type habits */}
+          {record.goalType === "counter" && (
+            <div className="mt-2 space-y-1">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Progress
+                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {getProgressDisplay()}
+                </span>
+              </div>
+              <Progress
+                value={getProgressValue()}
+                variant={record.completed ? "success" : "default"}
+                className="h-2"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right side: Completion info */}
+      <div className="flex-shrink-0 text-right">
+        {record.completed && record.completedAt && (
+          <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
+            <Clock className="w-4 h-4" />
+            <span>
+              {new Date(record.completedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
+        )}
+        {!record.completed && record.goalType === "streak" && (
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Goal: {record.goalValue} days
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

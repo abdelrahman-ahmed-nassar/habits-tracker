@@ -106,7 +106,8 @@ class CompletionsService {
    */
   async deleteHabitCompletion(habitId: string, date: string): Promise<void> {
     await axios.delete(`${API_BASE_URL}/habits/${habitId}/complete/${date}`);
-  }  /**
+  }
+  /**
    * Update a completion value for counter-type habits
    * @param habitId - The ID of the habit
    * @param date - The date in ISO format
@@ -119,8 +120,8 @@ class CompletionsService {
   ): Promise<Completion> {
     // First, find the completion record for this habit and date
     const dailyCompletions = await this.getDailyCompletions(date);
-    const completion = dailyCompletions.find(c => c.habitId === habitId);
-    
+    const completion = dailyCompletions.find((c) => c.habitId === habitId);
+
     if (!completion) {
       // If no completion exists, create one first
       const newCompletion = await this.createCompletion(habitId, date);
