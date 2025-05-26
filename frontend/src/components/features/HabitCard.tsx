@@ -71,9 +71,9 @@ const HabitCard: React.FC<HabitCardProps> = ({
 
   return (
     <Card
-      className={`transition-all duration-200 hover:shadow-md ${
+      className={`transition-all duration-200 hover:shadow-md  flex flex-col flex${
         record.completed ? "ring-2 ring-green-200 dark:ring-green-800" : ""
-      }`}
+      } ${record.goalType === "streak" ? "min-h-[310px]" : "min-h-[380px]"}`}
     >
       <CardHeader
         title={
@@ -88,7 +88,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         }
       />
 
-      <CardContent className="space-y-4">
+      <CardContent className="flex flex-col justify-between  h-full">
         {/* Goal Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
@@ -142,6 +142,18 @@ const HabitCard: React.FC<HabitCardProps> = ({
           </span>{" "}
         </div>{" "}
         {/* Completion Controls */}
+        {record.value >= record.goalValue && (
+          <div className="text-center">
+            <Badge variant="success" size="sm">
+              Goal Completed! 🎉
+            </Badge>
+          </div>
+        )}
+        {record.completed && record.completedAt && (
+          <div className="text-xs text-center text-gray-500 dark:text-gray-400">
+            Completed at {new Date(record.completedAt).toLocaleTimeString()}
+          </div>
+        )}
         {record.goalType === "counter" ? (
           <div className="space-y-3">
             <div className="text-center">
@@ -157,13 +169,6 @@ const HabitCard: React.FC<HabitCardProps> = ({
                 disabled={isUpdating}
               />
             </div>
-            {record.value >= record.goalValue && (
-              <div className="text-center">
-                <Badge variant="success" size="sm">
-                  Goal Completed! 🎉
-                </Badge>
-              </div>
-            )}
           </div>
         ) : (
           <Button
@@ -194,11 +199,6 @@ const HabitCard: React.FC<HabitCardProps> = ({
           </Button>
         )}
         {/* Completion Time */}
-        {record.completed && record.completedAt && (
-          <div className="text-xs text-center text-gray-500 dark:text-gray-400">
-            Completed at {new Date(record.completedAt).toLocaleTimeString()}
-          </div>
-        )}
       </CardContent>
     </Card>
   );
