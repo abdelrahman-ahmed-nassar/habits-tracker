@@ -11,6 +11,7 @@ import completionsRoutes from "./routes/completionsRoutes";
 import settingsRoutes from "./routes/settingsRoutes";
 import optionsRoutes from "./routes/optionsRoutes";
 import backupRoutes from "./routes/backupRoutes";
+import tagRoutes from "./routes/tagRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
@@ -36,6 +37,7 @@ app.use("/api/completions", completionsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/backup", backupRoutes);
+app.use("/api/tags", tagRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

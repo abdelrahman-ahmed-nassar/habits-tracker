@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "name": "Health",
+    "color": "#FF5733"
+  },
+  {
+    "id": "2",
+    "name": "Productivity",
+    "color": "#33FF57"
+  },
+  {
+    "id": "3",
+    "name": "Learning",
+    "color": "#3357FF"
+  }
+]
