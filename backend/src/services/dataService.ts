@@ -215,6 +215,56 @@ export const createCompletion = async (
 };
 
 /**
+ * Create multiple completion records in a single batch operation
+ * This prevents race conditions when creating multiple completions simultaneously
+ * @param completionsData Array of completion data to create
+ * @returns Array of created completion records
+ */
+export const createCompletionsBatch = async (
+  completionsData: Array<Omit<CompletionRecord, "id" | "completedAt">>
+): Promise<CompletionRecord[]> => {
+  const completions = await getCompletions();
+  const newCompletions: CompletionRecord[] = [];
+  const habitIds = new Set<string>();
+
+  // Process all completions in the batch
+  for (const completionData of completionsData) {
+    // Check if a record already exists for this habit and date
+    const existingIndex = completions.findIndex(
+      (c) =>
+        c.habitId === completionData.habitId && c.date === completionData.date
+    );
+
+    const newCompletion: CompletionRecord = {
+      id: uuidv4(),
+      ...completionData,
+      completedAt: new Date().toISOString(),
+    };
+
+    if (existingIndex >= 0) {
+      // Update existing record
+      completions[existingIndex] = newCompletion;
+    } else {
+      // Add new record
+      completions.push(newCompletion);
+    }
+
+    newCompletions.push(newCompletion);
+    habitIds.add(completionData.habitId);
+  }
+
+  // Write all changes in a single operation to prevent race conditions
+  await writeData(COMPLETIONS_FILE, completions);
+
+  // Update streaks for all affected habits
+  for (const habitId of habitIds) {
+    await updateHabitStreaks(habitId);
+  }
+
+  return newCompletions;
+};
+
+/**
  * Delete a completion record
  * @param id The ID of the completion record to delete
  * @returns Whether the deletion was successful

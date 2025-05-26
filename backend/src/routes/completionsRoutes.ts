@@ -36,6 +36,9 @@ router.get(
 // POST /api/completions - Create a new completion
 router.post("/", completionController.markHabitComplete);
 
+// POST /api/completions/batch - Create multiple completions in a batch
+router.post("/batch", completionController.createCompletionsBatch);
+
 // POST /api/completions/toggle - Toggle a completion
 router.post("/toggle", toggleHabitCompletion);
 

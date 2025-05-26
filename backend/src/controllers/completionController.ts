@@ -232,7 +232,7 @@ export const updateCompletion = asyncHandler(
     const habit = await dataService.getHabitById(completion.habitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${completion.habitId} not found`, 404);
-    }    // For counter type habits, ensure value is provided when completed is true
+    } // For counter type habits, ensure value is provided when completed is true
     if (habit.goalType === "counter" && completed && value === undefined) {
       throw new AppError("Value is required for counter-type habits", 400);
     }
@@ -272,6 +272,85 @@ export const updateCompletion = asyncHandler(
       success: true,
       data: updatedCompletion,
       message: "Completion record updated successfully",
+    });
+  }
+);
+
+/**
+ * Create multiple completion records in a batch
+ * @route POST /api/completions/batch
+ */
+export const createCompletionsBatch = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { completions } = req.body;
+
+    if (!Array.isArray(completions) || completions.length === 0) {
+      throw new AppError(
+        "Completions array is required and must not be empty",
+        400
+      );
+    }
+
+    // Validate each completion in the batch
+    const validatedCompletions: Array<
+      Omit<CompletionRecord, "id" | "completedAt">
+    > = [];
+
+    for (const completionData of completions) {
+      const { habitId, date, completed, value } = completionData;
+
+      // Basic validation
+      if (!habitId || !date) {
+        throw new AppError("Each completion must have habitId and date", 400);
+      }
+
+      // Check if habit exists
+      const habit = await dataService.getHabitById(habitId);
+      if (!habit) {
+        throw new AppError(`Habit with ID ${habitId} not found`, 404);
+      }
+
+      const completionToCreate: Omit<CompletionRecord, "id" | "completedAt"> = {
+        habitId,
+        date,
+        completed: completed !== undefined ? completed : true,
+        value: value !== undefined ? value : undefined,
+      };
+
+      // Validate completion data
+      const errors = validateCompletion(completionToCreate);
+      if (errors.length > 0) {
+        throw new AppError(
+          `Invalid completion data for habit ${habitId}`,
+          400,
+          errors
+        );
+      }
+
+      // For counter type habits, ensure value is provided when completed is true
+      if (
+        habit.goalType === "counter" &&
+        completionToCreate.completed &&
+        completionToCreate.value === undefined
+      ) {
+        throw new AppError(
+          `Value is required for counter-type habit ${habitId}`,
+          400
+        );
+      }
+
+      validatedCompletions.push(completionToCreate);
+    }
+
+    // Create all completions in a single batch operation
+    const createdCompletions = await dataService.createCompletionsBatch(
+      validatedCompletions
+    );
+
+    res.status(200).json({
+      success: true,
+      data: createdCompletions,
+      message: `${createdCompletions.length} habits marked as complete`,
     });
   }
 );

@@ -8,6 +8,9 @@ const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 const existsAsync = promisify(fs.exists);
 
+// File locking mechanism to prevent race conditions
+const fileLocks = new Map<string, Promise<void>>();
+
 // Base directory for data storage
 const dataDir = path.join(__dirname, "../../data");
 const backupDir = path.join(dataDir, "backups");
@@ -99,7 +102,31 @@ export const readData = async <T>(fileName: string): Promise<T> => {
 };
 
 /**
- * Write data to a JSON file
+ * Acquire a lock for a file to prevent concurrent writes
+ * @param fileName The name of the file to lock
+ * @returns A promise that resolves when the lock is acquired
+ */
+const acquireFileLock = async (fileName: string): Promise<() => void> => {
+  // If there's already a lock for this file, wait for it to complete
+  if (fileLocks.has(fileName)) {
+    await fileLocks.get(fileName);
+  }
+
+  let releaseLock: () => void;
+  const lockPromise = new Promise<void>((resolve) => {
+    releaseLock = resolve;
+  });
+
+  fileLocks.set(fileName, lockPromise);
+
+  return () => {
+    fileLocks.delete(fileName);
+    releaseLock!();
+  };
+};
+
+/**
+ * Write data to a JSON file with file locking to prevent race conditions
  * @param fileName The name of the file to write to
  * @param data The data to write
  */
@@ -107,12 +134,16 @@ export const writeData = async <T>(
   fileName: string,
   data: T
 ): Promise<void> => {
+  const releaseLock = await acquireFileLock(fileName);
+
   try {
     const filePath = path.join(dataDir, fileName);
     await writeFileAsync(filePath, JSON.stringify(data, null, 2), "utf8");
   } catch (error) {
     console.error(`Error writing data to ${fileName}:`, error);
     throw error;
+  } finally {
+    releaseLock();
   }
 };
 

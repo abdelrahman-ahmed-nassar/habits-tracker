@@ -355,24 +355,18 @@ const Daily: React.FC = () => {
 
     // Update state immediately
     setDailyRecords(optimisticRecords);
+
     try {
-      // Make API calls in background
-      await Promise.all(
-        habitsToComplete.map((habit) => {
-          if (habit.goalType === "counter") {
-            return completionsService.updateCompletionValue(
-              habit.habitId,
-              formattedDate,
-              habit.goalValue
-            );
-          } else {
-            return RecordsService.markHabitComplete(
-              habit.habitId,
-              formattedDate
-            );
-          }
-        })
-      );
+      // Use batch API to create all completions in a single atomic operation
+      // This prevents race conditions and ensures all habits are marked consistently
+      const completionsToCreate = habitsToComplete.map((habit) => ({
+        habitId: habit.habitId,
+        date: formattedDate,
+        completed: true,
+        value: habit.goalType === "counter" ? habit.goalValue : undefined,
+      }));
+
+      await completionsService.createCompletionsBatch(completionsToCreate);
 
       toast.success(`All ${tag} habits marked as complete`);
     } catch (error) {

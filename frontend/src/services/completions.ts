@@ -63,6 +63,24 @@ class CompletionsService {
   }
 
   /**
+   * Create multiple completions in a batch (prevents race conditions)
+   * @param completions - Array of completion data
+   */
+  async createCompletionsBatch(
+    completions: Array<{
+      habitId: string;
+      date: string;
+      completed?: boolean;
+      value?: number;
+    }>
+  ): Promise<Completion[]> {
+    const response = await axios.post(`${API_BASE_URL}/completions/batch`, {
+      completions,
+    });
+    return response.data.data;
+  }
+
+  /**
    * Toggle a completion status
    * @param habitId - The ID of the habit
    * @param date - The date in ISO format
