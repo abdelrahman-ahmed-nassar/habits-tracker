@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { format } from "date-fns";
 import {
   Home,
   Calendar,
@@ -15,10 +16,11 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
   const location = useLocation();
+  const todayDate = format(new Date(), "yyyy-MM-dd");
 
   const navigation = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/daily", icon: Calendar, label: "Daily" },
+    { path: `/daily/${todayDate}`, icon: Calendar, label: "Daily" },
     { path: "/weekly", icon: Calendar, label: "Weekly" },
     { path: "/monthly", icon: Calendar, label: "Monthly" },
     { path: "/analytics", icon: BarChart2, label: "Analytics" },
@@ -26,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
     { path: "/notes", icon: BookOpen, label: "Notes" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
-
 
   return (
     <aside
@@ -37,13 +38,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
       <div className="h-full flex flex-col">
         <div className="p-4 flex items-center border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold">Navigation</h2>
-        </div>
-
+        </div>{" "}
         <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+              // Special handling for Daily route to match any date
+              const isActive =
+                item.label === "Daily"
+                  ? location.pathname.startsWith("/daily")
+                  : location.pathname === item.path;
               return (
                 <li key={item.path}>
                   <Link
@@ -63,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
             })}
           </ul>
         </nav>
-        </div>
+      </div>
     </aside>
   );
 };

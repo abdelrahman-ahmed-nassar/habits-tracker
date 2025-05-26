@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { format, addDays, subDays } from "date-fns";
+import { useParams, useNavigate } from "react-router-dom";
+import { format, addDays, subDays, isValid, parseISO } from "date-fns";
 import {
   ChevronLeft,
   ChevronRight,
@@ -57,7 +58,19 @@ interface TabData {
 }
 
 const Daily: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const { date: urlDate } = useParams<{ date: string }>();
+  const navigate = useNavigate();
+
+  // Initialize date from URL parameter or default to today
+  const [currentDate, setCurrentDate] = useState<Date>(() => {
+    if (urlDate) {
+      const parsed = parseISO(urlDate);
+      if (isValid(parsed)) {
+        return parsed;
+      }
+    }
+    return new Date();
+  });
   const [dailyRecords, setDailyRecords] = useState<DailyRecords | null>(null);
   const [dailyNote, setDailyNote] = useState<DailyNote | null>(null);
   const [loading, setLoading] = useState(true);
@@ -153,23 +166,37 @@ const Daily: React.FC = () => {
     },
     [formattedDate]
   );
-
   useEffect(() => {
     fetchDailyData();
   }, [fetchDailyData]);
+  // Handle URL parameter changes (only when urlDate changes)
+  useEffect(() => {
+    if (urlDate) {
+      const parsed = parseISO(urlDate);
+      if (isValid(parsed)) {
+        setCurrentDate(parsed);
+      }
+    }
+  }, [urlDate]); // Only depend on urlDate
   const goToPreviousDay = () => {
     setTransitioning(true);
-    setCurrentDate(subDays(currentDate, 1));
+    const newDate = subDays(currentDate, 1);
+    const newFormattedDate = format(newDate, "yyyy-MM-dd");
+    navigate(`/daily/${newFormattedDate}`);
   };
 
   const goToNextDay = () => {
     setTransitioning(true);
-    setCurrentDate(addDays(currentDate, 1));
+    const newDate = addDays(currentDate, 1);
+    const newFormattedDate = format(newDate, "yyyy-MM-dd");
+    navigate(`/daily/${newFormattedDate}`);
   };
 
   const goToToday = () => {
     setTransitioning(true);
-    setCurrentDate(new Date());
+    const newDate = new Date();
+    const newFormattedDate = format(newDate, "yyyy-MM-dd");
+    navigate(`/daily/${newFormattedDate}`);
   };
   const toggleHabitCompletion = async (habitId: string) => {
     if (!dailyRecords) return;

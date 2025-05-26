@@ -15,6 +15,7 @@ function App() {
             <Route index element={<Home />} />
             {/* Add other routes here as we create them */}
             <Route path="daily" element={<Daily />} />
+            <Route path="daily/:date" element={<Daily />} />
             <Route path="weekly" element={<div>Weekly View</div>} />
             <Route path="monthly" element={<div>Monthly View</div>} />
             <Route path="analytics" element={<div>Analytics</div>} />
