@@ -91,5 +91,19 @@
     "date": "2025-05-26",
     "completed": true,
     "completedAt": "2025-05-26T12:29:05.597Z"
+  },
+  {
+    "id": "203ef4fc-e804-4769-bdee-950d1925c2d6",
+    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+    "date": "2025-05-28",
+    "completed": true,
+    "completedAt": "2025-05-26T13:16:22.291Z"
+  },
+  {
+    "id": "69a2afde-b365-495c-bfdf-1996c7596779",
+    "habitId": "reading-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "completedAt": "2025-05-26T14:18:45.316Z"
   }
 ]

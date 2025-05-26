@@ -7,7 +7,7 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 2,
+    "currentStreak": 1,
     "bestStreak": 8,
     "createdAt": "2024-03-20",
     "motivationNote": "Start your day with spiritual connection",
@@ -123,7 +123,7 @@
     "bestStreak": 1,
     "createdAt": "2024-03-20",
     "motivationNote": "Improve mental clarity and reduce stress",
-    "isActive": true
+    "isActive": false
   },
   {
     "id": "reading-1",
@@ -133,7 +133,7 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 0,
+    "currentStreak": 1,
     "bestStreak": 1,
     "createdAt": "2024-03-20",
     "motivationNote": "Expand knowledge and improve focus",

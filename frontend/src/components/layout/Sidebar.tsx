@@ -27,11 +27,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
-  // Mock stats - replace with real data later
-  const stats = {
-    totalHabits: 12,
-    completionRate: "85%",
-  };
 
   return (
     <aside
@@ -68,18 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
             })}
           </ul>
         </nav>
-
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="space-y-2">
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Total Habits: {stats.totalHabits}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              Today's Completion: {stats.completionRate}
-            </div>
-          </div>
         </div>
-      </div>
     </aside>
   );
 };
