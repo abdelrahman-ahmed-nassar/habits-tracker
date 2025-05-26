@@ -47,5 +47,21 @@
     "date": "2025-05-26",
     "completed": true,
     "completedAt": "2025-05-26T12:09:09.430Z"
+  },
+  {
+    "id": "3f23815d-6479-4f02-b484-2b2a5617de9d",
+    "habitId": "teeth-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-26T12:13:44.358Z"
+  },
+  {
+    "id": "99fdbfbc-c7d1-4c11-b484-c8be8028cdd5",
+    "habitId": "water-1",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 2,
+    "completedAt": "2025-05-26T12:19:13.096Z"
   }
 ]

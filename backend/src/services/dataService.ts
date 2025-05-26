@@ -234,6 +234,26 @@ export const deleteCompletion = async (id: string): Promise<boolean> => {
 };
 
 /**
+ * Update a completion record
+ * @param completion The completion record to update
+ * @returns Whether the update was successful
+ */
+export const updateCompletion = async (
+  completion: CompletionRecord
+): Promise<boolean> => {
+  const completions = await getCompletions();
+  const index = completions.findIndex((c) => c.id === completion.id);
+
+  if (index === -1) {
+    return false;
+  }
+
+  completions[index] = completion;
+  await writeData(COMPLETIONS_FILE, completions);
+  return true;
+};
+
+/**
  * Update a habit's current and best streak values
  * Public version of the internal updateHabitStreaks function
  * @param habitId The habit ID to update streaks for

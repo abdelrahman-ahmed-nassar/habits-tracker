@@ -210,3 +210,62 @@ export const getCompletionsInRange = asyncHandler(
     });
   }
 );
+
+/**
+ * Update a completion record
+ * @route PUT /api/completions/:id
+ */
+export const updateCompletion = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { completed, value } = req.body;
+
+    // Get all completions to find the one to update
+    const completions = await dataService.getCompletions();
+    const completion = completions.find((c) => c.id === id);
+
+    if (!completion) {
+      throw new AppError(`Completion with ID ${id} not found`, 404);
+    }
+
+    // Check if habit exists
+    const habit = await dataService.getHabitById(completion.habitId);
+    if (!habit) {
+      throw new AppError(`Habit with ID ${completion.habitId} not found`, 404);
+    }
+
+    // For counter type habits, ensure value is provided when completed is true
+    if (habit.goalType === "counter" && completed && value === undefined) {
+      throw new AppError("Value is required for counter-type habits", 400);
+    }
+
+    // Update completion data
+    const updatedCompletion = {
+      ...completion,
+      completed: completed !== undefined ? completed : completion.completed,
+      value: value !== undefined ? value : completion.value,
+      completedAt: new Date().toISOString(),
+    };
+
+    // Validate updated completion data
+    const errors = validateCompletion(updatedCompletion);
+    if (errors.length > 0) {
+      throw new AppError("Invalid completion data", 400, errors);
+    }
+
+    // Save updated completion
+    const success = await dataService.updateCompletion(updatedCompletion);
+    if (!success) {
+      throw new AppError("Failed to update completion record", 500);
+    }
+
+    // Update the habit streaks after update
+    await dataService.updateHabitStreaks(completion.habitId);
+
+    res.status(200).json({
+      success: true,
+      data: updatedCompletion,
+      message: "Completion record updated successfully",
+    });
+  }
+);

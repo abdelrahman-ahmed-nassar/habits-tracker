@@ -42,4 +42,7 @@ router.post("/toggle", toggleHabitCompletion);
 // DELETE /api/completions/:habitId/:date - Delete a completion
 router.delete("/:habitId/:date", completionController.deleteCompletion);
 
+// PUT /api/completions/:id - Update a completion
+router.put("/:id", completionController.updateCompletion);
+
 export default router;
