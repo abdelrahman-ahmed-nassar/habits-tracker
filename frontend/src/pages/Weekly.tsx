@@ -138,6 +138,16 @@ interface WeekStats {
   bestHabits: { habitName: string; completionRate: number }[];
 }
 
+// Helper function to get background gradient based on completion rate
+const getBackgroundGradient = (successRate: number): string => {
+  if (successRate >= 70) {
+    return "bg-gradient-to-r from-green-50 to-green-50/50 dark:from-green-900/20 dark:to-green-800/10";
+  } else if (successRate >= 40) {
+    return "bg-gradient-to-r from-yellow-50 to-yellow-50/50 dark:from-yellow-900/20 dark:to-yellow-800/10";
+  }
+  return "bg-gradient-to-r from-red-50 to-red-50/50 dark:from-red-900/20 dark:to-red-800/10";
+};
+
 // Compact Habit Card for the board view
 const HabitCard: React.FC<HabitCardProps> = ({
   record,
@@ -147,23 +157,44 @@ const HabitCard: React.FC<HabitCardProps> = ({
   // Determine color based on completion and tag
   const getBgColor = () => {
     if (record.completed) {
-      return "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800";
+      return "bg-gradient-to-r from-green-50 to-green-50/50 dark:from-green-900/20 dark:to-green-800/10 border-green-200 dark:border-green-800";
     }
-    return "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700";
+    return "bg-white dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600";
   };
 
   return (
     <div
-      className={`rounded-lg border ${getBgColor()} flex items-center justify-between p-3 cursor-pointer transition-all hover:shadow-md hover:translate-y-[-1px] relative w-full snap-start`}
+      className={`rounded-xl border ${getBgColor()} flex items-center p-3 cursor-pointer transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start group`}
       onClick={() => onToggleCompletion(record.habitId, record.date)}
     >
-      <div className="flex flex-col mr-2 flex-1 min-w-0">
-        <div className="font-medium truncate mb-1" title={record.habitName}>
+      {/* Checkbox container */}
+      <div
+        className={`flex-shrink-0 w-6 h-6 rounded-lg mr-3 flex items-center justify-center transition-all duration-300
+          ${
+            record.completed
+              ? "bg-gradient-to-br from-green-400 to-green-500 dark:from-green-500 dark:to-green-600 shadow-green-200 dark:shadow-green-900/20 shadow-sm"
+              : "bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 group-hover:border-green-400 dark:group-hover:border-green-500"
+          }`}
+      >
+        {record.completed ? (
+          <Check size={14} className="text-white animate-scale-check" />
+        ) : (
+          <div className="w-4 h-4 rounded-sm group-hover:bg-green-100 dark:group-hover:bg-green-800/20 transition-colors duration-200" />
+        )}
+      </div>
+
+      <div className="flex flex-col flex-1 min-w-0">
+        <div 
+          className={`font-medium truncate mb-1 transition-colors duration-200 ${
+            record.completed ? 'text-green-700 dark:text-green-400' : ''
+          }`} 
+          title={record.habitName}
+        >
           {record.habitName}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Badge
-            variant="default"
+            variant={record.completed ? "success" : "default"}
             size="sm"
             className="bg-opacity-70 dark:bg-opacity-50"
           >
@@ -171,13 +202,17 @@ const HabitCard: React.FC<HabitCardProps> = ({
           </Badge>
 
           {record.goalType === "counter" && (
-            <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+            <span className={`text-xs px-2 py-0.5 rounded-full transition-colors duration-200
+              ${record.completed 
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"}`
+            }>
               {record.value}/{record.goalValue}
             </span>
           )}
 
           {record.currentStreak > 0 && (
-            <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center">
+            <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full">
               <svg
                 className="w-3 h-3 mr-0.5"
                 viewBox="0 0 20 20"
@@ -195,19 +230,9 @@ const HabitCard: React.FC<HabitCardProps> = ({
         </div>
       </div>
 
-      <div
-        className={`flex-shrink-0 flex items-center justify-center rounded-full w-8 h-8 ${
-          record.completed
-            ? "bg-gradient-to-br from-green-400 to-green-600 dark:from-green-500 dark:to-green-700"
-            : "bg-gray-200 dark:bg-gray-700"
-        }`}
-      >
-        {record.completed && <Check size={16} className="text-white" />}
-      </div>
-
       {isUpdating && (
-        <div className="absolute inset-0 bg-white/70 dark:bg-black/50 flex items-center justify-center rounded-lg backdrop-blur-sm">
-          <div className="w-5 h-5 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 bg-white/70 dark:bg-black/50 flex items-center justify-center rounded-xl backdrop-blur-sm">
+          <div className="w-5 h-5 border-2 border-t-transparent border-green-500 rounded-full animate-spin"></div>
         </div>
       )}
     </div>

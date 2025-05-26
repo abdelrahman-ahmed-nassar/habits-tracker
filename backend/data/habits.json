@@ -24,7 +24,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 8,
-    "currentCounter": 4,
+    "currentCounter": 5,
     "createdAt": "2024-03-20",
     "motivationNote": "Take a spiritual break during your busy day",
     "isActive": true
@@ -39,7 +39,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 7,
-    "currentCounter": 4,
+    "currentCounter": 5,
     "createdAt": "2024-03-20",
     "motivationNote": "Maintain spiritual focus in the afternoon",
     "isActive": true
@@ -54,7 +54,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 8,
-    "currentCounter": 2,
+    "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "Reflect on your day as the sun sets",
     "isActive": true
@@ -69,7 +69,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 8,
-    "currentCounter": 1,
+    "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true
@@ -82,9 +82,9 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 2,
+    "currentStreak": 1,
     "bestStreak": 3,
-    "currentCounter": 0,
+    "currentCounter": 1,
     "createdAt": "2024-03-20",
     "motivationNote": "Build strength and improve overall health",
     "isActive": true
