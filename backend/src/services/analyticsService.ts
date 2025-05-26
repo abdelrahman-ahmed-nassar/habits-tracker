@@ -108,7 +108,8 @@ export const calculateAllHabitsAnalytics = async (
           (7 * 24 * 60 * 60 * 1000)
       );
       const averageCompletionsPerWeek =
-        weeksInPeriod > 0 ? totalCompletions / weeksInPeriod : 0;      return {
+        weeksInPeriod > 0 ? totalCompletions / weeksInPeriod : 0;
+      return {
         habitId: habit.id,
         habitName: habit.name,
         tag: habit.tag,

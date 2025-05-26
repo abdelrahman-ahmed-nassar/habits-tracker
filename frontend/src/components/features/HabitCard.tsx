@@ -17,6 +17,10 @@ interface Record {
   goalType: string;
   goalValue: number;
   value: number;
+  // Analytics fields
+  currentStreak: number;
+  bestStreak: number;
+  currentCounter: number;
 }
 
 interface HabitCardProps {
@@ -32,24 +36,6 @@ const HabitCard: React.FC<HabitCardProps> = ({
   onValueUpdate,
   isUpdating = false,
 }) => {
-  const getSuccessRate = () => {
-    // This would ideally come from the habit analytics
-    // For now, we'll show a mock success rate
-    return Math.floor(Math.random() * 41) + 60; // 60-100%
-  };
-
-  const getCurrentStreak = () => {
-    // This would ideally come from the habit data
-    // For now, we'll show a mock streak
-    return Math.floor(Math.random() * 20) + 1; // 1-20 days
-  };
-
-  const getBestStreak = () => {
-    // This would ideally come from the habit data
-    // For now, we'll show a mock best streak
-    return Math.floor(Math.random() * 50) + 10; // 10-60 days
-  };
-
   const getProgressValue = () => {
     if (record.goalType === "counter") {
       return Math.min((record.value / record.goalValue) * 100, 100);
@@ -64,9 +50,6 @@ const HabitCard: React.FC<HabitCardProps> = ({
     return record.completed ? "Completed" : "Not completed";
   };
 
-  const successRate = getSuccessRate();
-  const currentStreak = getCurrentStreak();
-  const bestStreak = getBestStreak();
   const progressValue = getProgressValue();
 
   return (
@@ -107,27 +90,25 @@ const HabitCard: React.FC<HabitCardProps> = ({
             <div className="flex items-center justify-center">
               <Flame className="w-4 h-4 text-orange-500" />
             </div>
-            <div className="text-sm font-medium">{currentStreak}</div>
+            <div className="text-sm font-medium">{record.currentStreak}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Current
             </div>
           </div>
-
           <div className="space-y-1">
             <div className="flex items-center justify-center">
               <Target className="w-4 h-4 text-blue-500" />
             </div>
-            <div className="text-sm font-medium">{bestStreak}</div>
+            <div className="text-sm font-medium">{record.bestStreak}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400">Best</div>
-          </div>
-
+          </div>{" "}
           <div className="space-y-1">
             <div className="flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-green-500" />
             </div>
-            <div className="text-sm font-medium">{successRate}%</div>
+            <div className="text-sm font-medium">{record.currentCounter}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              Success
+              Counter
             </div>
           </div>
         </div>

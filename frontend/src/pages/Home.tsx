@@ -279,56 +279,65 @@ const Home: React.FC = () => {
   };
 
   const renderMostConsistentHabits = () => {
-    if (!dashboardData || !dashboardData.mostConsistentHabits.length) return null;
+    if (!dashboardData || !dashboardData.mostConsistentHabits.length)
+      return null;
 
     return (
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">Most Consistent Habits</h3>
         <div className="space-y-4">
-          {dashboardData.mostConsistentHabits.slice(0, 5).map((habit, index) => (
-            <div
-              key={habit.habitName}
-              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium">
-                  {index + 1}
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                    {habit.habitName}
-                  </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {Math.round(habit.successRate * 100)}% success rate
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="flex items-center space-x-4 text-sm">
-                  <div className="text-center">
-                    <span className="block text-orange-500 font-medium">
-                      {habit.currentStreak}
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400">Current</span>
+          {dashboardData.mostConsistentHabits
+            .slice(0, 5)
+            .map((habit, index) => (
+              <div
+                key={habit.habitName}
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium">
+                    {index + 1}
                   </div>
-                  <div className="text-center">
-                    <span className="block text-blue-500 font-medium">
-                      {habit.bestStreak}
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400">Best</span>
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                      {habit.habitName}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {Math.round(habit.successRate * 100)}% success rate
+                    </p>
                   </div>
-                  {habit.currentCounter > 0 && (
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center space-x-4 text-sm">
                     <div className="text-center">
-                      <span className="block text-green-500 font-medium">
-                        {habit.currentCounter}
+                      <span className="block text-orange-500 font-medium">
+                        {habit.currentStreak}
                       </span>
-                      <span className="text-gray-500 dark:text-gray-400">Counter</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Current
+                      </span>
                     </div>
-                  )}
+                    <div className="text-center">
+                      <span className="block text-blue-500 font-medium">
+                        {habit.bestStreak}
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Best
+                      </span>
+                    </div>
+                    {habit.currentCounter > 0 && (
+                      <div className="text-center">
+                        <span className="block text-green-500 font-medium">
+                          {habit.currentCounter}
+                        </span>
+                        <span className="text-gray-500 dark:text-gray-400">
+                          Counter
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     );

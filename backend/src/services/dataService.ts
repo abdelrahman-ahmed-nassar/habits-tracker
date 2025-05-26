@@ -74,7 +74,12 @@ export const getHabitById = async (id: string): Promise<Habit | null> => {
 export const createHabit = async (
   habitData: Omit<
     Habit,
-    "id" | "createdAt" | "currentStreak" | "bestStreak" | "currentCounter" | "isActive"
+    | "id"
+    | "createdAt"
+    | "currentStreak"
+    | "bestStreak"
+    | "currentCounter"
+    | "isActive"
   >
 ): Promise<Habit> => {
   const habits = await getHabits();
@@ -319,18 +324,18 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
 
   // Get all completions for this habit
   const completions = await getCompletionsByHabitId(habitId);
-  
+
   // Sort by date (oldest first for streak calculations)
   completions.sort((a, b) => a.date.localeCompare(b.date));
 
   // Calculate currentCounter from today's completion (if exists)
-  const today = new Date().toISOString().split('T')[0];
-  const todayCompletion = completions.find(c => c.date === today);
-  
+  const today = new Date().toISOString().split("T")[0];
+  const todayCompletion = completions.find((c) => c.date === today);
+
   if (habit.goalType === "counter") {
     // For counter-type habits, currentCounter is today's value
     currentCounter = todayCompletion?.value || 0;
-    
+
     // Calculate current streak (consecutive days where value >= goalValue)
     currentStreak = calculateCounterStreak(completions, habit.goalValue);
 
@@ -341,7 +346,7 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
   } else {
     // For streak-type habits, currentCounter is always 0
     currentCounter = 0;
-    
+
     const dailyCompletions = getDailyCompletionStatus(habit, completions);
 
     // Calculate current streak - counting back from today or the last record
@@ -539,6 +544,7 @@ const calculateCounterStreak = (
       );
 
       if (dayDiff > 1) break;
+      break;
     }
 
     // Check if the goal was met
@@ -720,6 +726,7 @@ export const calculateHabitAnalytics = async (
       longestStreak: 0,
       totalCompletions: 0,
       averageCompletionsPerWeek: 0,
+      currentCounter: habit.currentCounter,
     };
   }
 
@@ -776,7 +783,6 @@ export const calculateHabitAnalytics = async (
     ) + 1;
   const totalWeeks = Math.max(1, totalDays / 7);
   const averageCompletionsPerWeek = totalCompletions / totalWeeks;
-
   return {
     habitId,
     successRate,
@@ -785,6 +791,7 @@ export const calculateHabitAnalytics = async (
     longestStreak,
     totalCompletions,
     averageCompletionsPerWeek,
+    currentCounter: habit.currentCounter,
   };
 };
 

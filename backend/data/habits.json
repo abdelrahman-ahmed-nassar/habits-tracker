@@ -97,9 +97,9 @@
     "repetition": "daily",
     "goalType": "counter",
     "goalValue": 2,
-    "currentStreak": 2,
+    "currentStreak": 0,
     "bestStreak": 3,
-    "currentCounter": 2,
+    "currentCounter": 1,
     "createdAt": "2024-03-20",
     "motivationNote": "Maintain good oral hygiene",
     "isActive": true
@@ -112,9 +112,9 @@
     "repetition": "daily",
     "goalType": "counter",
     "goalValue": 8,
-    "currentStreak": 2,
+    "currentStreak": 0,
     "bestStreak": 3,
-    "currentCounter": 8,
+    "currentCounter": 6,
     "createdAt": "2024-03-20",
     "motivationNote": "Stay hydrated for better health",
     "isActive": true

@@ -34,7 +34,10 @@ interface Record {
   habitTag: string;
   goalType: string;
   goalValue: number;
-  value: number;
+  value: number; // Analytics fields
+  currentStreak: number;
+  bestStreak: number;
+  currentCounter: number;
 }
 
 interface DailyStats {
@@ -95,12 +98,12 @@ const Daily: React.FC = () => {
 
         // Get existing completions for this date
         const existingCompletions =
-          await completionsService.getDailyCompletions(formattedDate);
-
-        // Create a map of existing completions for quick lookup
+          await completionsService.getDailyCompletions(formattedDate); // Create a map of existing completions for quick lookup
         const completionMap = new Map(
           existingCompletions.map((c) => [c.habitId, c])
-        ); // Create records for all active habits, using existing completions or defaults
+        );
+
+        // Create records for all active habits, using existing completions or defaults
         const records = activeHabits.map((habit) => {
           const completion = completionMap.get(habit.id);
           let value = 0;
@@ -127,6 +130,11 @@ const Daily: React.FC = () => {
             goalType: habit.goalType,
             goalValue: habit.goalValue,
             value,
+            // Add analytics data from habit object
+            currentStreak: habit.currentStreak || 0,
+            bestStreak: habit.bestStreak || 0,
+            successRate: 0, // Will be calculated if needed
+            currentCounter: habit.currentCounter || 0,
           };
         });
 
