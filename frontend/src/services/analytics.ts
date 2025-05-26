@@ -62,12 +62,49 @@ interface DailyAnalytics {
 interface WeeklyAnalytics {
   startDate: string;
   endDate: string;
-  totalHabits: number;
-  completionRate: number;
   dailyStats: Array<{
     date: string;
+    dayOfWeek: number;
+    dayName: string;
+    totalHabits: number;
     completedHabits: number;
     completionRate: number;
+  }>;
+  weeklyStats: {
+    overallSuccessRate: number;
+    totalCompletions: number;
+    mostProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    leastProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    mostProductiveHabit: {
+      habitId: string;
+      habitName: string;
+      activeDaysCount: number;
+      completedDaysCount: number;
+      successRate: number;
+      completedDates: string[];
+    };
+  };
+  habitStats: Array<{
+    habitId: string;
+    habitName: string;
+    activeDaysCount: number;
+    completedDaysCount: number;
+    successRate: number;
+    completedDates: string[];
   }>;
 }
 

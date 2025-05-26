@@ -65,5 +65,145 @@
     "completed": true,
     "value": 2,
     "completedAt": "2025-05-26T17:18:24.743Z"
+  },
+  {
+    "id": "1bcc58f5-0d8e-4d88-a4d9-5b737468481f",
+    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:28.544Z"
+  },
+  {
+    "id": "bab91492-567e-49a5-aa21-fe2a8aeb005b",
+    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:29.429Z"
+  },
+  {
+    "id": "d373fc35-0127-49a1-8282-975d5a0e8252",
+    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:30.747Z"
+  },
+  {
+    "id": "8a8e556b-ffb6-49a7-b3a5-74c316b886ac",
+    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:31.797Z"
+  },
+  {
+    "id": "df55fc95-1c27-4715-b87e-619640296eb3",
+    "habitId": "reading-1",
+    "date": "2025-05-22",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:45.247Z"
+  },
+  {
+    "id": "a2a9e15b-a900-4af2-b74f-8b6e549ed6fa",
+    "habitId": "reading-1",
+    "date": "2025-05-21",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:45.749Z"
+  },
+  {
+    "id": "c18667ae-74d7-4ac6-924a-a50ee0d8be3c",
+    "habitId": "reading-1",
+    "date": "2025-05-20",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:46.165Z"
+  },
+  {
+    "id": "84bbea03-bf67-4be0-babb-cccea121c8c3",
+    "habitId": "reading-1",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T20:32:46.581Z"
+  },
+  {
+    "id": "8f1ae7d4-cbc1-46e4-bdf3-5e9743d8b7f2",
+    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+    "date": "2025-05-20",
+    "completed": true,
+    "completedAt": "2025-05-26T21:11:38.787Z"
+  },
+  {
+    "id": "3550f883-a173-4e47-87a6-db48f6cf58b2",
+    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+    "date": "2025-05-23",
+    "completed": true,
+    "completedAt": "2025-05-26T20:38:30.523Z"
+  },
+  {
+    "id": "92f19dde-6ebd-467e-8938-025aa61ef8af",
+    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+    "date": "2025-05-23",
+    "completed": true,
+    "completedAt": "2025-05-26T20:38:31.546Z"
+  },
+  {
+    "id": "2a7b2046-321c-496a-baf7-6cbb634bbf1a",
+    "habitId": "reading-1",
+    "date": "2025-05-18",
+    "completed": true,
+    "completedAt": "2025-05-26T20:39:22.427Z"
+  },
+  {
+    "id": "cecb7155-0bf9-4542-a61d-bd99e8a5a353",
+    "habitId": "reading-1",
+    "date": "2025-05-23",
+    "completed": true,
+    "completedAt": "2025-05-26T20:39:23.755Z"
+  },
+  {
+    "id": "ef82bd11-b058-48d8-84b6-46279d6e8cd6",
+    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+    "date": "2025-05-20",
+    "completed": true,
+    "completedAt": "2025-05-26T20:39:27.900Z"
+  },
+  {
+    "id": "83edd997-ae5f-4565-a6e9-ff3427ed92f5",
+    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+    "date": "2025-05-20",
+    "completed": true,
+    "completedAt": "2025-05-26T20:39:28.611Z"
+  },
+  {
+    "id": "9f7a2d96-8d4f-464e-b2f7-6df62313e631",
+    "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+    "date": "2025-05-18",
+    "completed": true,
+    "completedAt": "2025-05-26T20:39:29.443Z"
+  },
+  {
+    "id": "d983d552-9aa6-4732-9d57-b494dee6df2c",
+    "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+    "date": "2025-05-18",
+    "completed": false,
+    "completedAt": "2025-05-26T21:11:51.323Z"
+  },
+  {
+    "id": "4a7bbede-e070-4b74-9b77-df0b885d6a90",
+    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+    "date": "2025-05-18",
+    "completed": true,
+    "completedAt": "2025-05-26T21:11:48.636Z"
+  },
+  {
+    "id": "175f638b-2c36-4a64-85af-f76611ae2d18",
+    "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+    "date": "2025-05-18",
+    "completed": false,
+    "completedAt": "2025-05-26T21:11:53.715Z"
+  },
+  {
+    "id": "f4cb1ad0-c7e3-4d88-9ef4-b13e63a4bc4d",
+    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+    "date": "2025-05-19",
+    "completed": true,
+    "completedAt": "2025-05-26T21:12:08.277Z"
   }
 ]
