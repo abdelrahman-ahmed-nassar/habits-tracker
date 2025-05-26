@@ -18,6 +18,7 @@ import {
   getTodayDateString,
 } from "../utils/dateUtils";
 import { analyticsCache } from "../utils/cacheUtils";
+import * as analyticsService from "../services/analyticsService";
 
 /**
  * Get overall analytics and trends
@@ -908,6 +909,28 @@ export const clearAnalyticsCache = asyncHandler(
     res.status(200).json({
       success: true,
       message: "Analytics cache cleared successfully",
+    });
+  }
+);
+
+/**
+ * Get analytics for all habits
+ * @route GET /api/analytics/habits
+ */
+export const getAllHabitsAnalytics = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { period = "30days" } = req.query;
+
+    // Generate cache key
+    const cacheKey = `analytics:habits:${period}`;
+
+    const data = await analyticsCache.getOrSet(cacheKey, async () => {
+      return analyticsService.calculateAllHabitsAnalytics(period as string);
+    });
+
+    res.status(200).json({
+      success: true,
+      data,
     });
   }
 );
