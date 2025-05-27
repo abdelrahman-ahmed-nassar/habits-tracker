@@ -91,7 +91,8 @@ const Daily: React.FC = () => {
         setLoading(true);
       }
       setTransitioning(false); // Clear transitioning state
-      try {        // First, get all active habits
+      try {
+        // First, get all active habits
         const allHabits = await habitsService.getAllHabits();
         const activeHabits = allHabits.filter((habit) => habit.isActive);
 
@@ -99,10 +100,13 @@ const Daily: React.FC = () => {
         const currentDateObj = new Date(formattedDate);
         const dayOfWeek = currentDateObj.getDay(); // 0 = Sunday, 1 = Monday, etc.
         const dayOfMonth = currentDateObj.getDate(); // 1-31
-        
+
         const habitsForToday = activeHabits.filter((habit) => {
           // Check if habit was created before or on this date
-          if (habit.createdAt && habit.createdAt.split("T")[0] > formattedDate) {
+          if (
+            habit.createdAt &&
+            habit.createdAt.split("T")[0] > formattedDate
+          ) {
             return false;
           }
 
@@ -114,9 +118,11 @@ const Daily: React.FC = () => {
             return habit.specificDays && habit.specificDays.includes(dayOfWeek);
           } else if (habit.repetition === "monthly") {
             // Monthly habits appear only on specific days of the month
-            return habit.specificDays && habit.specificDays.includes(dayOfMonth);
+            return (
+              habit.specificDays && habit.specificDays.includes(dayOfMonth)
+            );
           }
-          
+
           return false; // Unknown repetition pattern
         });
 
@@ -125,7 +131,7 @@ const Daily: React.FC = () => {
           await completionsService.getDailyCompletions(formattedDate); // Create a map of existing completions for quick lookup
         const completionMap = new Map(
           existingCompletions.map((c) => [c.habitId, c])
-        );        // Create records for habits scheduled for today, using existing completions or defaults
+        ); // Create records for habits scheduled for today, using existing completions or defaults
         const records = habitsForToday.map((habit) => {
           const completion = completionMap.get(habit.id);
           let value = 0;

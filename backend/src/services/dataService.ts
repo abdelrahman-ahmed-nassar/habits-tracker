@@ -592,12 +592,13 @@ export const saveNote = async (
   const now = new Date().toISOString();
 
   const existingIndex = notes.findIndex((n) => n.date === noteData.date);
-
   if (existingIndex >= 0) {
     // Update existing note
     notes[existingIndex] = {
       ...notes[existingIndex],
       content: noteData.content,
+      mood: noteData.mood,
+      productivityLevel: noteData.productivityLevel,
       updatedAt: now,
     };
 
@@ -616,6 +617,36 @@ export const saveNote = async (
     await writeData(NOTES_FILE, notes);
     return newNote;
   }
+};
+
+/**
+ * Update a note by ID
+ * @param id The note ID to update
+ * @param noteData The note data to update
+ * @returns The updated note if successful, null if not found
+ */
+export const updateNote = async (
+  id: string,
+  noteData: Partial<Omit<DailyNote, "id" | "createdAt" | "updatedAt">>
+): Promise<DailyNote | null> => {
+  const notes = await getNotes();
+  const index = notes.findIndex((n) => n.id === id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  const now = new Date().toISOString();
+  const updatedNote: DailyNote = {
+    ...notes[index],
+    ...noteData,
+    updatedAt: now,
+  };
+
+  notes[index] = updatedNote;
+  await writeData(NOTES_FILE, notes);
+
+  return updatedNote;
 };
 
 /**

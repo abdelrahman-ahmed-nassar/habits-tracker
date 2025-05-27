@@ -82,30 +82,42 @@ export const updateNote = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { content, mood, productivityLevel } = req.body;
 
-  const notes = await dataService.getNotes();
-  const note = notes.find((n) => n.id === id);
-
-  if (!note) {
-    throw new AppError(`Note with ID ${id} not found`, 404);
-  }
-
-  const noteData: Omit<DailyNote, "id" | "createdAt" | "updatedAt"> = {
-    date: note.date,
+  const noteData: Partial<Omit<DailyNote, "id" | "createdAt" | "updatedAt">> = {
     content,
     mood,
     productivityLevel,
   };
 
-  // Validate note data
-  const validationErrors = await validateDailyNote(noteData);
-  if (validationErrors.length > 0) {
-    throw new AppError(validationErrors[0].message, 400);
+  // Validate note data if provided fields are not empty
+  if (content !== undefined || mood !== undefined || productivityLevel !== undefined) {
+    // For validation, we need to get the existing note to provide full context
+    const existingNote = await dataService.getNotes().then(notes => notes.find(n => n.id === id));
+    if (!existingNote) {
+      throw new AppError(`Note with ID ${id} not found`, 404);
+    }
+
+    const fullNoteData = {
+      date: existingNote.date,
+      content: content !== undefined ? content : existingNote.content,
+      mood: mood !== undefined ? mood : existingNote.mood,
+      productivityLevel: productivityLevel !== undefined ? productivityLevel : existingNote.productivityLevel,
+    };
+
+    const validationErrors = await validateDailyNote(fullNoteData);
+    if (validationErrors.length > 0) {
+      throw new AppError(validationErrors[0].message, 400);
+    }
   }
 
-  const updatedNote = await dataService.saveNote(noteData);
+  const updatedNote = await dataService.updateNote(id, noteData);
+  if (!updatedNote) {
+    throw new AppError(`Note with ID ${id} not found`, 404);
+  }
+
   res.status(200).json({
     success: true,
     data: updatedNote,
+    message: "Note updated successfully",
   });
 });
 

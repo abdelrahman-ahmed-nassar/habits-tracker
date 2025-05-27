@@ -1,85 +1,11 @@
 [
   {
-    "id": "4691d35e-f6a7-4bbd-b3af-7050e71642d0",
-    "date": "2025-05-23",
-    "content": "Sample note for 2025-05-23. Today was productive.",
-    "createdAt": "2025-05-23T04:20:38.860Z",
-    "updatedAt": "2025-05-23T04:20:38.860Z"
-  },
-  {
-    "id": "91b8e5ff-f338-4b80-8d97-90ecd05df1bd",
-    "date": "2025-05-22",
-    "content": "Sample note for 2025-05-22. Today was challenging.",
-    "createdAt": "2025-05-22T04:20:38.860Z",
-    "updatedAt": "2025-05-22T04:20:38.860Z"
-  },
-  {
-    "id": "83de817a-221d-498c-a22b-c120927d1722",
-    "date": "2025-05-21",
-    "content": "Sample note for 2025-05-21. Today was productive.",
-    "createdAt": "2025-05-21T04:20:38.860Z",
-    "updatedAt": "2025-05-21T04:20:38.860Z"
-  },
-  {
-    "id": "192ce63b-949d-4762-a783-095a0486c8d9",
-    "date": "2025-05-18",
-    "content": "Sample note for 2025-05-18. Today was productive.",
-    "createdAt": "2025-05-18T04:20:38.860Z",
-    "updatedAt": "2025-05-18T04:20:38.860Z"
-  },
-  {
-    "id": "a18f1f91-cc4e-4c97-8a3d-e05986391223",
-    "date": "2025-05-17",
-    "content": "Sample note for 2025-05-17. Today was productive.",
-    "createdAt": "2025-05-17T04:20:38.860Z",
-    "updatedAt": "2025-05-17T04:20:38.860Z"
-  },
-  {
-    "id": "65cdc059-e07e-4d2e-99bc-3960e05468c4",
-    "date": "2025-05-16",
-    "content": "Sample note for 2025-05-16. Today was challenging.",
-    "createdAt": "2025-05-16T04:20:38.860Z",
-    "updatedAt": "2025-05-16T04:20:38.860Z"
-  },
-  {
-    "id": "c8527445-b908-4dd1-afa3-5aa30ef1ab0a",
-    "date": "2024-03-20",
-    "content": "Today was a great day!",
-    "createdAt": "2025-05-25T13:58:57.772Z",
-    "updatedAt": "2025-05-25T13:58:57.772Z"
-  },
-  {
-    "id": "9ef7039a-419b-42f8-9be5-4d172e6181a7",
-    "date": "2024-03-21",
-    "content": "Invalid mood test",
-    "createdAt": "2025-05-25T14:00:41.192Z",
-    "updatedAt": "2025-05-25T14:00:41.192Z"
-  },
-  {
-    "id": "12df896b-9974-426a-a252-f716ad4bd56f",
-    "date": "2025-05-24",
-    "content": "Feeling motivated today!",
-    "mood": "Happy",
-    "productivityLevel": "High",
-    "createdAt": "2025-05-25T15:04:20.642Z",
-    "updatedAt": "2025-05-25T15:04:20.642Z"
-  },
-  {
-    "id": "8cdead0b-8bd5-4230-9271-b3a8e57e91f6",
-    "date": "2025-05-25",
-    "content": "Great day! Completed several prayer habits and feeling spiritually centered.",
-    "mood": "Happy",
-    "productivityLevel": "High",
-    "createdAt": "2025-05-25T20:18:40.959Z",
-    "updatedAt": "2025-05-25T20:18:40.959Z"
-  },
-  {
-    "id": "9c6523a9-8328-477b-bf33-bf84b2a98a25",
-    "date": "2025-05-26",
-    "content": "يوم جديد\n\nبداية كويسه",
-    "mood": "Neutral",
-    "productivityLevel": "Low",
-    "createdAt": "2025-05-26T11:45:45.429Z",
-    "updatedAt": "2025-05-26T15:43:09.976Z"
+    "id": "588f6ba0-ca7e-47d9-aae0-9ef30725859b",
+    "date": "2025-05-27",
+    "content": "sd7jhkfdh s7jhdfdj",
+    "mood": "متحمس",
+    "productivityLevel": "High ⚡⚡⚡⚡",
+    "createdAt": "2025-05-27T10:45:58.994Z",
+    "updatedAt": "2025-05-27T11:02:31.938Z"
   }
 ]
