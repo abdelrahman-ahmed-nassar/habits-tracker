@@ -1,0 +1,84 @@
+{
+  "name": "habits-tracker",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Personal habit tracking desktop application",
+  "author": "Your Name <your.email@example.com>",
+  "type": "module",
+  "main": "dist-electron/main.cjs",
+  "homepage": "./",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "electron": "electron .",
+    "electron:dev": "node ../dev-electron.js",
+    "electron:build": "npm run build && if not exist dist-electron mkdir dist-electron && cp electron/main.cjs dist-electron/ && cp electron/preload.js dist-electron/",
+    "electron:pack": "npm run electron:build && electron-builder --dir",
+    "electron:dist": "npm run electron:build && electron-builder",
+    "build:electron-main": "mkdir -p dist-electron && cp electron/*.js dist-electron/",
+    "prepare:electron": "if not exist dist-electron mkdir dist-electron && cp electron/main.cjs dist-electron/ && cp electron/preload.js dist-electron/",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "@uiw/react-md-editor": "^4.0.7",
+    "apexcharts": "^4.7.0",
+    "axios": "^1.9.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.12.2",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.0",
+    "react-apexcharts": "^1.7.0",
+    "react-circular-progressbar": "^2.2.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.6.1",
+    "react-toastify": "^11.0.5",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@types/react-toastify": "^4.0.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^3.0.1",
+    "electron-updater": "^6.6.2",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.habitsTracker.app",
+    "productName": "HabitsTracker",
+    "directories": {
+      "output": "electron-build"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "win": {
+      "target": "dir"
+    }
+  }
+}

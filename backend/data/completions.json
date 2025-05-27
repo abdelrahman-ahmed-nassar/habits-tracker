@@ -30,11 +30,11 @@
     "completedAt": "2025-05-27T09:59:37.652Z"
   },
   {
-    "id": "41b86d36-d1b5-4fb7-b5fd-10df9639036e",
+    "id": "5862285d-74bd-4047-8ea4-a66b091b4f18",
     "habitId": "thekr-1",
     "date": "2025-05-27",
-    "completed": false,
-    "completedAt": "2025-05-27T14:07:04.485Z"
+    "completed": true,
+    "completedAt": "2025-05-27T16:39:34.520Z"
   },
   {
     "id": "13e75916-3325-4911-8c1f-442bdabf1b1f",
@@ -327,27 +327,27 @@
     "completedAt": "2025-05-27T11:27:56.603Z"
   },
   {
-    "id": "d8256710-50c7-4678-a7d6-79c6aef21e15",
+    "id": "f52ea4c0-f897-40c6-ac8c-db596a4bfeba",
     "habitId": "sunnah-6",
     "date": "2025-05-27",
-    "completed": false,
-    "value": 0,
-    "completedAt": "2025-05-27T14:07:08.931Z"
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-27T16:39:39.220Z"
   },
   {
-    "id": "80fcd014-e3b3-45be-bb41-cb6e475ff329",
+    "id": "709b5957-7bf6-4f3f-8e18-d4f69070e7bb",
     "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
     "date": "2025-05-27",
-    "completed": false,
-    "completedAt": "2025-05-27T14:07:07.106Z"
+    "completed": true,
+    "completedAt": "2025-05-27T16:39:36.666Z"
   },
   {
-    "id": "512efc48-be50-46e7-91d8-cb63fa9dd03a",
+    "id": "6cc962b8-8fea-4340-9fed-058fa2956587",
     "habitId": "water-1",
     "date": "2025-05-27",
-    "completed": false,
-    "value": 0,
-    "completedAt": "2025-05-27T14:07:18.639Z"
+    "completed": true,
+    "value": 8,
+    "completedAt": "2025-05-27T16:39:36.666Z"
   },
   {
     "id": "6992c26c-83f8-4357-80ef-720a0159c115",
@@ -436,5 +436,21 @@
     "completed": true,
     "value": 1,
     "completedAt": "2025-05-27T16:22:23.917Z"
+  },
+  {
+    "id": "f57bd9e8-dc9b-401e-b4fd-3b3c0cd35c91",
+    "habitId": "sunnah-4",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-27T16:40:06.294Z"
+  },
+  {
+    "id": "6f4112b2-5182-411c-9025-57c164d71b62",
+    "habitId": "sunnah-5",
+    "date": "2025-05-26",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-27T16:40:07.370Z"
   }
 ]

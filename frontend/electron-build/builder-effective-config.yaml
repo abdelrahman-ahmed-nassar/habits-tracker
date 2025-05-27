@@ -1,0 +1,12 @@
+directories:
+  output: electron-build
+  buildResources: build
+appId: com.habitsTracker.app
+productName: HabitsTracker
+files:
+  - filter:
+      - dist/**/*
+      - dist-electron/**/*
+win:
+  target: dir
+electronVersion: 36.3.1

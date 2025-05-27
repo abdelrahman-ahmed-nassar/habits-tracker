@@ -2,8 +2,8 @@
   {
     "id": "daily",
     "name": "Daily Note",
-    "template": "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
-    "updatedAt": "2025-05-27T16:30:17.504Z"
+    "template": "## 1. # Daily Note - {{date}}\n\n## Tasks\n- [ ] \n1. \n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
+    "updatedAt": "2025-05-27T16:38:32.651Z"
   },
   {
     "id": "weekly",

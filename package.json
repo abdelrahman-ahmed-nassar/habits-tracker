@@ -1,14 +1,36 @@
 {
-  "name": "habits-tracker",
+  "name": "habits-tracker-workspace",
   "version": "1.0.0",
-  "description": "Habits Tracker Application",
+  "description": "Personal habit tracking desktop application",
   "scripts": {
-    "frontend": "cd frontend && npm run dev",
-    "backend": "cd backend && npm run dev",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev": "node dev-electron.js",
+    "build": "node build-electron.js",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build:electron": "cd frontend && npm run electron:build",
+    "pack": "cd frontend && npm run electron:pack",
+    "dist": "cd frontend && npm run electron:dist",
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "test:api": "bash test-api.sh"
   },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/habits-tracker.git"
+  },
+  "keywords": [
+    "habits",
+    "tracker",
+    "productivity",
+    "electron",
+    "react",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
-} 
+}
