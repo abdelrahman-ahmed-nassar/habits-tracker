@@ -1,0 +1,17 @@
+[
+  {
+    "id": "daily",
+    "name": "Daily Note",
+    "template": "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n"
+  },
+  {
+    "id": "weekly",
+    "name": "Weekly Review",
+    "template": "# Weekly Review - {{weekStart}} to {{weekEnd}}\n\n## Accomplishments\n\n\n## Challenges\n\n\n## Next Week Goals\n\n"
+  },
+  {
+    "id": "monthly",
+    "name": "Monthly Review",
+    "template": "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n"
+  }
+]

@@ -12,6 +12,7 @@ import settingsRoutes from "./routes/settingsRoutes";
 import optionsRoutes from "./routes/optionsRoutes";
 import backupRoutes from "./routes/backupRoutes";
 import tagRoutes from "./routes/tagRoutes";
+import templateRoutes from "./routes/templateRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
@@ -38,6 +39,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/options", optionsRoutes);
 app.use("/api/backup", backupRoutes);
 app.use("/api/tags", tagRoutes);
+app.use("/api/templates", templateRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

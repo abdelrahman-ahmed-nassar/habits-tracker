@@ -5,6 +5,7 @@ import {
   CompletionRecord,
   DailyNote,
   HabitAnalytics,
+  NoteTemplate,
 } from "@shared/types";
 import { Settings, BackupData } from "../types/models";
 import { getTodayDateString, formatDateToString } from "../utils/dateUtils";
@@ -15,6 +16,7 @@ const COMPLETIONS_FILE = "completions.json";
 const NOTES_FILE = "notes.json";
 const SETTINGS_FILE = "settings.json";
 const BACKUP_FOLDER = "backups";
+const NOTES_TEMPLATES_FILE = "notes_templates.json";
 
 // Default settings
 const DEFAULT_SETTINGS: Settings = {
@@ -44,6 +46,29 @@ export const initializeData = async (): Promise<void> => {
   await ensureFileExists(COMPLETIONS_FILE, []);
   await ensureFileExists(NOTES_FILE, []);
   await ensureFileExists(SETTINGS_FILE, DEFAULT_SETTINGS);
+  await ensureFileExists(NOTES_TEMPLATES_FILE, [
+    {
+      id: "daily",
+      name: "Daily Note",
+      template: "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: "weekly",
+      name: "Weekly Review",
+      template: "# Weekly Review - {{weekStart}} to {{weekEnd}}\n\n## Accomplishments\n\n\n## Challenges\n\n\n## Next Week Goals\n\n",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: "monthly",
+      name: "Monthly Review",
+      template: "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ]);
   console.log("Data files initialized");
 };
 
@@ -832,6 +857,229 @@ export const replaceAllCompletions = async (
   completions: CompletionRecord[]
 ): Promise<void> => {
   await writeData(COMPLETIONS_FILE, completions);
+};
+
+/**
+ * Get all note templates
+ * @returns Promise with all templates
+ */
+export const getTemplates = async (): Promise<NoteTemplate[]> => {
+  return await readData<NoteTemplate[]>(NOTES_TEMPLATES_FILE);
+};
+
+/**
+ * Get a template by ID
+ * @param id The ID to find
+ * @returns The template if found, null otherwise
+ */
+export const getTemplateById = async (id: string): Promise<NoteTemplate | null> => {
+  const templates = await getTemplates();
+  const template = templates.find((t) => t.id === id);
+  return template || null;
+};
+
+/**
+ * Create a new template
+ * @param templateData The template data
+ * @returns The created template
+ */
+export const createTemplate = async (
+  templateData: Omit<NoteTemplate, "id" | "createdAt" | "updatedAt">
+): Promise<NoteTemplate> => {
+  const templates = await getTemplates();
+  const now = new Date().toISOString();
+
+  const newTemplate: NoteTemplate = {
+    id: uuidv4(),
+    ...templateData,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  templates.push(newTemplate);
+  await writeData(NOTES_TEMPLATES_FILE, templates);
+  return newTemplate;
+};
+
+/**
+ * Update a template
+ * @param id The template ID to update
+ * @param templateData The template data to update
+ * @returns The updated template if successful, null if not found
+ */
+export const updateTemplate = async (
+  id: string,
+  templateData: Partial<Omit<NoteTemplate, "id" | "createdAt" | "updatedAt">>
+): Promise<NoteTemplate | null> => {
+  const templates = await getTemplates();
+  const index = templates.findIndex((t) => t.id === id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  const now = new Date().toISOString();
+  const updatedTemplate: NoteTemplate = {
+    ...templates[index],
+    ...templateData,
+    updatedAt: now,
+  };
+
+  templates[index] = updatedTemplate;
+  await writeData(NOTES_TEMPLATES_FILE, templates);
+  return updatedTemplate;
+};
+
+/**
+ * Delete a template
+ * @param id The template ID to delete
+ * @returns Whether the deletion was successful
+ */
+export const deleteTemplate = async (id: string): Promise<boolean> => {
+  const templates = await getTemplates();
+  const initialLength = templates.length;
+
+  const filteredTemplates = templates.filter((t) => t.id !== id);
+
+  if (filteredTemplates.length === initialLength) {
+    return false;
+  }
+
+  await writeData(NOTES_TEMPLATES_FILE, filteredTemplates);
+  return true;
+};
+
+
+// Generic CRUD operations for any data file
+
+/**
+ * Get all items from a data file
+ * @param dataFile The name of the data file without extension
+ * @returns Promise with all items
+ */
+export const getAll = async <T>(dataFile: string): Promise<T[]> => {
+  const fileName = `${dataFile}.json`;
+  await ensureFileExists(fileName, []);
+  return await readData<T[]>(fileName);
+};
+
+/**
+ * Get an item by ID from a data file
+ * @param dataFile The name of the data file without extension
+ * @param id The ID of the item to get
+ * @returns The item if found, null otherwise
+ */
+export const getById = async <T extends { id: string }>(
+  dataFile: string,
+  id: string
+): Promise<T | null> => {
+  const items = await getAll<T>(dataFile);
+  const item = items.find((item) => item.id === id);
+  return item || null;
+};
+
+/**
+ * Add a new item to a data file
+ * @param dataFile The name of the data file without extension
+ * @param item The item to add
+ */
+export const add = async <T extends { id: string }>(
+  dataFile: string,
+  item: T
+): Promise<T> => {
+  const fileName = `${dataFile}.json`;
+  const items = await getAll<T>(dataFile);
+  items.push(item);
+  await writeData(fileName, items);
+  return item;
+};
+
+/**
+ * Update an item in a data file
+ * @param dataFile The name of the data file without extension
+ * @param id The ID of the item to update
+ * @param updatedItem The updated item data
+ * @returns The updated item if found, null otherwise
+ */
+export const update = async <T extends { id: string }>(
+  dataFile: string,
+  id: string,
+  updatedItem: T
+): Promise<T | null> => {
+  const fileName = `${dataFile}.json`;
+  const items = await getAll<T>(dataFile);
+  const index = items.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  items[index] = updatedItem;
+  await writeData(fileName, items);
+  return updatedItem;
+};
+
+/**
+ * Remove an item from a data file
+ * @param dataFile The name of the data file without extension
+ * @param id The ID of the item to remove
+ * @returns True if removed, false if not found
+ */
+export const remove = async <T extends { id: string }>(
+  dataFile: string,
+  id: string
+): Promise<boolean> => {
+  const fileName = `${dataFile}.json`;
+  const items = await getAll<T>(dataFile);
+  const initialLength = items.length;
+  const filteredItems = items.filter((item) => item.id !== id);
+
+  if (filteredItems.length === initialLength) {
+    return false;
+  }
+
+  await writeData(fileName, filteredItems);
+  return true;
+};
+
+// Export the dataService as an object for importing in other files
+export const dataService = {
+  getAll,
+  getById,
+  add,
+  update,
+  remove,
+  // Existing methods
+  getHabits,
+  getHabitById,
+  createHabit,
+  updateHabit,
+  deleteHabit,
+  getCompletions,
+  getCompletionsByHabitId,
+  getCompletionsByDate,
+  createCompletion,
+  createCompletionsBatch,
+  updateCompletion,
+  deleteCompletion,
+  getNotes,
+  getNoteByDate,
+  saveNote,
+  updateNote,
+  deleteNote,
+  getSettings,
+  updateSettings,
+  createBackup,
+  restoreFromBackup,
+  calculateHabitAnalytics,
+  replaceAllCompletions,
+  updateHabitStreaks,
+  // Template methods
+  getTemplates,
+  getTemplateById,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
 };
 
 // Initialize data on module load
