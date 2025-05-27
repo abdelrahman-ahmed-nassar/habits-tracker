@@ -145,30 +145,53 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 - 
 `
     }
-  ];
-  const insertText = useCallback((before: string, after: string = "", placeholder: string = "") => {
+  ];  const insertText = useCallback((before: string, after: string = "") => {
     if (!textareaRef.current || disabled) return;
 
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = value.substring(start, end);
-    const textToInsert = selectedText || placeholder;
     
-    const newText = 
-      value.substring(0, start) + 
-      before + 
-      textToInsert + 
-      after + 
-      value.substring(end);
+    textarea.focus();
     
-    onChange(newText);
+    // Determine what text to insert and cursor positioning
+    let textToInsert: string;
+    let newCursorStart: number;
+    let newCursorEnd: number;
+    
+    if (selectedText) {
+      // Wrap selected text with formatting
+      textToInsert = selectedText;
+      newCursorStart = newCursorEnd = start + before.length + selectedText.length + after.length;
+    } else {
+      // No selection - position cursor between markers for empty formatting
+      textToInsert = "";
+      newCursorStart = newCursorEnd = start + before.length;
+    }
+    
+    // Select the range we want to replace
+    textarea.setSelectionRange(start, end);
+    
+    // Use execCommand to maintain undo history (works in most browsers)
+    const fullText = before + textToInsert + after;
+    try {
+      // This maintains the undo stack
+      const success = document.execCommand('insertText', false, fullText);
+      if (!success) {
+        // Fallback if execCommand doesn't work
+        const newValue = value.substring(0, start) + fullText + value.substring(end);
+        onChange(newValue);
+      }
+    } catch {
+      // Fallback for browsers that don't support execCommand
+      const newValue = value.substring(0, start) + fullText + value.substring(end);
+      onChange(newValue);
+    }
     
     // Set cursor position after insertion
     setTimeout(() => {
-      const newPosition = start + before.length + (selectedText ? selectedText.length : placeholder.length);
-      textarea.setSelectionRange(newPosition, newPosition);
-      textarea.focus();
+      textarea.setSelectionRange(newCursorStart, newCursorEnd);
     }, 0);
   }, [value, onChange, disabled]);  const insertLink = useCallback(() => {
     if (!textareaRef.current || disabled) return;
@@ -177,7 +200,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     if (!url) return;
     
     const linkText = prompt("Enter link text:") || "link";
-    insertText(`[${linkText}](`, ")", url);
+    insertText(`[${linkText}](${url})`);
   }, [insertText, disabled]);
 
   const insertTemplate = useCallback((template: typeof dailyNoteTemplates[0]) => {
@@ -187,65 +210,64 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     onChange(template.content);
     setShowTemplates(false);
     setTimeout(() => textareaRef.current?.focus(), 0);
-  }, [value, onChange]);
-  const toolbarButtons = [
+  }, [value, onChange]);  const toolbarButtons = [
     {
       icon: Bold,
       title: "Bold",
-      action: () => insertText("**", "**", "bold text"),
+      action: () => insertText("**", "**"),
     },
     {
       icon: Italic,
       title: "Italic", 
-      action: () => insertText("*", "*", "italic text"),
+      action: () => insertText("*", "*"),
     },
     {
       icon: Underline,
       title: "Strikethrough",
-      action: () => insertText("~~", "~~", "strikethrough text"),
+      action: () => insertText("~~", "~~"),
     },
     { type: "separator" },
     {
       icon: Heading1,
       title: "Heading 1",
-      action: () => insertText("# ", "", "Heading 1"),
+      action: () => insertText("# "),
     },
     {
       icon: Heading2,
       title: "Heading 2", 
-      action: () => insertText("## ", "", "Heading 2"),
+      action: () => insertText("## "),
     },
     {
       icon: Heading3,
       title: "Heading 3",
-      action: () => insertText("### ", "", "Heading 3"),
+      action: () => insertText("### "),
     },
     { type: "separator" },
     {
       icon: List,
       title: "Bullet List",
-      action: () => insertText("- ", "", "List item"),
+      action: () => insertText("- "),
     },
     {
       icon: ListOrdered,
       title: "Numbered List",
-      action: () => insertText("1. ", "", "List item"),
+      action: () => insertText("1. "),
     },
     {
       icon: CheckSquare,
       title: "Task List",
-      action: () => insertText("- [ ] ", "", "Task item"),
+      action: () => insertText("- [ ] "),
     },
     {
       icon: Quote,
       title: "Quote",
-      action: () => insertText("> ", "", "Quote text"),
+      action: () => insertText("> "),
     },
     { type: "separator" },
     {
       icon: Code,
       title: "Inline Code",
-      action: () => insertText("`", "`", "code"),
+      action: () => insertText("`", "`"),
     },
     {
       icon: Link,
@@ -253,35 +275,122 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       action: insertLink,
     },
   ];
-
   const quickInsertButtons = [
     {
       icon: Calendar,
       title: "Insert Today's Date",
       action: () => {
         const today = new Date().toLocaleDateString();
-        insertText(`📅 ${today}: `, "");
+        insertText(`📅 ${today}: `);
       },
     },
     {
       icon: Star,
       title: "Highlight Achievement",
-      action: () => insertText("⭐ **Achievement**: ", "", "Something great I accomplished"),
+      action: () => insertText("⭐ **Achievement**: "),
     },
     {
       icon: Zap,
       title: "Key Insight",
-      action: () => insertText("💡 **Insight**: ", "", "Something I learned or realized"),
+      action: () => insertText("💡 **Insight**: "),
     },
-  ];
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  ];  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (disabled) return;
+
+    // Handle Enter for list continuation
+    if (e.key === "Enter") {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const { selectionStart } = textarea;
+      const beforeCursor = value.substring(0, selectionStart);
+      const lines = beforeCursor.split('\n');
+      const currentLine = lines[lines.length - 1];
+      
+      // Check for bullet list pattern (- or * followed by optional space)
+      const bulletMatch = currentLine.match(/^(\s*)([-*])\s*(.*)$/);
+      if (bulletMatch) {
+        const [, indent, bullet, content] = bulletMatch;
+        
+        // If the current line is empty (just the bullet), remove it and don't create a new one
+        if (!content.trim()) {
+          e.preventDefault();
+          // Remove the empty bullet line
+          const newValue = value.substring(0, selectionStart - currentLine.length) + 
+                          indent + 
+                          value.substring(selectionStart);
+          onChange(newValue);
+          setTimeout(() => {
+            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
+                                     selectionStart - currentLine.length + indent.length);
+          }, 0);
+          return;
+        }
+        
+        // Create new bullet point
+        e.preventDefault();
+        insertText(`\n${indent}${bullet} `);
+        return;
+      }
+      
+      // Check for numbered list pattern (number followed by . and optional space)
+      const numberedMatch = currentLine.match(/^(\s*)(\d+)\.\s*(.*)$/);
+      if (numberedMatch) {
+        const [, indent, num, content] = numberedMatch;
+        
+        // If the current line is empty (just the number), remove it and don't create a new one
+        if (!content.trim()) {
+          e.preventDefault();
+          // Remove the empty numbered line
+          const newValue = value.substring(0, selectionStart - currentLine.length) + 
+                          indent + 
+                          value.substring(selectionStart);
+          onChange(newValue);
+          setTimeout(() => {
+            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
+                                     selectionStart - currentLine.length + indent.length);
+          }, 0);
+          return;
+        }
+        
+        // Create new numbered item (increment the number)
+        e.preventDefault();
+        const nextNum = parseInt(num) + 1;
+        insertText(`\n${indent}${nextNum}. `);
+        return;
+      }
+      
+      // Check for task list pattern (- [ ] or - [x] followed by optional space)
+      const taskMatch = currentLine.match(/^(\s*)([-*])\s*\[([ x])\]\s*(.*)$/);
+      if (taskMatch) {
+        const [, indent, bullet, , content] = taskMatch;
+        
+        // If the current line is empty (just the task checkbox), remove it and don't create a new one
+        if (!content.trim()) {
+          e.preventDefault();
+          // Remove the empty task line
+          const newValue = value.substring(0, selectionStart - currentLine.length) + 
+                          indent + 
+                          value.substring(selectionStart);
+          onChange(newValue);
+          setTimeout(() => {
+            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
+                                     selectionStart - currentLine.length + indent.length);
+          }, 0);
+          return;
+        }
+        
+        // Create new unchecked task item
+        e.preventDefault();
+        insertText(`\n${indent}${bullet} [ ] `);
+        return;
+      }
+    }
 
     // Handle Tab for indentation
     if (e.key === "Tab") {
       e.preventDefault();
-      insertText("  ", "");
+      insertText("  ");
       return;
     }
 
@@ -290,15 +399,20 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       switch (e.key) {
         case "b":
           e.preventDefault();
-          insertText("**", "**", "bold text");
+          insertText("**", "**");
           break;
         case "i":
           e.preventDefault();
-          insertText("*", "*", "italic text");
+          insertText("*", "*");
           break;
         case "k":
           e.preventDefault();
           insertLink();
+          break;
+        case "z":
+        case "y":
+          // Let the browser handle undo/redo naturally
+          // Don't prevent default for these
           break;
       }
     }

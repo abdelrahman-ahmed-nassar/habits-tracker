@@ -330,9 +330,9 @@
     "id": "7b3317bc-8840-44cb-9bb8-3e591d06b8d6",
     "habitId": "sunnah-6",
     "date": "2025-05-27",
-    "completed": true,
-    "value": 1,
-    "completedAt": "2025-05-27T11:27:56.603Z"
+    "completed": false,
+    "value": 0,
+    "completedAt": "2025-05-27T11:42:03.376Z"
   },
   {
     "id": "5653c8b1-670f-461c-9c35-86b23407c8fd",
