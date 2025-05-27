@@ -17,9 +17,10 @@ import {
   CheckSquare,
   Calendar,
   Star,
-  Zap,
-  FileText,
+  Zap,  FileText,
   ChevronDown,
+  AlignLeft,
+  AlignRight,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -33,6 +34,8 @@ interface MarkdownEditorProps {
   minHeight?: number;
   className?: string;
   disabled?: boolean;
+  rtl?: boolean;
+  onRtlChange?: (rtl: boolean) => void;
 }
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
@@ -42,6 +45,8 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   minHeight = 200,
   className,
   disabled = false,
+  rtl = false,
+  onRtlChange,
 }) => {
   const [mode, setMode] = useState<"edit" | "preview" | "split">("edit");
   const [showHelp, setShowHelp] = useState(false);
@@ -580,8 +585,25 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               disabled={disabled}
             >
               <Eye className="w-3 h-3" />
-            </button>
-          </div>
+            </button>          </div>
+
+          {/* RTL Toggle */}
+          {onRtlChange && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "p-2 h-8 w-8",
+                rtl && "bg-blue-100 dark:bg-blue-900/30"
+              )}
+              onClick={() => onRtlChange(!rtl)}
+              disabled={disabled}
+              title={rtl ? "Switch to Left-to-Right" : "Switch to Right-to-Left"}
+            >
+              {rtl ? <AlignLeft className="w-4 h-4" /> : <AlignRight className="w-4 h-4" />}
+            </Button>
+          )}
+
           {/* Help Button */}
           <Button
             variant="ghost"
@@ -640,14 +662,14 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                   <code>[Link](url)</code>
                 </div>
               </div>
-            </div>
-            <div>
+            </div>            <div>
               <h4 className="font-semibold mb-2">Quick Inserts</h4>
               <div className="space-y-1 text-xs">
                 <div>📅 Today's date</div>
                 <div>⭐ Achievement marker</div>
                 <div>💡 Insight marker</div>
                 <div>📝 Note template</div>
+                <div>🔄 RTL toggle (if enabled)</div>
               </div>
             </div>
           </div>
@@ -661,14 +683,14 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                   <div>Ctrl+K → Insert link</div>
                   <div>Tab → Indent (in lists)</div>
                 </div>
-              </div>
-              <div>
+              </div>              <div>
                 <h5 className="font-semibold mb-1">Daily Note Tips</h5>
                 <div className="space-y-1 text-gray-600 dark:text-gray-400">
                   <div>Use headings to organize sections</div>
                   <div>Create task lists for tomorrow's goals</div>
                   <div>Quote inspiring thoughts</div>
                   <div>Bold key achievements</div>
+                  <div>Toggle RTL for Arabic/Hebrew writing</div>
                 </div>
               </div>
             </div>
@@ -685,19 +707,20 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               mode === "split" &&
                 "border-r border-gray-300 dark:border-gray-600"
             )}
-          >
-            <textarea
+          >            <textarea
               ref={textareaRef}
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               disabled={disabled}
+              dir={rtl ? "rtl" : "ltr"}
               className={cn(
                 "w-full h-full p-4 resize-none border-0 focus:outline-none focus:ring-0",
                 "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
                 "placeholder:text-gray-400 dark:placeholder:text-gray-500",
-                disabled && "opacity-50 cursor-not-allowed"
+                disabled && "opacity-50 cursor-not-allowed",
+                rtl && "text-right"
               )}
               style={{ minHeight }}
             />
@@ -705,9 +728,14 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         )}
 
         {/* Preview Mode */}
-        {(mode === "preview" || mode === "split") && (
-          <div className={cn("flex-1 overflow-auto")}>
-            <div className="p-4 prose prose-sm dark:prose-invert max-w-none">
+        {(mode === "preview" || mode === "split") && (          <div className={cn("flex-1 overflow-auto")}>
+            <div 
+              className={cn(
+                "p-4 prose prose-sm dark:prose-invert max-w-none",
+                rtl && "text-right"
+              )}
+              dir={rtl ? "rtl" : "ltr"}
+            >
               {value ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {value}

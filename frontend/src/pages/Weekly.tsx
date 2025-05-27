@@ -434,9 +434,9 @@ const Weekly: React.FC = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     // Use URL date if valid, otherwise default to start of current week
     if (urlDate && isValid(parseISO(urlDate))) {
-      return startOfWeek(parseISO(urlDate));
+      return startOfWeek(parseISO(urlDate), { weekStartsOn: 6 });
     }
-    return startOfWeek(new Date());
+    return startOfWeek(new Date(), { weekStartsOn: 6 });
   });
 
   // State for weekly records

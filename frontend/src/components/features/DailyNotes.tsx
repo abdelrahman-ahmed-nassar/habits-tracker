@@ -23,12 +23,12 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const [note, setNote] = useState<DailyNote | null>(initialNote);
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
-  const [mood, setMood] = useState("");
-  const [productivityLevel, setProductivityLevel] = useState("");
+  const [mood, setMood] = useState("");  const [productivityLevel, setProductivityLevel] = useState("");
   const [availableMoods, setAvailableMoods] = useState<string[]>([]);
   const [availableProductivityLevels, setAvailableProductivityLevels] =
     useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isRtl, setIsRtl] = useState(false);
 
   useEffect(() => {
     setNote(initialNote);
@@ -213,13 +213,14 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Note Content
-                </label>{" "}
-                <MarkdownEditor
+                </label>{" "}                <MarkdownEditor
                   value={content}
                   onChange={setContent}
                   placeholder="What's on your mind today? Use markdown for rich formatting..."
                   minHeight={300}
                   disabled={loading}
+                  rtl={isRtl}
+                  onRtlChange={setIsRtl}
                 />
               </div>
               {/* Mood Selection */}
