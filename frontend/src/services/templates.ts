@@ -1,6 +1,6 @@
-import { NoteTemplate } from '@shared/types/template';
+import { NoteTemplate } from "@shared/types/template";
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "http://localhost:5000/api";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -15,11 +15,11 @@ export class TemplatesService {
   static async getAllTemplates(): Promise<NoteTemplate[]> {
     const response = await fetch(`${API_BASE_URL}/templates`);
     const result: ApiResponse<NoteTemplate[]> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch templates');
+      throw new Error(result.message || "Failed to fetch templates");
     }
-    
+
     return result.data;
   }
 
@@ -29,32 +29,34 @@ export class TemplatesService {
   static async getTemplateById(id: string): Promise<NoteTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`);
     const result: ApiResponse<NoteTemplate> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch template');
+      throw new Error(result.message || "Failed to fetch template");
     }
-    
+
     return result.data;
   }
 
   /**
    * Create a new template
    */
-  static async createTemplate(template: Omit<NoteTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<NoteTemplate> {
+  static async createTemplate(
+    template: Omit<NoteTemplate, "id" | "createdAt" | "updatedAt">
+  ): Promise<NoteTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(template),
     });
-    
+
     const result: ApiResponse<NoteTemplate> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to create template');
+      throw new Error(result.message || "Failed to create template");
     }
-    
+
     return result.data;
   }
 
@@ -62,23 +64,23 @@ export class TemplatesService {
    * Update a template
    */
   static async updateTemplate(
-    id: string, 
-    template: Partial<Omit<NoteTemplate, 'id' | 'createdAt' | 'updatedAt'>>
+    id: string,
+    template: Partial<Omit<NoteTemplate, "id" | "createdAt" | "updatedAt">>
   ): Promise<NoteTemplate> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(template),
     });
-    
+
     const result: ApiResponse<NoteTemplate> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to update template');
+      throw new Error(result.message || "Failed to update template");
     }
-    
+
     return result.data;
   }
 
@@ -87,13 +89,13 @@ export class TemplatesService {
    */
   static async deleteTemplate(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/templates/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
-    
+
     const result: ApiResponse<void> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to delete template');
+      throw new Error(result.message || "Failed to delete template");
     }
   }
 
@@ -101,7 +103,10 @@ export class TemplatesService {
    * Apply a template to create a note
    * Formats the template with the given variables
    */
-  static formatTemplate(template: string, variables: Record<string, string>): string {
+  static formatTemplate(
+    template: string,
+    variables: Record<string, string>
+  ): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       return variables[key] || match;
     });

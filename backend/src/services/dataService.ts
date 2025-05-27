@@ -50,24 +50,27 @@ export const initializeData = async (): Promise<void> => {
     {
       id: "daily",
       name: "Daily Note",
-      template: "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
+      template:
+        "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     },
     {
       id: "weekly",
       name: "Weekly Review",
-      template: "# Weekly Review - {{weekStart}} to {{weekEnd}}\n\n## Accomplishments\n\n\n## Challenges\n\n\n## Next Week Goals\n\n",
+      template:
+        "# Weekly Review - {{weekStart}} to {{weekEnd}}\n\n## Accomplishments\n\n\n## Challenges\n\n\n## Next Week Goals\n\n",
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     },
     {
       id: "monthly",
       name: "Monthly Review",
-      template: "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n",
+      template:
+        "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n",
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
+      updatedAt: new Date().toISOString(),
+    },
   ]);
   console.log("Data files initialized");
 };
@@ -357,7 +360,10 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
   const todayCompletion = completions.find((c) => c.date === today);
   if (habit.goalType === "counter") {
     // For counter-type habits, currentCounter is the sum of all completion values
-    currentCounter = completions.reduce((sum, completion) => sum + (completion.value || 0), 0);
+    currentCounter = completions.reduce(
+      (sum, completion) => sum + (completion.value || 0),
+      0
+    );
 
     // Calculate current streak (consecutive days where value >= goalValue)
     currentStreak = calculateCounterStreak(completions, habit.goalValue);
@@ -872,7 +878,9 @@ export const getTemplates = async (): Promise<NoteTemplate[]> => {
  * @param id The ID to find
  * @returns The template if found, null otherwise
  */
-export const getTemplateById = async (id: string): Promise<NoteTemplate | null> => {
+export const getTemplateById = async (
+  id: string
+): Promise<NoteTemplate | null> => {
   const templates = await getTemplates();
   const template = templates.find((t) => t.id === id);
   return template || null;
@@ -948,7 +956,6 @@ export const deleteTemplate = async (id: string): Promise<boolean> => {
   await writeData(NOTES_TEMPLATES_FILE, filteredTemplates);
   return true;
 };
-
 
 // Generic CRUD operations for any data file
 

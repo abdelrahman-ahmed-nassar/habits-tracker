@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -22,11 +22,15 @@ import {
   ChevronDown,
   AlignLeft,
   AlignRight,
+  Loader,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "../../utils/cn";
 import Button from "./Button";
+import { TemplatesService } from "../../services/templates";
+import { NoteTemplate } from "@shared/types/template";
+import { toast } from "react-toastify";
 
 interface MarkdownEditorProps {
   value: string;
@@ -52,10 +56,29 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   const [mode, setMode] = useState<"edit" | "preview" | "split">("edit");
   const [showHelp, setShowHelp] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [templates, setTemplates] = useState<NoteTemplate[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
 
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const templatesRef = React.useRef<HTMLDivElement>(null);
 
+  // Load templates from API
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        setIsLoadingTemplates(true);
+        const fetchedTemplates = await TemplatesService.getAllTemplates();
+        setTemplates(fetchedTemplates);
+      } catch (error) {
+        console.error("Error loading templates:", error);
+        toast.error("Failed to load note templates");
+      } finally {
+        setIsLoadingTemplates(false);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
   // Close templates dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,90 +96,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showTemplates]);
-
-  const dailyNoteTemplates = [
-    {
-      name: "Daily Reflection",
-      content: `# Daily Reflection - ${new Date().toLocaleDateString()}
-
-## 🌟 Today's Highlights
-- 
-
-## 💭 What I Learned
-- 
-
-## 🎯 Tomorrow's Focus
-- [ ] 
-- [ ] 
-- [ ] 
-
-## 📝 Additional Notes
-`,
-    },
-    {
-      name: "Gratitude & Growth",
-      content: `# ${new Date().toLocaleDateString()} - Gratitude & Growth
-
-## 🙏 What I'm Grateful For
-1. 
-2. 
-3. 
-
-## 📈 How I Grew Today
-- 
-
-## 🌱 Areas for Improvement
-- 
-
-## ⭐ Quote of the Day
-> 
-`,
-    },
-    {
-      name: "Achievement Log",
-      content: `# Achievement Log - ${new Date().toLocaleDateString()}
-
-## 🏆 Accomplishments
-- **Big Win**: 
-- **Small Wins**: 
-  - 
-  - 
-
-## 🚀 Progress Made
-- 
-
-## 🎯 Next Steps
-- [ ] 
-- [ ] 
-
-## 💡 Key Insights
-- 
-`,
-    },
-    {
-      name: "Mood & Energy",
-      content: `# Daily Check-in - ${new Date().toLocaleDateString()}
-
-## 😊 Mood & Energy
-**Overall Mood**: 
-**Energy Level**: 
-**Stress Level**: 
-
-## 🌈 What Affected My Mood
-**Positive**: 
-- 
-
-**Challenging**: 
-- 
-
-## 🔋 Energy Boosters
-- 
-
-## 😌 Self-Care Today
-- 
-`,
-    },
-  ];
   const insertText = useCallback(
     (before: string, after: string = "") => {
       if (!textareaRef.current || disabled) return;
@@ -221,16 +160,49 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const linkText = prompt("Enter link text:") || "link";
     insertText(`[${linkText}](${url})`);
   }, [insertText, disabled]);
-
   const insertTemplate = useCallback(
-    (template: (typeof dailyNoteTemplates)[0]) => {
+    (template: NoteTemplate) => {
       if (
         value.trim() &&
         !confirm("This will replace your current content. Continue?")
       ) {
         return;
       }
-      onChange(template.content);
+
+      // Process template content - replace variables
+      let processedContent = template.template;
+      const today = new Date();
+
+      // Common template variables
+      processedContent = processedContent.replace(
+        /\{\{date\}\}/g,
+        today.toLocaleDateString()
+      );
+      processedContent = processedContent.replace(
+        /\{\{year\}\}/g,
+        today.getFullYear().toString()
+      );
+      processedContent = processedContent.replace(
+        /\{\{month\}\}/g,
+        today.toLocaleString("default", { month: "long" })
+      );
+
+      // Weekly variables
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay());
+      const weekEnd = new Date(today);
+      weekEnd.setDate(today.getDate() + (6 - today.getDay()));
+
+      processedContent = processedContent.replace(
+        /\{\{weekStart\}\}/g,
+        weekStart.toLocaleDateString()
+      );
+      processedContent = processedContent.replace(
+        /\{\{weekEnd\}\}/g,
+        weekEnd.toLocaleDateString()
+      );
+
+      onChange(processedContent);
       setShowTemplates(false);
       setTimeout(() => textareaRef.current?.focus(), 0);
     },
@@ -527,24 +499,36 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             >
               <FileText className="w-4 h-4" />
               <ChevronDown className="w-3 h-3" />
-            </Button>
-
+            </Button>{" "}
             {showTemplates && (
               <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-10 min-w-48">
                 <div className="p-2">
                   <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-2 py-1">
-                    Daily Note Templates
+                    Note Templates
                   </div>
-                  {dailyNoteTemplates.map((template, index) => (
-                    <button
-                      key={index}
-                      onClick={() => insertTemplate(template)}
-                      className="w-full text-left px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                      disabled={disabled}
-                    >
-                      {template.name}
-                    </button>
-                  ))}
+                  {isLoadingTemplates ? (
+                    <div className="flex items-center justify-center p-4">
+                      <Loader className="w-4 h-4 animate-spin mr-2" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Loading...
+                      </span>
+                    </div>
+                  ) : templates.length > 0 ? (
+                    templates.map((template) => (
+                      <button
+                        key={template.id}
+                        onClick={() => insertTemplate(template)}
+                        className="w-full text-left px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                        disabled={disabled}
+                      >
+                        {template.name}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="text-sm text-gray-600 dark:text-gray-400 p-2">
+                      No templates available
+                    </div>
+                  )}
                 </div>
               </div>
             )}

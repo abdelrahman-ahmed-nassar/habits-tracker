@@ -30,11 +30,11 @@
     "completedAt": "2025-05-27T09:59:37.652Z"
   },
   {
-    "id": "bc5366e9-a2d7-4eeb-bde7-a3209f007c8c",
+    "id": "41b86d36-d1b5-4fb7-b5fd-10df9639036e",
     "habitId": "thekr-1",
     "date": "2025-05-27",
-    "completed": true,
-    "completedAt": "2025-05-27T10:01:47.044Z"
+    "completed": false,
+    "completedAt": "2025-05-27T14:07:04.485Z"
   },
   {
     "id": "13e75916-3325-4911-8c1f-442bdabf1b1f",
@@ -330,24 +330,24 @@
     "id": "d8256710-50c7-4678-a7d6-79c6aef21e15",
     "habitId": "sunnah-6",
     "date": "2025-05-27",
-    "completed": true,
-    "value": 1,
-    "completedAt": "2025-05-27T12:52:11.273Z"
+    "completed": false,
+    "value": 0,
+    "completedAt": "2025-05-27T14:07:08.931Z"
   },
   {
-    "id": "5653c8b1-670f-461c-9c35-86b23407c8fd",
+    "id": "80fcd014-e3b3-45be-bb41-cb6e475ff329",
     "habitId": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
     "date": "2025-05-27",
-    "completed": true,
-    "completedAt": "2025-05-27T10:56:27.789Z"
+    "completed": false,
+    "completedAt": "2025-05-27T14:07:07.106Z"
   },
   {
     "id": "512efc48-be50-46e7-91d8-cb63fa9dd03a",
     "habitId": "water-1",
     "date": "2025-05-27",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-27T10:56:32.995Z"
+    "completed": false,
+    "value": 0,
+    "completedAt": "2025-05-27T14:07:18.639Z"
   },
   {
     "id": "6992c26c-83f8-4357-80ef-720a0159c115",
@@ -413,5 +413,12 @@
     "date": "2025-05-24",
     "completed": false,
     "completedAt": "2025-05-27T11:59:01.004Z"
+  },
+  {
+    "id": "8f800ab5-9bba-4030-84e5-ab61eb9bab93",
+    "habitId": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+    "date": "2025-05-31",
+    "completed": true,
+    "completedAt": "2025-05-27T14:09:58.157Z"
   }
 ]

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Save, Edit3, Plus, Trash2 } from "lucide-react";
+import { Save, Edit3, Plus, Trash2, FileText } from "lucide-react";
 import { toast } from "react-toastify";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,7 +7,9 @@ import Card, { CardContent, CardHeader } from "../ui/Card";
 import Button from "../ui/Button";
 import MarkdownEditor from "../ui/MarkdownEditor";
 import { NotesService } from "../../services/notes";
+import { TemplatesService } from "../../services/templates";
 import { DailyNote } from "@shared/types/note";
+import { NoteTemplate } from "@shared/types/template";
 
 interface DailyNotesProps {
   date: string; // YYYY-MM-DD format
@@ -23,12 +25,16 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const [note, setNote] = useState<DailyNote | null>(initialNote);
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState("");
-  const [mood, setMood] = useState("");  const [productivityLevel, setProductivityLevel] = useState("");
+  const [mood, setMood] = useState("");
+  const [productivityLevel, setProductivityLevel] = useState("");
   const [availableMoods, setAvailableMoods] = useState<string[]>([]);
   const [availableProductivityLevels, setAvailableProductivityLevels] =
     useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isRtl, setIsRtl] = useState(true); // Default to RTL
+  const [templates, setTemplates] = useState<NoteTemplate[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
 
   useEffect(() => {
     setNote(initialNote);
@@ -45,8 +51,8 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
   useEffect(() => {
     fetchOptions();
+    fetchTemplates();
   }, []);
-
   const fetchOptions = async () => {
     try {
       const [moods, productivityLevels] = await Promise.all([
@@ -73,6 +79,57 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
         "😴 Very Low",
       ]);
     }
+  };
+
+  const fetchTemplates = async () => {
+    try {
+      setIsLoadingTemplates(true);
+      const fetchedTemplates = await TemplatesService.getAllTemplates();
+      setTemplates(fetchedTemplates);
+    } catch (error) {
+      console.error("Error loading templates:", error);
+      toast.error("Failed to load note templates");
+    } finally {
+      setIsLoadingTemplates(false);
+    }
+  };
+
+  const applyTemplate = (template: NoteTemplate) => {
+    // Process template content - replace variables
+    let processedContent = template.template;
+    const today = new Date();
+
+    // Common template variables
+    processedContent = processedContent.replace(
+      /\{\{date\}\}/g,
+      today.toLocaleDateString()
+    );
+    processedContent = processedContent.replace(
+      /\{\{year\}\}/g,
+      today.getFullYear().toString()
+    );
+    processedContent = processedContent.replace(
+      /\{\{month\}\}/g,
+      today.toLocaleString("default", { month: "long" })
+    );
+
+    // Weekly variables
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() + (6 - today.getDay()));
+
+    processedContent = processedContent.replace(
+      /\{\{weekStart\}\}/g,
+      weekStart.toLocaleDateString()
+    );
+    processedContent = processedContent.replace(
+      /\{\{weekEnd\}\}/g,
+      weekEnd.toLocaleDateString()
+    );
+
+    setContent(processedContent);
+    setShowTemplateSelector(false);
   };
 
   const handleSave = async () => {
@@ -211,9 +268,56 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               {" "}
               {/* Content */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Note Content
-                </label>{" "}                <MarkdownEditor
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Note Content
+                  </label>
+                  <div className="relative">
+                    <Button
+                      onClick={() =>
+                        setShowTemplateSelector(!showTemplateSelector)
+                      }
+                      variant="secondary"
+                      size="sm"
+                      className="flex items-center"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Use Template
+                    </Button>
+
+                    {showTemplateSelector && (
+                      <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-10 min-w-48">
+                        <div className="p-2">
+                          <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-2 py-1">
+                            Select Template
+                          </div>
+                          {isLoadingTemplates ? (
+                            <div className="flex items-center justify-center p-4">
+                              <span className="text-sm text-gray-600 dark:text-gray-400">
+                                Loading...
+                              </span>
+                            </div>
+                          ) : templates.length > 0 ? (
+                            templates.map((template) => (
+                              <button
+                                key={template.id}
+                                onClick={() => applyTemplate(template)}
+                                className="w-full text-left px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                              >
+                                {template.name}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="text-sm text-gray-600 dark:text-gray-400 p-2">
+                              No templates available
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <MarkdownEditor
                   value={content}
                   onChange={setContent}
                   placeholder="What's on your mind today? Use markdown for rich formatting..."
@@ -248,7 +352,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   Productivity Level
                 </label>
                 <select
-                dir="ltr"
+                  dir="ltr"
                   value={productivityLevel}
                   onChange={(e) => setProductivityLevel(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
