@@ -207,18 +207,18 @@
     "completedAt": "2025-05-26T21:12:08.277Z"
   },
   {
-    "id": "9ffb78ed-1a4b-4299-ad76-a5458a9c067b",
+    "id": "a18ba3e5-616b-487a-9f02-56a0da7e4145",
     "habitId": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
     "date": "2025-05-13",
     "completed": true,
-    "completedAt": "2025-05-26T21:23:11.957Z"
+    "completedAt": "2025-05-26T21:55:50.595Z"
   },
   {
-    "id": "cce46849-8da7-43e3-b292-479b0ba03b4e",
+    "id": "7cfb97d3-19b8-41b1-b89b-068aca6a7c18",
     "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
     "date": "2025-05-13",
     "completed": true,
-    "completedAt": "2025-05-26T21:23:13.290Z"
+    "completedAt": "2025-05-26T21:55:47.459Z"
   },
   {
     "id": "969f629f-1319-4153-83ac-53c82bd9978c",
@@ -249,11 +249,11 @@
     "completedAt": "2025-05-26T21:23:33.043Z"
   },
   {
-    "id": "8ad9b666-5ecb-4562-a351-d852f6a6c771",
+    "id": "cf0aa968-4138-42c1-b83f-a9601092e5b2",
     "habitId": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
     "date": "2025-05-13",
-    "completed": true,
-    "completedAt": "2025-05-26T21:35:46.497Z"
+    "completed": false,
+    "completedAt": "2025-05-26T22:10:36.968Z"
   },
   {
     "id": "4e7a8e93-c9c0-49c7-bd4b-e8e7e2880008",
@@ -261,5 +261,44 @@
     "date": "2025-05-13",
     "completed": true,
     "completedAt": "2025-05-26T21:35:47.914Z"
+  },
+  {
+    "id": "5b77dff7-57d6-49e8-95d9-fb28ef4ebe54",
+    "habitId": "reading-1",
+    "date": "2025-05-13",
+    "completed": true,
+    "completedAt": "2025-05-26T21:40:27.631Z"
+  },
+  {
+    "id": "07939a25-413d-401e-b034-09bbca64051a",
+    "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+    "date": "2025-05-12",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-26T22:10:19.157Z"
+  },
+  {
+    "id": "13b65a7a-9527-4d4b-bff8-3052bda81262",
+    "habitId": "teeth-1",
+    "date": "2025-05-12",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-26T22:10:22.147Z"
+  },
+  {
+    "id": "6357d49c-3b12-4297-ae48-938300f24080",
+    "habitId": "water-1",
+    "date": "2025-05-13",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-26T22:10:24.873Z"
+  },
+  {
+    "id": "fb2f680c-2f3e-4fea-9cd4-ce6594927551",
+    "habitId": "teeth-1",
+    "date": "2025-05-13",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-26T22:10:28.280Z"
   }
 ]

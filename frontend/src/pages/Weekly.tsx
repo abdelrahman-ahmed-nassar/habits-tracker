@@ -22,9 +22,13 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { RecordsService } from "../services/records";
 import { completionsService } from "../services/completions";
 import { analyticsService } from "../services/analytics";
+import { habitsService } from "../services/habits";
+import type { Habit } from "@shared/types/habit";
 import Button from "../components/ui/Button";
 import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
+import Progress from "../components/ui/Progress";
+import CounterInput from "../components/ui/CounterInput";
 
 interface Record {
   id: string;
@@ -113,6 +117,7 @@ interface WeeklyRecordsApiResponse {
 interface HabitCardProps {
   record: Record;
   onToggleCompletion: (habitId: string, date: string) => void;
+  onUpdateCounter?: (habitId: string, date: string, value: number) => void;
   isUpdating: boolean;
 }
 
@@ -120,6 +125,7 @@ interface DayColumnProps {
   date: string;
   dayRecords: Record[];
   onToggleCompletion: (habitId: string, date: string) => void;
+  onUpdateCounter: (habitId: string, date: string, value: number) => void;
   updatingRecords: Set<string>;
 }
 
@@ -138,103 +144,134 @@ interface WeekStats {
   bestHabits: { habitName: string; completionRate: number }[];
 }
 
-// Helper function to get background gradient based on completion rate
-const getBackgroundGradient = (successRate: number): string => {
-  if (successRate >= 70) {
-    return "bg-gradient-to-r from-green-50 to-green-50/50 dark:from-green-900/20 dark:to-green-800/10";
-  } else if (successRate >= 40) {
-    return "bg-gradient-to-r from-yellow-50 to-yellow-50/50 dark:from-yellow-900/20 dark:to-yellow-800/10";
-  }
-  return "bg-gradient-to-r from-red-50 to-red-50/50 dark:from-red-900/20 dark:to-red-800/10";
-};
-
 // Compact Habit Card for the board view
 const HabitCard: React.FC<HabitCardProps> = ({
   record,
   onToggleCompletion,
+  onUpdateCounter,
   isUpdating,
 }) => {
-  // Determine color based on completion and tag
   const getBgColor = () => {
-    if (record.completed) {
+    if (
+      record.completed ||
+      (record.goalType === "counter" && record.value >= record.goalValue)
+    ) {
       return "bg-gradient-to-r from-green-50 to-green-50/50 dark:from-green-900/20 dark:to-green-800/10 border-green-200 dark:border-green-800";
     }
     return "bg-white dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600";
   };
 
+  const getProgressValue = () => {
+    if (record.goalType === "counter") {
+      return Math.min((record.value / record.goalValue) * 100, 100);
+    }
+    return record.completed ? 100 : 0;
+  };
+
+  const getProgressDisplay = () => {
+    if (record.goalType === "counter") {
+      return `${record.value}/${record.goalValue}`;
+    }
+    return record.completed ? "Completed" : "Not completed";
+  };
+
+  const progressValue = getProgressValue();
+
   return (
     <div
-      className={`rounded-xl border ${getBgColor()} flex items-center p-3 cursor-pointer transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start group`}
-      onClick={() => onToggleCompletion(record.habitId, record.date)}
+      className={`rounded-xl border ${getBgColor()} p-3 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start ${
+        record.goalType === "counter" ? "min-h-[160px]" : "min-h-[120px]"
+      }`}
+      onClick={() =>
+        record.goalType !== "counter" &&
+        onToggleCompletion(record.habitId, record.date)
+      }
     >
-      {/* Checkbox container */}
-      <div
-        className={`flex-shrink-0 w-6 h-6 rounded-lg mr-3 flex items-center justify-center transition-all duration-300
-          ${
-            record.completed
-              ? "bg-gradient-to-br from-green-400 to-green-500 dark:from-green-500 dark:to-green-600 shadow-green-200 dark:shadow-green-900/20 shadow-sm"
-              : "bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 group-hover:border-green-400 dark:group-hover:border-green-500"
-          }`}
-      >
-        {record.completed ? (
-          <Check size={14} className="text-white animate-scale-check" />
-        ) : (
-          <div className="w-4 h-4 rounded-sm group-hover:bg-green-100 dark:group-hover:bg-green-800/20 transition-colors duration-200" />
-        )}
-      </div>
-
-      <div className="flex flex-col flex-1 min-w-0">
-        <div 
-          className={`font-medium truncate mb-1 transition-colors duration-200 ${
-            record.completed ? 'text-green-700 dark:text-green-400' : ''
-          }`} 
-          title={record.habitName}
-        >
-          {record.habitName}
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-col justify-between h-full">
+        {/* Header with name and badge */}
+        <div className="flex items-center justify-between mb-3">
+          <div
+            className={`font-medium truncate transition-colors duration-200 ${
+              record.completed ||
+              (record.goalType === "counter" &&
+                record.value >= record.goalValue)
+                ? "text-green-700 dark:text-green-400"
+                : ""
+            }`}
+            title={record.habitName}
+          >
+            {record.habitName}
+          </div>
           <Badge
-            variant={record.completed ? "success" : "default"}
+            variant={
+              record.goalType === "counter"
+                ? record.value >= record.goalValue
+                  ? "success"
+                  : record.value > 0
+                  ? "warning"
+                  : "default"
+                : record.completed
+                ? "success"
+                : "default"
+            }
             size="sm"
             className="bg-opacity-70 dark:bg-opacity-50"
           >
             {record.habitTag}
           </Badge>
-
-          {record.goalType === "counter" && (
-            <span className={`text-xs px-2 py-0.5 rounded-full transition-colors duration-200
-              ${record.completed 
-                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"}`
-            }>
-              {record.value}/{record.goalValue}
-            </span>
-          )}
-
-          {record.currentStreak > 0 && (
-            <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full">
-              <svg
-                className="w-3 h-3 mr-0.5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {record.currentStreak}
-            </span>
-          )}
         </div>
+
+        {/* Progress section */}
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600 dark:text-gray-400">Progress</span>
+            <span className="font-medium">{getProgressDisplay()}</span>
+          </div>
+          <Progress
+            value={progressValue}
+            variant={
+              record.completed ||
+              (record.goalType === "counter" &&
+                record.value >= record.goalValue)
+                ? "success"
+                : "default"
+            }
+            className="h-2"
+          />
+        </div>
+
+        {/* Counter or Checkbox */}
+        {record.goalType === "counter" ? (
+          <div className="mt-auto">
+            <div className="text-center">
+              <CounterInput
+                value={record.value}
+                goalValue={record.goalValue}
+                onValueChange={(value: number) =>
+                  onUpdateCounter?.(record.habitId, record.date, value)
+                }
+                disabled={isUpdating}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center mt-auto">
+            <div
+              className={`flex-shrink-0 w-6 h-6 rounded-lg mr-3 flex items-center justify-center transition-all duration-300
+                ${
+                  record.completed
+                    ? "bg-green-500"
+                    : "border-2 border-gray-300 dark:border-gray-600"
+                }`}
+            >
+              {record.completed && <Check className="w-4 h-4 text-white" />}
+            </div>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {record.completed ? "Completed" : "Mark as done"}
+            </span>
+          </div>
+        )}
       </div>
-
-      {isUpdating && (
-        <div className="absolute inset-0 bg-white/70 dark:bg-black/50 flex items-center justify-center rounded-xl backdrop-blur-sm">
-          <div className="w-5 h-5 border-2 border-t-transparent border-green-500 rounded-full animate-spin"></div>
-        </div>
-      )}
     </div>
   );
 };
@@ -244,6 +281,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
   date,
   dayRecords,
   onToggleCompletion,
+  onUpdateCounter,
   updatingRecords,
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -251,7 +289,9 @@ const DayColumn: React.FC<DayColumnProps> = ({
   // Calculate completion stats
   const totalHabits = dayRecords.length;
   const completedHabits = dayRecords.filter(
-    (record: Record) => record.completed
+    (record: Record) =>
+      record.completed ||
+      (record.goalType === "counter" && record.value >= record.goalValue)
   ).length;
   const completionRate =
     totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
@@ -349,6 +389,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
                   key={key}
                   record={record}
                   onToggleCompletion={onToggleCompletion}
+                  onUpdateCounter={onUpdateCounter}
                   isUpdating={isUpdating}
                 />
               );
@@ -365,14 +406,14 @@ const DayColumn: React.FC<DayColumnProps> = ({
           <>
             <button
               onClick={scrollUp}
-              className="absolute top-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-10"
+              className="absolute top-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
               aria-label="Scroll up"
             >
               <ChevronLeft className="rotate-90" size={20} />
             </button>
             <button
               onClick={scrollDown}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-10"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
               aria-label="Scroll down"
             >
               <ChevronRight className="rotate-90" size={20} />
@@ -470,30 +511,40 @@ const Weekly: React.FC = () => {
           // Construct records for each day based on the analytics data
           const constructedRecords: DailyRecords[] = [];
 
-          // Get an array of all habits from habitStats
+          // Get habits details first
+          const habits = await habitsService.getAllHabits();
+          const habitsMap = new Map<string, Habit>(
+            habits.map((h) => [h.id, h])
+          );
+
+          // Get an array of all habits from habitStats and combine with full habit details
           const allHabits =
             recordsApiResponse.habitStats?.map(
-              (habit: {
+              (stat: {
                 habitId: string;
                 habitName: string;
                 activeDaysCount?: number;
                 completedDaysCount?: number;
                 successRate: number;
                 completedDates: string[];
-              }) => ({
-                id: habit.habitId + "-record",
-                habitId: habit.habitId,
-                habitName: habit.habitName,
-                habitTag: "General", // Default tag since API doesn't provide tags
-                goalType: "boolean", // Default type since API doesn't provide type
-                goalValue: 1,
-                value: 0,
-                completed: false,
-                completedAt: "",
-                currentStreak: 0,
-                bestStreak: 0,
-                currentCounter: 0,
-              })
+              }) => {
+                const habit = habitsMap.get(stat.habitId);
+                const habitDetails = habit as Habit | undefined;
+                return {
+                  id: stat.habitId + "-record",
+                  habitId: stat.habitId,
+                  habitName: stat.habitName,
+                  habitTag: habitDetails?.tag || "General",
+                  goalType: habitDetails?.goalType || "streak",
+                  goalValue: habitDetails?.goalValue || 1,
+                  value: 0,
+                  completed: false,
+                  completedAt: "",
+                  currentStreak: 0,
+                  bestStreak: 0,
+                  currentCounter: 0,
+                };
+              }
             ) || [];
 
           // For each day in the week, create a DailyRecords object
@@ -809,6 +860,30 @@ const Weekly: React.FC = () => {
       await fetchWeeklyData();
     } finally {
       // Remove item from updating set
+      setUpdatingRecords((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(key);
+        return newSet;
+      });
+    }
+  };
+
+  // Handle updating counter values
+  const handleUpdateCounter = async (
+    habitId: string,
+    date: string,
+    value: number
+  ) => {
+    const key = `${habitId}-${date}`;
+    try {
+      setUpdatingRecords((prev) => new Set(prev).add(key));
+      await completionsService.updateCompletionValue(habitId, date, value);
+      await fetchWeeklyData();
+      toast.success("Counter updated successfully");
+    } catch (error) {
+      console.error("Error updating counter:", error);
+      toast.error("Failed to update counter");
+    } finally {
       setUpdatingRecords((prev) => {
         const newSet = new Set(prev);
         newSet.delete(key);
@@ -1165,6 +1240,7 @@ const Weekly: React.FC = () => {
                   date={dayRecord.date}
                   dayRecords={dayRecord.records}
                   onToggleCompletion={handleToggleCompletion}
+                  onUpdateCounter={handleUpdateCounter}
                   updatingRecords={updatingRecords}
                 />
               ))}

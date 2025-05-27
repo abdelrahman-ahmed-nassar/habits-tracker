@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import Button from "./Button";
+import Input from "./Input";
 
 interface CounterInputProps {
   value: number;
@@ -44,14 +44,13 @@ const CounterInput: React.FC<CounterInputProps> = ({
     // Reset to current value if input is invalid
     setInputValue(value.toString());
   };
-
   return (
     <div className="flex items-center justify-center space-x-2">
       <Button
         onClick={handleDecrement}
         variant="ghost"
         size="sm"
-        className="w-8 h-8 p-0 rounded-full"
+        className="w-8 h-8 p-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
         disabled={disabled || value <= 0}
       >
         <Minus className="w-4 h-4" />
@@ -77,7 +76,7 @@ const CounterInput: React.FC<CounterInputProps> = ({
         onClick={handleIncrement}
         variant="ghost"
         size="sm"
-        className="w-8 h-8 p-0 rounded-full"
+        className="w-8 h-8 p-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
         disabled={disabled || value >= goalValue}
       >
         <Plus className="w-4 h-4" />

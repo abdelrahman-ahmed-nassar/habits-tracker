@@ -108,41 +108,83 @@ export const getWeeklyRecords = asyncHandler(
     const activeHabits = habits.filter((h) => h.isActive);
 
     // Create daily stats
-    const dailyStats = await Promise.all(
+    const dailyRecords = await Promise.all(
       dateRange.map(async (date) => {
         const dayCompletions = weeklyCompletions.filter((c) => c.date === date);
-        const completedHabits = new Set(
-          dayCompletions.filter((c) => c.completed).map((c) => c.habitId)
+        const recordsWithDetails = await Promise.all(
+          activeHabits.map(async (habit) => {
+            const completion = dayCompletions.find(
+              (c) => c.habitId === habit.id
+            );
+            const isRelevant = isDateActiveForHabit(
+              date,
+              habit.repetition,
+              habit.specificDays
+            );
+
+            if (!isRelevant) return null;
+
+            const isCompleted = completion ? completion.completed : false;
+            const value = completion ? completion.value ?? 0 : 0;
+
+            return {
+              id: completion?.id || `temp-${date}-${habit.id}`,
+              habitId: habit.id,
+              date,
+              completed:
+                habit.goalType === "counter"
+                  ? value >= (habit.goalValue ?? 0)
+                  : isCompleted,
+              value,
+              completedAt: completion?.completedAt || "",
+              habitName: habit.name,
+              habitTag: habit.tag,
+              goalType: habit.goalType,
+              goalValue: habit.goalValue,
+              currentStreak: habit.currentStreak || 0,
+              bestStreak: habit.bestStreak || 0,
+              currentCounter: habit.currentCounter || 0,
+            };
+          })
         );
 
-        // Only count habits that should be active on this date
-        const relevantHabits = activeHabits.filter((habit) =>
-          isDateActiveForHabit(date, habit.repetition, habit.specificDays)
+        const filteredRecords = recordsWithDetails.filter(
+          (r): r is NonNullable<typeof r> => r !== null
         );
+        const completedHabits = filteredRecords.filter(
+          (r) => r.completed
+        ).length;
 
         return {
           date,
-          totalHabits: relevantHabits.length,
-          completedHabits: completedHabits.size,
-          completionRate:
-            relevantHabits.length > 0
-              ? relevantHabits.filter((h) => completedHabits.has(h.id)).length /
-                relevantHabits.length
-              : 0,
+          records: filteredRecords,
+          stats: {
+            totalHabits: filteredRecords.length,
+            completedHabits,
+            completionRate:
+              filteredRecords.length > 0
+                ? completedHabits / filteredRecords.length
+                : 0,
+          },
         };
       })
     );
 
-    // Calculate overall weekly stats
+    // Calculate weekly stats from daily records
     const weeklyStats = {
       averageCompletionRate:
-        dailyStats.reduce((sum, day) => sum + day.completionRate, 0) /
-        dailyStats.length,
-      totalCompletions: weeklyCompletions.filter((c) => c.completed).length,
-      mostProductiveDay: dailyStats.reduce(
+        dailyRecords.reduce((sum, day) => sum + day.stats.completionRate, 0) /
+        dailyRecords.length,
+      totalCompletions: dailyRecords.reduce(
+        (sum, day) => sum + day.stats.completedHabits,
+        0
+      ),
+      mostProductiveDay: dailyRecords.reduce(
         (best, current) =>
-          current.completionRate > best.completionRate ? current : best,
-        { date: "", completionRate: 0 }
+          current.stats.completionRate > best.stats.completionRate
+            ? current
+            : best,
+        dailyRecords[0]
       ).date,
     };
 
@@ -150,8 +192,18 @@ export const getWeeklyRecords = asyncHandler(
     const habitStats = await Promise.all(
       activeHabits.map(async (habit) => {
         const habitCompletions = weeklyCompletions.filter(
-          (c) => c.habitId === habit.id && c.completed
+          (c) => c.habitId === habit.id
         );
+
+        // For counter habits, check if value meets goal
+        const completedCompletions = habitCompletions.filter((c) => {
+          if (habit.goalType === "counter") {
+            const value = c.value ?? 0;
+            const goalValue = habit.goalValue ?? 0;
+            return value >= goalValue;
+          }
+          return c.completed;
+        });
 
         // Calculate how many days this habit should have been active
         const activeDates = dateRange.filter((date) =>
@@ -161,11 +213,13 @@ export const getWeeklyRecords = asyncHandler(
         return {
           habitId: habit.id,
           habitName: habit.name,
+          goalType: habit.goalType,
+          goalValue: habit.goalValue,
           successRate:
             activeDates.length > 0
-              ? habitCompletions.length / activeDates.length
+              ? completedCompletions.length / activeDates.length
               : 0,
-          completedDates: habitCompletions.map((c) => c.date),
+          completedDates: completedCompletions.map((c) => c.date),
         };
       })
     );
@@ -175,7 +229,7 @@ export const getWeeklyRecords = asyncHandler(
       data: {
         startDate,
         endDate,
-        dailyStats,
+        records: dailyRecords,
         weeklyStats,
         habitStats,
       },
