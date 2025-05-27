@@ -436,9 +436,6 @@ const Home: React.FC = () => {
           />
         ))}
       </div>
-
-      {/* Most Consistent Habits Section */}
-      {renderMostConsistentHabits()}
     </div>
   );
 };

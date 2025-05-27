@@ -179,7 +179,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
 
   return (
     <div
-      className={`rounded-xl border ${getBgColor()} p-3 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start ${
+      className={`rounded-xl border ${getBgColor()} p-3 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start  ${
         record.goalType === "counter" ? "min-h-[160px]" : "min-h-[120px]"
       }`}
       onClick={() =>
@@ -315,7 +315,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
   const isToday = format(new Date(), "yyyy-MM-dd") === date;
 
   return (
-    <div className="flex-1 min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
+    <div className="flex-1 min-w-[250px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
       {/* Day header */}
       <div
         className={`p-4 border-b border-gray-200 dark:border-gray-700 ${
@@ -874,15 +874,64 @@ const Weekly: React.FC = () => {
     date: string,
     value: number
   ) => {
+    if (!weeklyRecords) return;
+
     const key = `${habitId}-${date}`;
+
+    // Find the record for this habit and date
+    const dayIndex = weeklyRecords.records.findIndex(
+      (day) => day.date === date
+    );
+    if (dayIndex === -1) return;
+
+    const recordIndex = weeklyRecords.records[dayIndex].records.findIndex(
+      (r) => r.habitId === habitId
+    );
+
+    if (recordIndex === -1) return;
+
+    // Show loading indicator
+    setUpdatingRecords((prev) => new Set(prev).add(key));
+
+    // Optimistic update
+    const updatedRecords = { ...weeklyRecords };
+    const currentRecord = updatedRecords.records[dayIndex].records[recordIndex];
+    const completed = value >= currentRecord.goalValue;
+
+    // Update the record
+    updatedRecords.records[dayIndex].records[recordIndex] = {
+      ...currentRecord,
+      completed,
+      completedAt: completed ? new Date().toISOString() : "",
+      value,
+    };
+
+    // Recalculate stats for this day
+    const dayRecords = updatedRecords.records[dayIndex].records;
+    const completedHabits = dayRecords.filter((r) => r.completed).length;
+    const totalHabits = dayRecords.length;
+    const completionRate =
+      totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+
+    updatedRecords.records[dayIndex].stats = {
+      totalHabits,
+      completedHabits,
+      completionRate,
+    };
+
+    // Update state immediately
+    setWeeklyRecords(updatedRecords);
+
     try {
-      setUpdatingRecords((prev) => new Set(prev).add(key));
+      // Make API call in background
       await completionsService.updateCompletionValue(habitId, date, value);
-      await fetchWeeklyData();
       toast.success("Counter updated successfully");
     } catch (error) {
       console.error("Error updating counter:", error);
       toast.error("Failed to update counter");
+
+      // Revert optimistic update on error
+      await fetchWeeklyData();
     } finally {
       setUpdatingRecords((prev) => {
         const newSet = new Set(prev);
@@ -985,7 +1034,7 @@ const Weekly: React.FC = () => {
             size="sm"
             className="px-3 py-1"
           >
-            Today
+            Current Week
           </Button>
 
           <Button
