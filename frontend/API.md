@@ -400,6 +400,7 @@ POST /completions
   "message": "Habit marked as completed"
 }
 ```
+
 #### Toggle Completion
 
 ```http
@@ -448,7 +449,7 @@ PUT /completions/:id
 
 **Response:**
 
-```json
+````json
 {
   "success": true,
   "data": {
@@ -467,7 +468,7 @@ PUT /completions/:id
 
 ```http
 DELETE /completions/:habitId/:date
-```
+````
 
 **Response:**
 
@@ -1257,6 +1258,129 @@ DELETE /tags/:id
 {
   "success": true,
   "message": "Tag deleted successfully"
+}
+```
+
+### 10. Note Templates Management (`/templates`)
+
+#### Get All Templates
+
+```http
+GET /templates
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "string",
+      "name": "string",
+      "template": "string",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  ]
+}
+```
+
+#### Get Template By ID
+
+```http
+GET /templates/:id
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "template": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Create Template
+
+```http
+POST /templates
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "template": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "template": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  },
+  "message": "Template created successfully"
+}
+```
+
+#### Update Template
+
+```http
+PUT /templates/:id
+```
+
+**Request Body:**
+
+```json
+{
+  "name": "string",
+  "template": "string"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "string",
+    "name": "string",
+    "template": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  },
+  "message": "Template updated successfully"
+}
+```
+
+#### Delete Template
+
+```http
+DELETE /templates/:id
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Template deleted successfully"
 }
 ```
 
