@@ -67,9 +67,9 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 1,
+    "currentStreak": 4,
     "bestStreak": 4,
-    "currentCounter": 3,
+    "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true

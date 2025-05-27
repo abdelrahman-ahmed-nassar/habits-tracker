@@ -58,11 +58,11 @@
     "completedAt": "2025-05-27T10:05:50.998Z"
   },
   {
-    "id": "5bb17c48-12fc-4671-9968-4093b7e9f11b",
+    "id": "f152c9bc-2831-4d6a-82ce-9e24732d7a85",
     "habitId": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
     "date": "2025-05-27",
-    "completed": false,
-    "completedAt": "2025-05-27T11:58:49.023Z"
+    "completed": true,
+    "completedAt": "2025-05-27T12:18:02.313Z"
   },
   {
     "id": "6eff83e3-9bee-43ba-9a5a-15ea80c5b430",

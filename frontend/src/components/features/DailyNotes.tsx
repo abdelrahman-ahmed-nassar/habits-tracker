@@ -28,7 +28,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const [availableProductivityLevels, setAvailableProductivityLevels] =
     useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isRtl, setIsRtl] = useState(false);
+  const [isRtl, setIsRtl] = useState(true); // Default to RTL
 
   useEffect(() => {
     setNote(initialNote);
@@ -161,7 +161,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 [direction:rtl] ">
       {/* Note Display/Edit */}
       <Card>
         <CardHeader
@@ -194,7 +194,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                     onClick={handleCreate}
                     variant="primary"
                     size="sm"
-                    className="ml-4"
+                    className="mr-4"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Note
