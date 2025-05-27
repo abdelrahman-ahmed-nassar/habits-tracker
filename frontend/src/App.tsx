@@ -4,6 +4,7 @@ import MainLayout from "./components/layout/MainLayout";
 import Home from "./pages/Home";
 import Daily from "./pages/Daily";
 import Weekly from "./pages/Weekly";
+import Monthly from "./pages/Monthly";
 import Streaks from "./pages/Streaks";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,7 +20,9 @@ function App() {
             <Route path="daily/:date" element={<Daily />} />
             <Route path="weekly" element={<Weekly />} />
             <Route path="weekly/:date" element={<Weekly />} />
-            <Route path="monthly" element={<div>Monthly View</div>} />
+            <Route path="monthly" element={<Monthly />} />
+            <Route path="monthly/:date" element={<Monthly />} />
+            <Route path="monthly/:date/:month" element={<Monthly />} />
             <Route path="analytics" element={<div>Analytics</div>} />
             <Route path="streaks" element={<Streaks />} />
             <Route path="notes" element={<div>Notes</div>} />

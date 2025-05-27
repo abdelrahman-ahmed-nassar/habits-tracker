@@ -111,13 +111,57 @@ interface WeeklyAnalytics {
 interface MonthlyAnalytics {
   year: number;
   month: number;
-  totalHabits: number;
-  completionRate: number;
-  dailyStats: Array<{
+  monthName: string;
+  startDate: string;
+  endDate: string;
+  dailyCompletionCounts: Array<{
     date: string;
-    completedHabits: number;
+    dayOfWeek: number;
+    dayName: string;
+    count: number;
+    totalHabits: number;
     completionRate: number;
   }>;
+  dayOfWeekStats: Array<{
+    dayOfWeek: number;
+    dayName: string;
+    successRate: number;
+    totalHabits: number;
+    completedHabits: number;
+  }>;
+  habitStats: Array<{
+    habitId: string;
+    habitName: string;
+    tag: string;
+    activeDaysCount: number;
+    completedDaysCount: number;
+    completionRate: number;
+    currentStreak: number;
+    bestStreak: number;
+  }>;
+  monthlyStats: {
+    totalHabits: number;
+    totalCompletions: number;
+    overallCompletionRate: number;
+    mostProductiveHabit: string | null;
+    bestStreakHabit: string | null;
+    bestDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      count: number;
+      totalHabits: number;
+      completionRate: number;
+    } | null;
+    worstDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      count: number;
+      totalHabits: number;
+      completionRate: number;
+    } | null;
+  };
 }
 
 interface QuarterAnalytics {

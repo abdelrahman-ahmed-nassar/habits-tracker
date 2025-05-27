@@ -30,7 +30,6 @@ const QuarterAnalytics: React.FC<QuarterAnalyticsProps> = ({
     const fetchQuarterData = async () => {
       try {
         const data = await analyticsService.getQuarterAnalytics(startDate);
-        console.log("quarter", startDate, data);
         setQuarterData(data);
       } catch (error) {
         console.error("Error fetching quarter data:", error);

@@ -296,17 +296,8 @@ const DayColumn: React.FC<DayColumnProps> = ({
   const completionRate =
     totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
-  const scrollUp = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ top: -300, behavior: "smooth" });
-    }
-  };
 
-  const scrollDown = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ top: 300, behavior: "smooth" });
-    }
-  };
+
 
   // Format date info
   const dayName = format(parseISO(date), "EEEE");
@@ -404,20 +395,22 @@ const DayColumn: React.FC<DayColumnProps> = ({
         {/* Scroll controls - only visible when needed and hovered */}
         {dayRecords.length > 5 && (
           <>
-            <button
-              onClick={scrollUp}
+            <a
+              id="top-scroll"
+              href="#bottom-scroll"
               className="absolute top-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
-              aria-label="Scroll up"
-            >
-              <ChevronLeft className="rotate-90" size={20} />
-            </button>
-            <button
-              onClick={scrollDown}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
               aria-label="Scroll down"
             >
               <ChevronRight className="rotate-90" size={20} />
-            </button>
+            </a>
+            <a
+              id="bottom-scroll"
+              href="#top-scroll"
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
+              aria-label="Scroll up"
+            >
+              <ChevronLeft className="rotate-90" size={20} />
+            </a>
           </>
         )}
       </div>

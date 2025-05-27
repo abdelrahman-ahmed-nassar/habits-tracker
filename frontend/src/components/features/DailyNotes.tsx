@@ -230,6 +230,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                 </label>
                 <select
                   value={mood}
+                  dir="ltr"
                   onChange={(e) => setMood(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
                 >
@@ -247,6 +248,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   Productivity Level
                 </label>
                 <select
+                dir="ltr"
                   value={productivityLevel}
                   onChange={(e) => setProductivityLevel(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
