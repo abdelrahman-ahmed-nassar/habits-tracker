@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Save, Edit3, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Card, { CardContent, CardHeader } from "../ui/Card";
 import Button from "../ui/Button";
+import MarkdownEditor from "../ui/MarkdownEditor";
 import { NotesService } from "../../services/notes";
 import { DailyNote } from "@shared/types/note";
 
@@ -199,17 +202,16 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
         <CardContent>
           {isEditing ? (
-            <div className="space-y-4">
-              {/* Content */}
+            <div className="space-y-4">              {/* Content */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Note Content
-                </label>
-                <textarea
+                </label>                <MarkdownEditor
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="What's on your mind today?"
-                  className="w-full h-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
+                  onChange={setContent}
+                  placeholder="What's on your mind today? Use markdown for rich formatting..."
+                  minHeight={300}
+                  disabled={loading}
                 />
               </div>
 
@@ -272,13 +274,12 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                 </Button>
               </div>
             </div>
-          ) : note ? (
-            <div className="space-y-4">
+          ) : note ? (            <div className="space-y-4">
               {/* Content Display */}
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+              <div className="prose dark:prose-invert max-w-none prose-sm">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {note.content}
-                </p>
+                </ReactMarkdown>
               </div>
 
               {/* Metadata */}
@@ -314,17 +315,29 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
             </div>
           )}
         </CardContent>
-      </Card>
-
-      {/* Quick Tips */}
+      </Card>      {/* Quick Tips */}
       <Card>
         <CardHeader title="Daily Reflection Tips" />
         <CardContent>
-          <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-            <p>• Reflect on your achievements and challenges from today</p>
-            <p>• Note any insights or learnings you gained</p>
-            <p>• Consider what you're grateful for</p>
-            <p>• Plan how tomorrow could be even better</p>
+          <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3">
+            <div>
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Content Ideas</h4>
+              <div className="space-y-1">
+                <p>• Reflect on your achievements and challenges from today</p>
+                <p>• Note any insights or learnings you gained</p>
+                <p>• Consider what you're grateful for</p>
+                <p>• Plan how tomorrow could be even better</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Formatting Tips</h4>
+              <div className="space-y-1">
+                <p>• Use <strong>**bold**</strong> for important achievements</p>
+                <p>• Create task lists with <code>- [ ]</code> for tomorrow's goals</p>
+                <p>• Add <em>*emphasis*</em> to key insights</p>
+                <p>• Use templates for consistent daily structure</p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

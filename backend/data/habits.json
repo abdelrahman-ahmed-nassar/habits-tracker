@@ -144,7 +144,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 1,
-    "currentCounter": 1,
+    "currentCounter": 2,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true
@@ -159,7 +159,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 1,
-    "currentCounter": 1,
+    "currentCounter": 2,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true
@@ -211,9 +211,9 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 8,
-    "currentStreak": 1,
-    "bestStreak": 1,
-    "currentCounter": 1,
+    "currentStreak": 3,
+    "bestStreak": 3,
+    "currentCounter": 3,
     "createdAt": "2024-03-20",
     "motivationNote": "Stay hydrated for better health",
     "isActive": true
@@ -226,9 +226,9 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 8,
-    "currentStreak": 1,
+    "currentStreak": 0,
     "bestStreak": 1,
-    "currentCounter": 1,
+    "currentCounter": 0,
     "createdAt": "2024-03-20",
     "motivationNote": "Stay hydrated for better health",
     "isActive": true
@@ -242,8 +242,8 @@
     "goalType": "streak",
     "goalValue": 8,
     "currentStreak": 1,
-    "bestStreak": 1,
-    "currentCounter": 1,
+    "bestStreak": 3,
+    "currentCounter": 2,
     "createdAt": "2024-03-20",
     "motivationNote": "Stay hydrated for better health",
     "isActive": true
