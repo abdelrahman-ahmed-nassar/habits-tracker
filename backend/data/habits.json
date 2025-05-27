@@ -9,7 +9,7 @@
     "goalValue": 30,
     "currentStreak": 3,
     "bestStreak": 5,
-    "currentCounter": 3,
+    "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "Start your day with spiritual connection",
     "isActive": true
@@ -26,7 +26,7 @@
     "bestStreak": 5,
     "currentCounter": 4,
     "createdAt": "2024-03-20",
-    "motivationNote": "Take a spiritual break during your busy day",
+    "motivationNote": "Take a spiritual break during your busy day h",
     "isActive": true
   },
   {
@@ -99,7 +99,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 1,
-    "currentCounter": 2,
+    "currentCounter": 3,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true
@@ -144,7 +144,7 @@
     "goalValue": 1,
     "currentStreak": 1,
     "bestStreak": 1,
-    "currentCounter": 2,
+    "currentCounter": 3,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true

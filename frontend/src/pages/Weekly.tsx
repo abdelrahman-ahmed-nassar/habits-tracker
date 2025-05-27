@@ -296,9 +296,6 @@ const DayColumn: React.FC<DayColumnProps> = ({
   const completionRate =
     totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
-
-
-
   // Format date info
   const dayName = format(parseISO(date), "EEEE");
   const dayNumber = format(parseISO(date), "d");
@@ -312,6 +309,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
         className={`p-4 border-b border-gray-200 dark:border-gray-700 ${
           isToday ? "bg-blue-50 dark:bg-blue-900/20" : ""
         }`}
+        id="top-scroll"
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
@@ -396,7 +394,6 @@ const DayColumn: React.FC<DayColumnProps> = ({
         {dayRecords.length > 5 && (
           <>
             <a
-              id="top-scroll"
               href="#bottom-scroll"
               className="absolute top-0 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 shadow-md rounded-full p-1 opacity-0 group-hover:opacity-80 transition-opacity z-99"
               aria-label="Scroll down"

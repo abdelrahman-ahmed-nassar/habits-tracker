@@ -2,7 +2,8 @@
   {
     "id": "daily",
     "name": "Daily Note",
-    "template": "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n"
+    "template": "# Daily Note - {{date}}\n\n## Tasks\n- [ ] \n\n## Notes\n\n\n## Mood\n\n\n## Achievements\n\n",
+    "updatedAt": "2025-05-27T16:30:17.504Z"
   },
   {
     "id": "weekly",
@@ -12,6 +13,7 @@
   {
     "id": "monthly",
     "name": "Monthly Review",
-    "template": "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n"
+    "template": "# Monthly Review - {{month}} {{year}}\n\n## Overview\n\n\n## Wins\n\n\n## Areas to Improve\n\n\n## Goals for Next Month\n\n",
+    "updatedAt": "2025-05-27T15:43:58.539Z"
   }
 ]

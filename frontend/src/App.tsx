@@ -6,6 +6,7 @@ import Daily from "./pages/Daily";
 import Weekly from "./pages/Weekly";
 import Monthly from "./pages/Monthly";
 import Streaks from "./pages/Streaks";
+import Settings from "./pages/Settings";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
             <Route path="analytics" element={<div>Analytics</div>} />
             <Route path="streaks" element={<Streaks />} />
             <Route path="notes" element={<div>Notes</div>} />
-            <Route path="settings" element={<div>Settings</div>} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </Router>

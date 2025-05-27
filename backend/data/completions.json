@@ -179,11 +179,11 @@
     "completedAt": "2025-05-27T11:58:47.395Z"
   },
   {
-    "id": "a5310d45-1128-481f-831e-d74e12f3daea",
+    "id": "91e2663e-99b0-41ee-96fb-4d7b0ff28ff9",
     "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
     "date": "2025-05-25",
-    "completed": false,
-    "completedAt": "2025-05-27T11:54:01.691Z"
+    "completed": true,
+    "completedAt": "2025-05-27T16:22:26.037Z"
   },
   {
     "id": "c8c7c42f-cd74-45e3-82aa-67106886ff7a",
@@ -420,5 +420,21 @@
     "date": "2025-05-31",
     "completed": true,
     "completedAt": "2025-05-27T14:09:58.157Z"
+  },
+  {
+    "id": "28bf4411-6e4b-47c9-9f6d-e4d65265801b",
+    "habitId": "sunnah-5",
+    "date": "2025-05-25",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-27T16:22:21.158Z"
+  },
+  {
+    "id": "cb53934a-acfa-47b0-9c0f-a51fc547bc1d",
+    "habitId": "sunnah-2",
+    "date": "2025-05-25",
+    "completed": true,
+    "value": 1,
+    "completedAt": "2025-05-27T16:22:23.917Z"
   }
 ]
