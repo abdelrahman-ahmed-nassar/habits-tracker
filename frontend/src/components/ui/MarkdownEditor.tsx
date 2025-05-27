@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from "react";
-import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  List, 
-  ListOrdered, 
-  Quote, 
-  Code, 
-  Link, 
-  Heading1, 
-  Heading2, 
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Quote,
+  Code,
+  Link,
+  Heading1,
+  Heading2,
   Heading3,
   Eye,
   Edit3,
@@ -19,7 +19,7 @@ import {
   Star,
   Zap,
   FileText,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -42,7 +42,8 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   minHeight = 200,
   className,
   disabled = false,
-}) => {  const [mode, setMode] = useState<"edit" | "preview" | "split">("edit");
+}) => {
+  const [mode, setMode] = useState<"edit" | "preview" | "split">("edit");
   const [showHelp, setShowHelp] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
 
@@ -52,14 +53,18 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   // Close templates dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (templatesRef.current && !templatesRef.current.contains(event.target as Node)) {
+      if (
+        templatesRef.current &&
+        !templatesRef.current.contains(event.target as Node)
+      ) {
         setShowTemplates(false);
       }
     };
 
     if (showTemplates) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showTemplates]);
 
@@ -80,7 +85,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 - [ ] 
 
 ## 📝 Additional Notes
-`
+`,
     },
     {
       name: "Gratitude & Growth",
@@ -99,7 +104,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
 ## ⭐ Quote of the Day
 > 
-`
+`,
     },
     {
       name: "Achievement Log",
@@ -120,7 +125,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
 ## 💡 Key Insights
 - 
-`
+`,
     },
     {
       name: "Mood & Energy",
@@ -143,74 +148,89 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
 ## 😌 Self-Care Today
 - 
-`
-    }
-  ];  const insertText = useCallback((before: string, after: string = "") => {
-    if (!textareaRef.current || disabled) return;
+`,
+    },
+  ];
+  const insertText = useCallback(
+    (before: string, after: string = "") => {
+      if (!textareaRef.current || disabled) return;
 
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = value.substring(start, end);
-    
-    textarea.focus();
-    
-    // Determine what text to insert and cursor positioning
-    let textToInsert: string;
-    let newCursorStart: number;
-    let newCursorEnd: number;
-    
-    if (selectedText) {
-      // Wrap selected text with formatting
-      textToInsert = selectedText;
-      newCursorStart = newCursorEnd = start + before.length + selectedText.length + after.length;
-    } else {
-      // No selection - position cursor between markers for empty formatting
-      textToInsert = "";
-      newCursorStart = newCursorEnd = start + before.length;
-    }
-    
-    // Select the range we want to replace
-    textarea.setSelectionRange(start, end);
-    
-    // Use execCommand to maintain undo history (works in most browsers)
-    const fullText = before + textToInsert + after;
-    try {
-      // This maintains the undo stack
-      const success = document.execCommand('insertText', false, fullText);
-      if (!success) {
-        // Fallback if execCommand doesn't work
-        const newValue = value.substring(0, start) + fullText + value.substring(end);
+      const textarea = textareaRef.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = value.substring(start, end);
+
+      textarea.focus();
+
+      // Determine what text to insert and cursor positioning
+      let textToInsert: string;
+      let newCursorStart: number;
+      let newCursorEnd: number;
+
+      if (selectedText) {
+        // Wrap selected text with formatting
+        textToInsert = selectedText;
+        newCursorStart = newCursorEnd =
+          start + before.length + selectedText.length + after.length;
+      } else {
+        // No selection - position cursor between markers for empty formatting
+        textToInsert = "";
+        newCursorStart = newCursorEnd = start + before.length;
+      }
+
+      // Select the range we want to replace
+      textarea.setSelectionRange(start, end);
+
+      // Use execCommand to maintain undo history (works in most browsers)
+      const fullText = before + textToInsert + after;
+      try {
+        // This maintains the undo stack
+        const success = document.execCommand("insertText", false, fullText);
+        if (!success) {
+          // Fallback if execCommand doesn't work
+          const newValue =
+            value.substring(0, start) + fullText + value.substring(end);
+          onChange(newValue);
+        }
+      } catch {
+        // Fallback for browsers that don't support execCommand
+        const newValue =
+          value.substring(0, start) + fullText + value.substring(end);
         onChange(newValue);
       }
-    } catch {
-      // Fallback for browsers that don't support execCommand
-      const newValue = value.substring(0, start) + fullText + value.substring(end);
-      onChange(newValue);
-    }
-    
-    // Set cursor position after insertion
-    setTimeout(() => {
-      textarea.setSelectionRange(newCursorStart, newCursorEnd);
-    }, 0);
-  }, [value, onChange, disabled]);  const insertLink = useCallback(() => {
+
+      // Set cursor position after insertion
+      setTimeout(() => {
+        textarea.setSelectionRange(newCursorStart, newCursorEnd);
+      }, 0);
+    },
+    [value, onChange, disabled]
+  );
+  const insertLink = useCallback(() => {
     if (!textareaRef.current || disabled) return;
 
     const url = prompt("Enter URL:");
     if (!url) return;
-    
+
     const linkText = prompt("Enter link text:") || "link";
     insertText(`[${linkText}](${url})`);
   }, [insertText, disabled]);
 
-  const insertTemplate = useCallback((template: typeof dailyNoteTemplates[0]) => {
-    if (value.trim() && !confirm("This will replace your current content. Continue?")) {
-      return;
-    }
-    onChange(template.content);
-    setShowTemplates(false);
-    setTimeout(() => textareaRef.current?.focus(), 0);
-  }, [value, onChange]);  const toolbarButtons = [
+  const insertTemplate = useCallback(
+    (template: (typeof dailyNoteTemplates)[0]) => {
+      if (
+        value.trim() &&
+        !confirm("This will replace your current content. Continue?")
+      ) {
+        return;
+      }
+      onChange(template.content);
+      setShowTemplates(false);
+      setTimeout(() => textareaRef.current?.focus(), 0);
+    },
+    [value, onChange]
+  );
+  const toolbarButtons = [
     {
       icon: Bold,
       title: "Bold",
@@ -218,7 +238,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     },
     {
       icon: Italic,
-      title: "Italic", 
+      title: "Italic",
       action: () => insertText("*", "*"),
     },
     {
@@ -234,7 +254,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     },
     {
       icon: Heading2,
-      title: "Heading 2", 
+      title: "Heading 2",
       action: () => insertText("## "),
     },
     {
@@ -294,7 +314,8 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       title: "Key Insight",
       action: () => insertText("💡 **Insight**: "),
     },
-  ];  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  ];
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (disabled) return;
 
     // Handle Enter for list continuation
@@ -304,82 +325,91 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
       const { selectionStart } = textarea;
       const beforeCursor = value.substring(0, selectionStart);
-      const lines = beforeCursor.split('\n');
+      const lines = beforeCursor.split("\n");
       const currentLine = lines[lines.length - 1];
-      
+
       // Check for bullet list pattern (- or * followed by optional space)
       const bulletMatch = currentLine.match(/^(\s*)([-*])\s*(.*)$/);
       if (bulletMatch) {
         const [, indent, bullet, content] = bulletMatch;
-        
+
         // If the current line is empty (just the bullet), remove it and don't create a new one
         if (!content.trim()) {
           e.preventDefault();
           // Remove the empty bullet line
-          const newValue = value.substring(0, selectionStart - currentLine.length) + 
-                          indent + 
-                          value.substring(selectionStart);
+          const newValue =
+            value.substring(0, selectionStart - currentLine.length) +
+            indent +
+            value.substring(selectionStart);
           onChange(newValue);
           setTimeout(() => {
-            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
-                                     selectionStart - currentLine.length + indent.length);
+            textarea.setSelectionRange(
+              selectionStart - currentLine.length + indent.length,
+              selectionStart - currentLine.length + indent.length
+            );
           }, 0);
           return;
         }
-        
+
         // Create new bullet point
         e.preventDefault();
         insertText(`\n${indent}${bullet} `);
         return;
       }
-      
+
       // Check for numbered list pattern (number followed by . and optional space)
       const numberedMatch = currentLine.match(/^(\s*)(\d+)\.\s*(.*)$/);
       if (numberedMatch) {
         const [, indent, num, content] = numberedMatch;
-        
+
         // If the current line is empty (just the number), remove it and don't create a new one
         if (!content.trim()) {
           e.preventDefault();
           // Remove the empty numbered line
-          const newValue = value.substring(0, selectionStart - currentLine.length) + 
-                          indent + 
-                          value.substring(selectionStart);
+          const newValue =
+            value.substring(0, selectionStart - currentLine.length) +
+            indent +
+            value.substring(selectionStart);
           onChange(newValue);
           setTimeout(() => {
-            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
-                                     selectionStart - currentLine.length + indent.length);
+            textarea.setSelectionRange(
+              selectionStart - currentLine.length + indent.length,
+              selectionStart - currentLine.length + indent.length
+            );
           }, 0);
           return;
         }
-        
+
         // Create new numbered item (increment the number)
         e.preventDefault();
         const nextNum = parseInt(num) + 1;
         insertText(`\n${indent}${nextNum}. `);
         return;
       }
-      
+
       // Check for task list pattern (- [ ] or - [x] followed by optional space)
       const taskMatch = currentLine.match(/^(\s*)([-*])\s*\[([ x])\]\s*(.*)$/);
       if (taskMatch) {
         const [, indent, bullet, , content] = taskMatch;
-        
+
         // If the current line is empty (just the task checkbox), remove it and don't create a new one
         if (!content.trim()) {
           e.preventDefault();
           // Remove the empty task line
-          const newValue = value.substring(0, selectionStart - currentLine.length) + 
-                          indent + 
-                          value.substring(selectionStart);
+          const newValue =
+            value.substring(0, selectionStart - currentLine.length) +
+            indent +
+            value.substring(selectionStart);
           onChange(newValue);
           setTimeout(() => {
-            textarea.setSelectionRange(selectionStart - currentLine.length + indent.length, 
-                                     selectionStart - currentLine.length + indent.length);
+            textarea.setSelectionRange(
+              selectionStart - currentLine.length + indent.length,
+              selectionStart - currentLine.length + indent.length
+            );
           }, 0);
           return;
         }
-        
+
         // Create new unchecked task item
         e.preventDefault();
         insertText(`\n${indent}${bullet} [ ] `);
@@ -419,16 +449,23 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   };
 
   return (
-    <div className={cn("border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden", className)}>      {/* Toolbar */}
+    <div
+      className={cn(
+        "border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden",
+        className
+      )}
+    >
+      {" "}
+      {/* Toolbar */}
       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
         <div className="flex items-center space-x-1 overflow-x-auto">
           {/* Formatting buttons */}
           {toolbarButtons.map((button, index) => {
             if (button.type === "separator") {
               return (
-                <div 
-                  key={index} 
-                  className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" 
+                <div
+                  key={index}
+                  className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"
                 />
               );
             }
@@ -448,10 +485,10 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               </Button>
             );
           })}
-          
+
           {/* Separator */}
           <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
-          
+
           {/* Quick insert buttons */}
           {quickInsertButtons.map((button, index) => {
             const IconComponent = button.icon;
@@ -469,7 +506,10 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               </Button>
             );
           })}
-        </div>        <div className="flex items-center space-x-1">          {/* Templates Dropdown */}
+        </div>{" "}
+        <div className="flex items-center space-x-1">
+          {" "}
+          {/* Templates Dropdown */}
           <div className="relative" ref={templatesRef}>
             <Button
               variant="ghost"
@@ -482,11 +522,13 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               <FileText className="w-4 h-4" />
               <ChevronDown className="w-3 h-3" />
             </Button>
-            
+
             {showTemplates && (
               <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-10 min-w-48">
                 <div className="p-2">
-                  <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-2 py-1">Daily Note Templates</div>
+                  <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-2 py-1">
+                    Daily Note Templates
+                  </div>
                   {dailyNoteTemplates.map((template, index) => (
                     <button
                       key={index}
@@ -501,7 +543,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               </div>
             )}
           </div>
-
           {/* View Mode Toggle */}
           <div className="flex bg-white dark:bg-gray-700 rounded-md p-1 border border-gray-300 dark:border-gray-600">
             <button
@@ -541,7 +582,6 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
               <Eye className="w-3 h-3" />
             </button>
           </div>
-
           {/* Help Button */}
           <Button
             variant="ghost"
@@ -553,29 +593,52 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             <HelpCircle className="w-4 h-4" />
           </Button>
         </div>
-      </div>          {/* Help Panel */}
+      </div>{" "}
+      {/* Help Panel */}
       {showHelp && (
         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-b border-gray-300 dark:border-gray-600 text-sm">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <h4 className="font-semibold mb-2">Formatting</h4>
               <div className="space-y-1 text-xs">
-                <div><code>**bold**</code> → <strong>bold</strong></div>
-                <div><code>*italic*</code> → <em>italic</em></div>
-                <div><code>~~strikethrough~~</code> → <del>strikethrough</del></div>
-                <div><code>`code`</code> → <code>code</code></div>
+                <div>
+                  <code>**bold**</code> → <strong>bold</strong>
+                </div>
+                <div>
+                  <code>*italic*</code> → <em>italic</em>
+                </div>
+                <div>
+                  <code>~~strikethrough~~</code> → <del>strikethrough</del>
+                </div>
+                <div>
+                  <code>`code`</code> → <code>code</code>
+                </div>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-2">Structure</h4>
               <div className="space-y-1 text-xs">
-                <div><code># Heading 1</code></div>
-                <div><code>## Heading 2</code></div>
-                <div><code>- List item</code></div>
-                <div><code>1. Numbered item</code></div>
-                <div><code>- [ ] Task item</code></div>
-                <div><code>&gt; Quote</code></div>
-                <div><code>[Link](url)</code></div>
+                <div>
+                  <code># Heading 1</code>
+                </div>
+                <div>
+                  <code>## Heading 2</code>
+                </div>
+                <div>
+                  <code>- List item</code>
+                </div>
+                <div>
+                  <code>1. Numbered item</code>
+                </div>
+                <div>
+                  <code>- [ ] Task item</code>
+                </div>
+                <div>
+                  <code>&gt; Quote</code>
+                </div>
+                <div>
+                  <code>[Link](url)</code>
+                </div>
               </div>
             </div>
             <div>
@@ -612,12 +675,17 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           </div>
         </div>
       )}
-
       {/* Editor Content */}
       <div className="flex" style={{ minHeight }}>
         {/* Edit Mode */}
         {(mode === "edit" || mode === "split") && (
-          <div className={cn("flex-1", mode === "split" && "border-r border-gray-300 dark:border-gray-600")}>
+          <div
+            className={cn(
+              "flex-1",
+              mode === "split" &&
+                "border-r border-gray-300 dark:border-gray-600"
+            )}
+          >
             <textarea
               ref={textareaRef}
               value={value}
@@ -645,7 +713,9 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                   {value}
                 </ReactMarkdown>
               ) : (
-                <div className="text-gray-400 italic">Preview will appear here...</div>
+                <div className="text-gray-400 italic">
+                  Preview will appear here...
+                </div>
               )}
             </div>
           </div>

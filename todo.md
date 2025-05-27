@@ -1,0 +1,2 @@
+- [ ] make templates.json
+- [ ] make the week start at in the settings

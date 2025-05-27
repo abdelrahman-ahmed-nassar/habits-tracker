@@ -189,12 +189,17 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                     </Button>
                   </>
                 )}
-              {!note && !isEditing && (
-                <Button onClick={handleCreate} variant="primary" size="sm" className="ml-4">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Note
-                </Button>
-              )}
+                {!note && !isEditing && (
+                  <Button
+                    onClick={handleCreate}
+                    variant="primary"
+                    size="sm"
+                    className="ml-4"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Note
+                  </Button>
+                )}
               </div>
             </div>
           }
@@ -202,11 +207,14 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
         <CardContent>
           {isEditing ? (
-            <div className="space-y-4">              {/* Content */}
+            <div className="space-y-4">
+              {" "}
+              {/* Content */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Note Content
-                </label>                <MarkdownEditor
+                </label>{" "}
+                <MarkdownEditor
                   value={content}
                   onChange={setContent}
                   placeholder="What's on your mind today? Use markdown for rich formatting..."
@@ -214,7 +222,6 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   disabled={loading}
                 />
               </div>
-
               {/* Mood Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -233,7 +240,6 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   ))}
                 </select>
               </div>
-
               {/* Productivity Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -252,7 +258,6 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   ))}
                 </select>
               </div>
-
               {/* Action Buttons */}
               <div className="flex items-center justify-end space-x-3">
                 <Button
@@ -274,7 +279,8 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                 </Button>
               </div>
             </div>
-          ) : note ? (            <div className="space-y-4">
+          ) : note ? (
+            <div className="space-y-4">
               {/* Content Display */}
               <div className="prose dark:prose-invert max-w-none prose-sm">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -315,13 +321,16 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
             </div>
           )}
         </CardContent>
-      </Card>      {/* Quick Tips */}
+      </Card>{" "}
+      {/* Quick Tips */}
       <Card>
         <CardHeader title="Daily Reflection Tips" />
         <CardContent>
           <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3">
             <div>
-              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Content Ideas</h4>
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Content Ideas
+              </h4>
               <div className="space-y-1">
                 <p>• Reflect on your achievements and challenges from today</p>
                 <p>• Note any insights or learnings you gained</p>
@@ -330,11 +339,20 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">Formatting Tips</h4>
+              <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Formatting Tips
+              </h4>
               <div className="space-y-1">
-                <p>• Use <strong>**bold**</strong> for important achievements</p>
-                <p>• Create task lists with <code>- [ ]</code> for tomorrow's goals</p>
-                <p>• Add <em>*emphasis*</em> to key insights</p>
+                <p>
+                  • Use <strong>**bold**</strong> for important achievements
+                </p>
+                <p>
+                  • Create task lists with <code>- [ ]</code> for tomorrow's
+                  goals
+                </p>
+                <p>
+                  • Add <em>*emphasis*</em> to key insights
+                </p>
                 <p>• Use templates for consistent daily structure</p>
               </div>
             </div>
