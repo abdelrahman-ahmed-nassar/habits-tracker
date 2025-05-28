@@ -86,11 +86,11 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500">
               30-Day Success Rate
-            </h3>
+            </h3>{" "}
             <div className="mt-2 flex items-center">
               <ArrowUp className="w-5 h-5 text-purple-500 mr-2" />
               <span className="text-2xl font-bold">
-                {analytics.last30DaysSuccessRate}%
+                {Math.round(analytics.last30DaysSuccessRate)}%
               </span>
             </div>
           </div>
@@ -130,10 +130,10 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                       <Award className="w-4 h-4 ml-2 mr-1 text-yellow-500" />
                       <span>Best: {habit.bestStreak}</span>
                     </div>
-                  </div>
+                  </div>{" "}
                   <div className="flex items-center">
                     <span className="font-bold text-green-600">
-                      {habit.successRate}%
+                      {Math.round(habit.successRate)}%
                     </span>
                   </div>
                 </div>
@@ -155,6 +155,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     <span className="w-24 font-medium">{day.dayName}</span>
                     <div className="flex-1">
                       <div className="relative pt-1">
+                        {" "}
                         <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
                           <div
                             style={{ width: `${day.successRate}%` }}
@@ -164,7 +165,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                       </div>
                     </div>
                     <span className="w-16 text-right font-medium">
-                      {day.successRate}%
+                      {Math.round(day.successRate)}%
                     </span>
                   </div>
                 ))}
@@ -188,10 +189,10 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               <div>
                 <p className="font-medium">
                   Best Day: {analytics.bestDayOfWeek.dayName}
-                </p>
+                </p>{" "}
                 <p className="text-sm text-gray-600">
-                  You complete {analytics.bestDayOfWeek.successRate}% of your
-                  habits on this day.
+                  You complete {Math.round(analytics.bestDayOfWeek.successRate)}
+                  % of your habits on this day.
                 </p>
               </div>
             </div>

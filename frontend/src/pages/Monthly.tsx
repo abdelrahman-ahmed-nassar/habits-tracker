@@ -149,7 +149,7 @@ const Monthly: React.FC = () => {
     const month = newDate.getMonth() + 1;
     navigate(`/monthly/${year}/${month}`);
   };
-  
+
   const goToCurrentMonth = () => {
     const today = new Date();
     setCurrentDate(today);
@@ -213,7 +213,7 @@ const Monthly: React.FC = () => {
       const year = parseInt(yearParam, 10);
       const month = parseInt(monthParam, 10) - 1; // Convert to 0-based month
       const urlDate = new Date(year, month, 1);
-      
+
       // Only update if the URL date is different from current date
       if (urlDate.getTime() !== currentDate.getTime()) {
         setCurrentDate(urlDate);
