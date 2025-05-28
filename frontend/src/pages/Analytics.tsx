@@ -132,7 +132,8 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
       } finally {
         setLoading(false);
       }
-    };    fetchData();
+    };
+    fetchData();
   }, [habitId, selectedPeriod]);
 
   if (loading) {

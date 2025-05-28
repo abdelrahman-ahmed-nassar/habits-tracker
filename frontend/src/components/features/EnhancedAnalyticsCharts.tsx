@@ -227,8 +227,10 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       title: {
         text: "Streak Length (Days)",
       },
-    },    yaxis: {
-      labels: {        formatter: (val: number, index?: number) => {
+    },
+    yaxis: {
+      labels: {
+        formatter: (val: number, index?: number) => {
           const streak = analytics.topStreaks[index || 0];
           if (streak) {
             return `${new Date(
