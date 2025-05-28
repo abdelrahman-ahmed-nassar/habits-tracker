@@ -89,7 +89,7 @@ async function main() {
 
   // Wait for backend to be ready
   console.log("\x1b[33m⏳ Waiting for backend to be ready...\x1b[0m");
-  const backendReady = await waitForPort(5000);
+  const backendReady = await waitForPort(5002);
   if (!backendReady) {
     console.log(
       "\x1b[31m⚠️  Backend took too long to start, continuing anyway...\x1b[0m"
@@ -159,7 +159,7 @@ async function main() {
 
   console.log("\n💡 Press Ctrl+C to stop all servers and close Electron\n");
   console.log("🌐 Frontend: http://localhost:5173");
-  console.log("🔧 Backend: http://localhost:5000");
+  console.log("🔧 Backend: http://localhost:5002");
 }
 
 main().catch(console.error);

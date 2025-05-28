@@ -11,6 +11,8 @@ habits-tracker/
 ├── package.json              # Root workspace configuration
 ├── dev-electron.js          # Development script (starts all services)
 ├── build-electron.js        # Build script (creates production builds)
+├── build-app.js             # Script to create standalone executable
+├── Update Ports.bat         # Utility to update ports throughout codebase
 ├── backend/                 # Node.js/Express backend
 │   ├── src/                # TypeScript source
 │   └── dist/               # Built JavaScript (after npm run build)
@@ -20,7 +22,7 @@ habits-tracker/
 │   │   └── preload.js     # Preload script for security
 │   ├── dist-electron/     # Built Electron files
 │   ├── dist/              # Built React app
-│   └── electron-dist/     # Packaged Electron app
+│   └── electron-build/    # Packaged Electron app
 └── shared/                # Shared TypeScript types
 ```
 
@@ -145,6 +147,30 @@ Override with `ELECTRON_ENV=production` for testing production mode locally.
    - macOS: `frontend/electron-dist/habits-tracker-1.0.0.dmg`
    - Linux: `frontend/electron-dist/habits-tracker-1.0.0.AppImage`
 
+## 📦 Creating a Standalone Executable
+
+A standalone executable has been set up that includes both the frontend and backend in a single package:
+
+### Quick Method (for Windows)
+
+1. Double-click the `Build Executable.bat` file in the project root
+2. Wait for the build process to complete
+3. Find the installer in `frontend/electron-build/HabitsTracker-Setup-x.x.x.exe`
+
+### Command Line Method
+
+```bash
+# From project root:
+npm run build:exe
+```
+
+### What the Executable Provides
+
+- **Single-file Launch**: Users click one .exe file to start the entire application
+- **Automatic Backend**: Backend server starts automatically with the frontend
+- **Clean Shutdown**: Both frontend and backend shut down when the app is closed
+- **Data Persistence**: All user data is stored locally across sessions
+
 ## 🔍 Troubleshooting
 
 ### Common Issues
@@ -212,6 +238,22 @@ Edit `frontend/package.json` "build" section for:
 3. **Auto Updates**: Configure update server for automatic updates
 4. **Testing**: Test packaged app on different operating systems
 5. **Distribution**: Set up CI/CD for automated builds
+
+## 🔧 Configuration Notes
+
+### Port Configuration
+
+The application now consistently uses port 5002 for the backend server to avoid conflicts with other common services:
+
+- Backend Express server listens on port 5002
+- Frontend services connect to http://localhost:5002/api
+- Port conflicts can be resolved using the `Update Ports.bat` utility
+
+To verify port consistency across the codebase:
+```bash
+# Run the port checker utility
+npm run check-ports
+```
 
 ## ✅ Conversion Summary
 

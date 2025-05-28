@@ -13,6 +13,6 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true
   },
-  "include": ["*.ts", "*.js"],
+  "include": ["**/*.ts", "**/*.js"],
   "exclude": ["node_modules", "../dist-electron"]
 }

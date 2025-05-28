@@ -1,8 +1,7 @@
 {
   "name": "habits-tracker-workspace",
   "version": "1.0.0",
-  "description": "Personal habit tracking desktop application",
-  "scripts": {
+  "description": "Personal habit tracking desktop application",  "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "dev": "node dev-electron.js",
     "build": "node build-electron.js",
@@ -13,7 +12,10 @@
     "dist": "cd frontend && npm run electron:dist",
     "start:backend": "cd backend && npm run dev",
     "start:frontend": "cd frontend && npm run dev",
-    "test:api": "bash test-api.sh"
+    "test:api": "bash test-api.sh",
+    "build:exe": "node build-app.js",
+    "check-ports": "powershell -ExecutionPolicy Bypass -File check-ports.ps1",
+    "update-ports": "node update-ports.js"
   },
   "repository": {
     "type": "git",

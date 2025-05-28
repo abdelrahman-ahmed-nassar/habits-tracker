@@ -81,28 +81,61 @@ function createWindow() {
   });
 }
 
-function startBackend() {
-  if (isDev) {
+function startBackend() {  if (isDev) {
     // In development, assume backend is running separately
     console.log(
-      "Development mode: Backend should be running separately on port 5000"
+      "Development mode: Backend should be running separately on port 5002"
     );
     return;
   }
 
   // In production, start the bundled backend
-  const backendPath = path.join(process.resourcesPath, "backend", "index.js");
+  let backendPath;
+  
+  if (app.isPackaged) {
+    // When properly packaged with electron-builder
+    backendPath = path.join(process.resourcesPath, "backend", "backend", "src", "index.js");
+  } else {
+    // When running manually (not from development mode)
+    backendPath = path.join(__dirname, "../../backend/dist/backend/src/index.js");
+  }
 
   try {
     console.log("Starting backend from:", backendPath);
+    
+    // Make sure the path exists
+    if (!fs.existsSync(backendPath)) {
+      console.error(`Backend path does not exist: ${backendPath}`);
+      
+      // Try to find the backend
+      const possibleLocations = [
+        path.join(process.resourcesPath, "backend", "backend", "src", "index.js"),
+        path.join(process.resourcesPath, "backend", "index.js"),
+        path.join(__dirname, "../../backend/dist/backend/src/index.js")
+      ];
+      
+      for (const loc of possibleLocations) {
+        if (fs.existsSync(loc)) {
+          console.log(`Found backend at alternative location: ${loc}`);
+          backendPath = loc;
+          break;
+        }
+      }
+      
+      if (!fs.existsSync(backendPath)) {
+        dialog.showErrorBox("Backend Error", "Could not find the backend server files.");
+        app.quit();
+        return;
+      }
+    }
 
     backendProcess = spawn("node", [backendPath], {
-      cwd: path.join(process.resourcesPath, "backend"),
+      cwd: path.dirname(backendPath),
       stdio: ["pipe", "pipe", "pipe"],
       env: {
         ...process.env,
         NODE_ENV: "production",
-        PORT: "5000",
+        PORT: "5002",
       },
     });
 
@@ -300,9 +333,29 @@ app.on("window-all-closed", () => {
   }
 });
 
+// Make sure the backend is properly terminated
 app.on("before-quit", () => {
+  console.log("Application quitting, cleaning up resources...");
   if (backendProcess) {
-    backendProcess.kill();
+    console.log("Terminating backend server...");
+    try {
+      backendProcess.kill();
+      console.log("Backend server terminated successfully");
+    } catch (error) {
+      console.error("Error terminating backend:", error);
+    }
+  }
+});
+
+// Ensure the backend is always terminated, even in case of crashes
+app.on("will-quit", () => {
+  if (backendProcess && !backendProcess.killed) {
+    try {
+      backendProcess.kill("SIGKILL");
+    } catch (error) {
+      // Last resort, just log the error
+      console.error("Error force-killing backend:", error);
+    }
   }
 });
 

@@ -11,10 +11,9 @@ class ApiService {
   private api: AxiosInstance;
   private config: ApiConfig;
   private retryCount: number = 0;
-
   constructor(config: ApiConfig) {
     this.config = {
-      baseURL: config.baseURL || "http://localhost:5000/api",
+      baseURL: config.baseURL || "http://localhost:5002/api",
       timeout: config.timeout || 10000,
       retryAttempts: config.retryAttempts || 3,
       retryDelay: config.retryDelay || 1000,
@@ -146,7 +145,7 @@ class ApiService {
 
 // Create and export a singleton instance
 export const apiService = new ApiService({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "http://localhost:5002/api",
   timeout: 10000,
   retryAttempts: 3,
   retryDelay: 1000,
