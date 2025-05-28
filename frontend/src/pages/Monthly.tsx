@@ -18,6 +18,7 @@ import {
   Download,
   Award,
   BarChart3,
+  TrendingUp,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -26,6 +27,8 @@ import Button from "../components/ui/Button";
 import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Progress from "../components/ui/Progress";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 // Updated interface to match backend response structure
 interface MonthlyAnalytics {
@@ -670,7 +673,163 @@ const Monthly: React.FC = () => {
                 </div>
               </CardContent>
             </Card>{" "}
-          </div>
+          </div>{" "}
+          {/* Daily Completion Trend Chart */}
+          <Card className="shadow-sm hover:shadow-md transition-all mb-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">
+                  Daily Completion Trend
+                </h3>
+                <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Track your daily habit completion rates throughout the month
+                  to identify patterns and maintain consistency.
+                </p>
+              </div>
+              <div className="h-80">
+                <ReactApexChart
+                  options={
+                    {
+                      chart: {
+                        type: "line",
+                        height: 350,
+                        toolbar: {
+                          show: false,
+                        },
+                        animations: {
+                          enabled: true,
+                          speed: 800,
+                          animateGradually: {
+                            enabled: true,
+                            delay: 150,
+                          },
+                          dynamicAnimation: {
+                            enabled: true,
+                            speed: 350,
+                          },
+                        },
+                      },
+                      stroke: {
+                        curve: "smooth",
+                        width: 3,
+                      },
+                      colors: ["#10B981"],
+                      grid: {
+                        borderColor: "#E5E7EB",
+                        strokeDashArray: 3,
+                      },
+                      xaxis: {
+                        categories: monthlyData.dailyCompletionCounts.map(
+                          (day) => format(new Date(day.date), "MMM dd")
+                        ),
+                        labels: {
+                          rotate: -45,
+                          rotateAlways: true,
+                          style: {
+                            fontSize: "12px",
+                            colors: "#6B7280",
+                          },
+                        },
+                      },
+                      yaxis: {
+                        title: {
+                          text: "Completion Rate (%)",
+                          style: {
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                            color: "#374151",
+                          },
+                        },
+                        min: 0,
+                        max: 100,
+                        labels: {
+                          formatter: function (val: number) {
+                            return Math.round(val) + "%";
+                          },
+                          style: {
+                            colors: "#6B7280",
+                          },
+                        },
+                      },
+                      tooltip: {
+                        y: {
+                          formatter: function (val: number) {
+                            return Math.round(val) + "%";
+                          },
+                        },
+                        x: {
+                          formatter: function (
+                            _val: number,
+                            { dataPointIndex }
+                          ) {
+                            const dayData =
+                              monthlyData.dailyCompletionCounts[dataPointIndex];
+                            return `${format(
+                              new Date(dayData.date),
+                              "EEEE, MMM dd"
+                            )} - ${dayData.count}/${
+                              dayData.totalHabits
+                            } habits completed`;
+                          },
+                        },
+                      },
+                      markers: {
+                        size: 4,
+                        colors: ["#10B981"],
+                        strokeColors: "#fff",
+                        strokeWidth: 2,
+                        hover: {
+                          size: 6,
+                        },
+                      },
+                      fill: {
+                        type: "gradient",
+                        gradient: {
+                          shade: "light",
+                          type: "vertical",
+                          shadeIntensity: 0.5,
+                          gradientToColors: ["#34D399"],
+                          inverseColors: false,
+                          opacityFrom: 0.7,
+                          opacityTo: 0.3,
+                          stops: [0, 100],
+                        },
+                      },
+                    } as ApexOptions
+                  }
+                  series={[
+                    {
+                      name: "Completion Rate",
+                      data: monthlyData.dailyCompletionCounts.map((day) =>
+                        Math.round((day.completionRate || 0) * 100)
+                      ),
+                    },
+                  ]}
+                  type="line"
+                  height={350}
+                />
+              </div>
+              <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                <span>
+                  Average:{" "}
+                  {Math.round(
+                    monthlyData.monthlyStats.overallCompletionRate * 100
+                  )}
+                  %
+                </span>
+                <span>
+                  Total Completions: {monthlyData.monthlyStats.totalCompletions}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>

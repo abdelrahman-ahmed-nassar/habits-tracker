@@ -6,7 +6,6 @@ import {
   BarChart2,
   Settings,
   BookOpen,
-  Flame,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -24,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
     { path: "/weekly", icon: Calendar, label: "Weekly" },
     { path: "/monthly", icon: Calendar, label: "Monthly" },
     { path: "/analytics", icon: BarChart2, label: "Analytics" },
-    { path: "/streaks", icon: Flame, label: "Streaks" },
+
     { path: "/notes", icon: BookOpen, label: "Notes" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];

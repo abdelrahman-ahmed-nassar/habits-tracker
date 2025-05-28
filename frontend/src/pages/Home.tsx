@@ -27,10 +27,30 @@ interface DashboardData {
   }[];
 }
 
+interface MonthlyAnalytics {
+  year: number;
+  month: number;
+  monthName: string;
+  dailyCompletionCounts: Array<{
+    date: string;
+    dayOfWeek: number;
+    dayName: string;
+    count: number;
+    totalHabits: number;
+    completionRate: number;
+  }>;
+  monthlyStats: {
+    totalHabits: number;
+    totalCompletions: number;
+    overallCompletionRate: number;
+  };
+}
+
 const Home: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
+  const [monthlyData, setMonthlyData] = useState<MonthlyAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -54,6 +74,7 @@ const Home: React.FC = () => {
           currentDate.getMonth() + 1
         );
 
+        setMonthlyData(monthlyAnalytics);
         console.log(monthlyAnalytics);
         console.log(weeklyAnalytics);
       } catch (error) {
@@ -224,7 +245,7 @@ const Home: React.FC = () => {
   };
 
   const renderMonthlyTrendChart = () => {
-    if (!dashboardData) return null;
+    if (!monthlyData) return null;
 
     const options: ApexOptions = {
       chart: {
@@ -233,17 +254,59 @@ const Home: React.FC = () => {
         toolbar: {
           show: false,
         },
+        animations: {
+          enabled: true,
+          speed: 800,
+          animateGradually: {
+            enabled: true,
+            delay: 150,
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350,
+          },
+        },
       },
       stroke: {
         curve: "smooth",
         width: 3,
       },
+      colors: ["#10B981"],
+      grid: {
+        borderColor: "#E5E7EB",
+        strokeDashArray: 3,
+      },
       xaxis: {
-        categories: dashboardData.dayOfWeekStats.map((stat) => stat.dayName),
+        categories: monthlyData.dailyCompletionCounts.map((day) =>
+          format(new Date(day.date), "MMM dd")
+        ),
+        labels: {
+          rotate: -45,
+          rotateAlways: true,
+          style: {
+            fontSize: "12px",
+            colors: "#6B7280",
+          },
+        },
       },
       yaxis: {
         title: {
-          text: "Completion Rate",
+          text: "Completion Rate (%)",
+          style: {
+            fontSize: "14px",
+            fontWeight: "bold",
+            color: "#374151",
+          },
+        },
+        min: 0,
+        max: 100,
+        labels: {
+          formatter: function (val: number) {
+            return Math.round(val) + "%";
+          },
+          style: {
+            colors: "#6B7280",
+          },
         },
       },
       tooltip: {
@@ -252,28 +315,78 @@ const Home: React.FC = () => {
             return Math.round(val) + "%";
           },
         },
+        x: {
+          formatter: function (_val: number, { dataPointIndex }) {
+            const dayData = monthlyData.dailyCompletionCounts[dataPointIndex];
+            return `${format(new Date(dayData.date), "EEEE, MMM dd")} - ${
+              dayData.count
+            }/${dayData.totalHabits} habits completed`;
+          },
+        },
       },
-      colors: ["#10B981"],
+      markers: {
+        size: 4,
+        colors: ["#10B981"],
+        strokeColors: "#fff",
+        strokeWidth: 2,
+        hover: {
+          size: 6,
+        },
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          shade: "light",
+          type: "vertical",
+          shadeIntensity: 0.5,
+          gradientToColors: ["#34D399"],
+          inverseColors: false,
+          opacityFrom: 0.7,
+          opacityTo: 0.3,
+          stops: [0, 100],
+        },
+      },
     };
 
     const series = [
       {
-        name: "Monthly Trend",
-        data: dashboardData.dayOfWeekStats.map((stat) =>
-          Math.round(stat.successRate * 100)
+        name: "Current Month Completion",
+        data: monthlyData.dailyCompletionCounts.map((day) =>
+          Math.round((day.completionRate || 0) * 100)
         ),
       },
     ];
 
     return (
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Monthly Trend</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">
+            Current Month Completion Trend ({monthlyData.monthName}{" "}
+            {monthlyData.year})
+          </h3>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Avg:{" "}
+            {Math.round(monthlyData.monthlyStats.overallCompletionRate * 100)}%
+          </div>
+        </div>
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Track your daily habit completion rates throughout the current month
+            to identify patterns and maintain consistency.
+          </p>
+        </div>
         <ReactApexChart
           options={options}
           series={series}
           type="line"
           height={350}
         />
+        <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+          <span>
+            Total Completions: {monthlyData.monthlyStats.totalCompletions}
+          </span>
+          <span>Days Tracked: {monthlyData.dailyCompletionCounts.length}</span>
+        </div>
       </div>
     );
   };
