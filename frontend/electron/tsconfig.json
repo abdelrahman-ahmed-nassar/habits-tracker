@@ -10,9 +10,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true
   },
-  "include": ["**/*.ts", "**/*.js"],
+  "files": ["main.js", "main.cjs", "preload.js"],
   "exclude": ["node_modules", "../dist-electron"]
 }
