@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AppError, asyncHandler } from "../middleware/errorHandler";
 import * as dataService from "../services/dataService";
+import * as optionsService from "../services/optionsService";
 import { isValidDateFormat } from "../utils/validation";
 
 /**
@@ -10,6 +11,14 @@ import { isValidDateFormat } from "../utils/validation";
 export const getNotesAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
     const notes = await dataService.getNotes();
+    const moodOptions = await optionsService.getMoods();
+    const productivityOptions = await optionsService.getProductivityLevels();
+
+    // Create lookups for mood and productivity values
+    const moodValueMap = new Map(moodOptions.map((m) => [m.label, m.value]));
+    const productivityValueMap = new Map(
+      productivityOptions.map((p) => [p.label, p.value])
+    );
 
     // Calculate basic statistics
     const totalNotes = notes.length;
@@ -20,26 +29,103 @@ export const getNotesAnalytics = asyncHandler(
 
     // Calculate mood distribution
     const moodCounts: Record<string, number> = {};
+    const moodValues: number[] = [];
     notes.forEach((note) => {
       if (note.mood) {
         moodCounts[note.mood] = (moodCounts[note.mood] || 0) + 1;
+        if (moodValueMap.has(note.mood)) {
+          moodValues.push(moodValueMap.get(note.mood) || 0);
+        }
       }
     });
 
+    // Calculate average mood value (if available)
+    const avgMoodValue =
+      moodValues.length > 0
+        ? Math.round(
+            (moodValues.reduce((sum, val) => sum + val, 0) /
+              moodValues.length) *
+              10
+          ) / 10
+        : null;
+
     // Calculate productivity distribution
     const productivityCounts: Record<string, number> = {};
+    const productivityValues: number[] = [];
     notes.forEach((note) => {
       if (note.productivityLevel) {
         productivityCounts[note.productivityLevel] =
           (productivityCounts[note.productivityLevel] || 0) + 1;
+        if (productivityValueMap.has(note.productivityLevel)) {
+          productivityValues.push(
+            productivityValueMap.get(note.productivityLevel) || 0
+          );
+        }
       }
     });
 
-    // Calculate monthly note frequency
+    // Calculate average productivity value (if available)
+    const avgProductivityValue =
+      productivityValues.length > 0
+        ? Math.round(
+            (productivityValues.reduce((sum, val) => sum + val, 0) /
+              productivityValues.length) *
+              10
+          ) / 10
+        : null; // Calculate monthly note frequency
     const monthlyFrequency: Record<string, number> = {};
     notes.forEach((note) => {
-      const monthKey = note.date.substring(0, 7); // YYYY-MM
-      monthlyFrequency[monthKey] = (monthlyFrequency[monthKey] || 0) + 1;
+      const yearMonth = note.date.substring(0, 7); // YYYY-MM
+      monthlyFrequency[yearMonth] = (monthlyFrequency[yearMonth] || 0) + 1;
+    });
+
+    // Calculate monthly mood and productivity scores
+    const monthlyMoodScores: Record<
+      string,
+      { avg: number; count: number; sum: number }
+    > = {};
+    const monthlyProductivityScores: Record<
+      string,
+      { avg: number; count: number; sum: number }
+    > = {};
+
+    notes.forEach((note) => {
+      if (note.date) {
+        const monthKey = note.date.substring(0, 7); // YYYY-MM
+
+        // Process mood data
+        if (note.mood && moodValueMap.has(note.mood)) {
+          if (!monthlyMoodScores[monthKey]) {
+            monthlyMoodScores[monthKey] = { avg: 0, count: 0, sum: 0 };
+          }
+          monthlyMoodScores[monthKey].count++;
+          monthlyMoodScores[monthKey].sum += moodValueMap.get(note.mood) || 0;
+        }
+
+        // Process productivity data
+        if (
+          note.productivityLevel &&
+          productivityValueMap.has(note.productivityLevel)
+        ) {
+          if (!monthlyProductivityScores[monthKey]) {
+            monthlyProductivityScores[monthKey] = { avg: 0, count: 0, sum: 0 };
+          }
+          monthlyProductivityScores[monthKey].count++;
+          monthlyProductivityScores[monthKey].sum +=
+            productivityValueMap.get(note.productivityLevel) || 0;
+        }
+      }
+    });
+
+    // Calculate averages
+    Object.keys(monthlyMoodScores).forEach((month) => {
+      const data = monthlyMoodScores[month];
+      data.avg = Math.round((data.sum / data.count) * 10) / 10;
+    });
+
+    Object.keys(monthlyProductivityScores).forEach((month) => {
+      const data = monthlyProductivityScores[month];
+      data.avg = Math.round((data.sum / data.count) * 10) / 10;
     });
 
     // Calculate average content length
@@ -52,30 +138,34 @@ export const getNotesAnalytics = asyncHandler(
         : 0;
 
     // Find longest streak of consecutive days with notes
-    const sortedDates = notes.map((n) => n.date).sort();
-    let longestStreak = 0;
+    const dateSet = new Set(notes.map((note) => note.date));
     let currentStreak = 0;
+    let longestStreak = 0;
+
+    // Sort dates in ascending order
+    const sortedDates = Array.from(dateSet).sort();
 
     for (let i = 0; i < sortedDates.length; i++) {
       if (i === 0) {
         currentStreak = 1;
-      } else {
-        const prevDate = new Date(sortedDates[i - 1]);
-        const currentDate = new Date(sortedDates[i]);
-        const dayDiff = Math.floor(
-          (currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
-
-        if (dayDiff === 1) {
-          currentStreak++;
-        } else {
-          longestStreak = Math.max(longestStreak, currentStreak);
-          currentStreak = 1;
-        }
+        longestStreak = 1;
+        continue;
       }
-    }
-    longestStreak = Math.max(longestStreak, currentStreak);
 
+      const currDate = new Date(sortedDates[i]);
+      const prevDate = new Date(sortedDates[i - 1]);
+
+      // Check if dates are consecutive
+      const diffTime = currDate.getTime() - prevDate.getTime();
+      const diffDays = diffTime / (1000 * 3600 * 24);
+
+      if (diffDays === 1) {
+        currentStreak++;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 1;
+      }
+    } // Send the analytics data
     res.status(200).json({
       success: true,
       data: {
@@ -86,7 +176,14 @@ export const getNotesAnalytics = asyncHandler(
         productivityDistribution: productivityCounts,
         monthlyFrequency,
         avgContentLength,
+        avgMoodValue,
+        avgProductivityValue,
         longestStreak,
+        currentStreak,
+        moodValueMap: Object.fromEntries(moodValueMap),
+        productivityValueMap: Object.fromEntries(productivityValueMap),
+        monthlyMoodScores,
+        monthlyProductivityScores,
         completionRate: {
           mood:
             totalNotes > 0 ? Math.round((notesWithMood / totalNotes) * 100) : 0,
@@ -106,45 +203,57 @@ export const getNotesAnalytics = asyncHandler(
  */
 export const getMoodTrends = asyncHandler(
   async (req: Request, res: Response) => {
-    const { startDate, endDate } = req.query;
+    const notes = await dataService.getNotes();
+    const moodOptions = await optionsService.getMoods();
 
-    let notes = await dataService.getNotes();
+    // Create lookup for mood values
+    const moodValueMap = new Map(moodOptions.map((m) => [m.label, m.value]));
 
-    // Filter by date range if provided
-    if (
-      startDate &&
-      typeof startDate === "string" &&
-      isValidDateFormat(startDate)
-    ) {
-      notes = notes.filter((n) => n.date >= startDate);
-    }
-    if (endDate && typeof endDate === "string" && isValidDateFormat(endDate)) {
-      notes = notes.filter((n) => n.date <= endDate);
-    }
+    // Filter notes with mood data
+    const notesWithMood = notes.filter((note) => note.mood);
 
-    // Group notes by week
-    const weeklyMoods: Record<string, Record<string, number>> = {};
+    // Group by month
+    const monthlyMoodData: Record<
+      string,
+      { count: number; sum: number; values: number[] }
+    > = {};
 
-    notes.forEach((note) => {
-      if (note.mood) {
-        const noteDate = new Date(note.date);
-        const weekStart = new Date(noteDate);
-        weekStart.setDate(noteDate.getDate() - noteDate.getDay());
-        const weekKey = weekStart.toISOString().substring(0, 10);
-
-        if (!weeklyMoods[weekKey]) {
-          weeklyMoods[weekKey] = {};
-        }
-        weeklyMoods[weekKey][note.mood] =
-          (weeklyMoods[weekKey][note.mood] || 0) + 1;
+    notesWithMood.forEach((note) => {
+      const yearMonth = note.date.substring(0, 7); // YYYY-MM format
+      if (!monthlyMoodData[yearMonth]) {
+        monthlyMoodData[yearMonth] = { count: 0, sum: 0, values: [] };
       }
+
+      const moodValue = moodValueMap.get(note.mood!) || 0;
+      monthlyMoodData[yearMonth].count++;
+      monthlyMoodData[yearMonth].sum += moodValue;
+      monthlyMoodData[yearMonth].values.push(moodValue);
     });
+
+    // Calculate average mood per month
+    const moodTrends = Object.entries(monthlyMoodData)
+      .map(([month, data]) => ({
+        month,
+        averageMood: Math.round((data.sum / data.count) * 10) / 10,
+        count: data.count,
+        distribution: moodOptions.map((mood) => {
+          const count = notesWithMood.filter(
+            (note) => note.date.startsWith(month) && note.mood === mood.label
+          ).length;
+          return {
+            label: mood.label,
+            value: mood.value,
+            count,
+          };
+        }),
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month));
 
     res.status(200).json({
       success: true,
       data: {
-        weeklyMoods,
-        totalNotesAnalyzed: notes.filter((n) => n.mood).length,
+        trends: moodTrends,
+        moodValueMap: Object.fromEntries(moodValueMap),
       },
     });
   }
@@ -157,103 +266,126 @@ export const getMoodTrends = asyncHandler(
 export const getProductivityCorrelation = asyncHandler(
   async (req: Request, res: Response) => {
     const notes = await dataService.getNotes();
+    const habits = await dataService.getHabits();
     const completions = await dataService.getCompletions();
+    const productivityOptions = await optionsService.getProductivityLevels();
 
-    // Group data by date
-    const dailyData: Record<
-      string,
-      {
-        productivity?: string;
-        completedHabits: number;
-        totalHabits: number;
-      }
-    > = {};
+    // Create lookup for productivity values
+    const productivityValueMap = new Map(
+      productivityOptions.map((p) => [p.label, p.value])
+    );
 
-    // Process notes
-    notes.forEach((note) => {
-      if (note.productivityLevel) {
-        dailyData[note.date] = {
-          ...dailyData[note.date],
-          productivity: note.productivityLevel,
-        };
-      }
-    });
+    // Filter notes with productivity data
+    const notesWithProductivity = notes.filter(
+      (note) => note.productivityLevel
+    );
 
-    // Process completions
+    // Create a map of date to productivity level
+    const dateToProductivityMap = new Map(
+      notesWithProductivity.map((note) => [
+        note.date,
+        {
+          level: note.productivityLevel!,
+          value: productivityValueMap.get(note.productivityLevel!) || 0,
+        },
+      ])
+    );
+
+    // Group completions by habit and date
+    const habitCompletions = new Map();
     completions.forEach((completion) => {
-      if (!dailyData[completion.date]) {
-        dailyData[completion.date] = { completedHabits: 0, totalHabits: 0 };
-      }
-
-      dailyData[completion.date].totalHabits++;
-      if (completion.completed) {
-        dailyData[completion.date].completedHabits++;
-      }
+      const key = `${completion.habitId}-${completion.date}`;
+      habitCompletions.set(key, true);
     });
 
-    // Calculate correlation data
-    const correlationData = Object.entries(dailyData)
-      .filter(([_, data]) => data.productivity && data.totalHabits > 0)
-      .map(([date, data]) => ({
-        date,
-        productivity: data.productivity!,
-        completionRate:
-          data.totalHabits > 0
-            ? (data.completedHabits / data.totalHabits) * 100
-            : 0,
-        completedHabits: data.completedHabits,
-        totalHabits: data.totalHabits,
-      }));
+    // Calculate correlation between habit completion and productivity
+    const correlationData = habits
+      .map((habit) => {
+        const datesWithCompletion: string[] = [];
+        const datesWithoutCompletion: string[] = [];
 
-    // Group by productivity level
-    const productivityGroups: Record<
-      string,
-      {
-        avgCompletionRate: number;
-        totalDays: number;
-        totalCompletedHabits: number;
-        totalHabits: number;
-      }
-    > = {};
+        // Find all dates where this habit was completed or not
+        Array.from(dateToProductivityMap.keys()).forEach((date) => {
+          const key = `${habit.id}-${date}`;
+          if (habitCompletions.has(key)) {
+            datesWithCompletion.push(date);
+          } else {
+            datesWithoutCompletion.push(date);
+          }
+        });
 
-    correlationData.forEach((data) => {
-      if (!productivityGroups[data.productivity]) {
-        productivityGroups[data.productivity] = {
-          avgCompletionRate: 0,
-          totalDays: 0,
-          totalCompletedHabits: 0,
-          totalHabits: 0,
+        // Calculate average productivity when habit was completed
+        let avgProductivityWithCompletion = null;
+        if (datesWithCompletion.length > 0) {
+          const sum = datesWithCompletion.reduce(
+            (total, date) =>
+              total + (dateToProductivityMap.get(date)?.value || 0),
+            0
+          );
+          avgProductivityWithCompletion =
+            Math.round((sum / datesWithCompletion.length) * 10) / 10;
+        }
+
+        // Calculate average productivity when habit was not completed
+        let avgProductivityWithoutCompletion = null;
+        if (datesWithoutCompletion.length > 0) {
+          const sum = datesWithoutCompletion.reduce(
+            (total, date) =>
+              total + (dateToProductivityMap.get(date)?.value || 0),
+            0
+          );
+          avgProductivityWithoutCompletion =
+            Math.round((sum / datesWithoutCompletion.length) * 10) / 10;
+        }
+
+        // Calculate difference in productivity (impact)
+        let productivityImpact = null;
+        if (
+          avgProductivityWithCompletion !== null &&
+          avgProductivityWithoutCompletion !== null
+        ) {
+          productivityImpact =
+            Math.round(
+              (avgProductivityWithCompletion -
+                avgProductivityWithoutCompletion) *
+                10
+            ) / 10;
+        }
+
+        return {
+          habitId: habit.id,
+          habitName: habit.name,
+          datesCompletedCount: datesWithCompletion.length,
+          datesNotCompletedCount: datesWithoutCompletion.length,
+          avgProductivityWithCompletion,
+          avgProductivityWithoutCompletion,
+          productivityImpact,
         };
-      }
-
-      const group = productivityGroups[data.productivity];
-      group.totalDays++;
-      group.totalCompletedHabits += data.completedHabits;
-      group.totalHabits += data.totalHabits;
-    });
-
-    // Calculate averages
-    Object.keys(productivityGroups).forEach((productivity) => {
-      const group = productivityGroups[productivity];
-      group.avgCompletionRate =
-        group.totalHabits > 0
-          ? Math.round((group.totalCompletedHabits / group.totalHabits) * 100)
-          : 0;
-    });
+      })
+      .filter(
+        (item) =>
+          item.datesCompletedCount > 0 || item.datesNotCompletedCount > 0
+      )
+      .sort((a, b) => {
+        // Sort by impact (descending) if available, otherwise by habit name
+        if (a.productivityImpact !== null && b.productivityImpact !== null) {
+          return b.productivityImpact - a.productivityImpact;
+        }
+        return a.habitName.localeCompare(b.habitName);
+      });
 
     res.status(200).json({
       success: true,
       data: {
-        correlationData,
-        productivityGroups,
-        totalDaysAnalyzed: correlationData.length,
+        correlations: correlationData,
+        productivityValueMap: Object.fromEntries(productivityValueMap),
       },
     });
   }
 );
 
 /**
- * Get calendar data for notes
+ * Get notes calendar data for a specific month
  * @route GET /api/notes/calendar/:year/:month
  */
 export const getNotesCalendar = asyncHandler(
@@ -261,59 +393,65 @@ export const getNotesCalendar = asyncHandler(
     const { year, month } = req.params;
 
     // Validate year and month
-    const yearNum = parseInt(year, 10);
-    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
 
     if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
-      throw new AppError("Invalid year or month", 400);
+      throw new AppError("Invalid year or month format", 400);
     }
 
-    // Get start and end dates for the month
-    const startDate = `${year}-${month.padStart(2, "0")}-01`;
-    const lastDay = new Date(yearNum, monthNum, 0).getDate();
-    const endDate = `${year}-${month.padStart(2, "0")}-${lastDay
-      .toString()
-      .padStart(2, "0")}`;
+    // Format month to ensure it has leading zero if needed
+    const monthFormatted = monthNum.toString().padStart(2, "0");
+    const yearMonthPrefix = `${yearNum}-${monthFormatted}`;
 
-    // Get all notes for the month
-    const allNotes = await dataService.getNotes();
-    const monthNotes = allNotes.filter(
-      (note) => note.date >= startDate && note.date <= endDate
+    const notes = await dataService.getNotes();
+    const moodOptions = await optionsService.getMoods();
+    const productivityOptions = await optionsService.getProductivityLevels();
+
+    // Create lookups for mood and productivity values
+    const moodValueMap = new Map(moodOptions.map((m) => [m.label, m.value]));
+    const productivityValueMap = new Map(
+      productivityOptions.map((p) => [p.label, p.value])
     );
 
-    // Create calendar structure
-    const calendarData: Record<
-      string,
-      {
-        hasNote: boolean;
-        mood?: string;
-        productivityLevel?: string;
-        contentLength: number;
-      }
-    > = {};
+    // Filter notes for the specified month
+    const monthNotes = notes.filter((note) =>
+      note.date.startsWith(yearMonthPrefix)
+    );
 
-    // Fill in the days of the month
-    for (let day = 1; day <= lastDay; day++) {
-      const dateStr = `${year}-${month.padStart(2, "0")}-${day
-        .toString()
-        .padStart(2, "0")}`;
-      const note = monthNotes.find((n) => n.date === dateStr);
+    // Create calendar data
+    const calendarData = monthNotes.map((note) => {
+      const dayOfMonth = parseInt(note.date.split("-")[2]);
+      const moodValue = note.mood ? moodValueMap.get(note.mood) : null;
+      const productivityValue = note.productivityLevel
+        ? productivityValueMap.get(note.productivityLevel)
+        : null;
 
-      calendarData[dateStr] = {
-        hasNote: !!note,
-        mood: note?.mood,
-        productivityLevel: note?.productivityLevel,
-        contentLength: note?.content.length || 0,
+      return {
+        date: note.date,
+        dayOfMonth,
+        id: note.id,
+        hasContent: note.content.length > 0,
+        contentPreview:
+          note.content.length > 100
+            ? note.content.substring(0, 100) + "..."
+            : note.content,
+        mood: note.mood,
+        moodValue,
+        productivityLevel: note.productivityLevel,
+        productivityValue,
+        updatedAt: note.updatedAt,
       };
-    }
+    });
 
     res.status(200).json({
       success: true,
       data: {
         year: yearNum,
         month: monthNum,
-        totalNotes: monthNotes.length,
-        calendarData,
+        notes: calendarData,
+        moodValueMap: Object.fromEntries(moodValueMap),
+        productivityValueMap: Object.fromEntries(productivityValueMap),
       },
     });
   }

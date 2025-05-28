@@ -208,8 +208,7 @@ export class NotesService {
 
   /**
    * Get notes analytics overview
-   */
-  static async getNotesAnalytics(): Promise<{
+   */ static async getNotesAnalytics(): Promise<{
     totalNotes: number;
     notesWithMood: number;
     notesWithProductivity: number;
@@ -218,13 +217,52 @@ export class NotesService {
     monthlyFrequency: Record<string, number>;
     avgContentLength: number;
     longestStreak: number;
+    currentStreak: number;
+    avgMoodValue: number | null;
+    avgProductivityValue: number | null;
+    moodValueMap: Record<string, number>;
+    productivityValueMap: Record<string, number>;
+    monthlyMoodScores: Record<
+      string,
+      { avg: number; count: number; sum: number }
+    >;
+    monthlyProductivityScores: Record<
+      string,
+      { avg: number; count: number; sum: number }
+    >;
     completionRate: {
       mood: number;
       productivity: number;
     };
   }> {
     const response = await fetch(`${API_BASE_URL}/notes/analytics/overview`);
-    const result: ApiResponse<any> = await response.json();
+    const result: ApiResponse<{
+      totalNotes: number;
+      notesWithMood: number;
+      notesWithProductivity: number;
+      moodDistribution: Record<string, number>;
+      productivityDistribution: Record<string, number>;
+      monthlyFrequency: Record<string, number>;
+      avgContentLength: number;
+      longestStreak: number;
+      currentStreak: number;
+      avgMoodValue: number | null;
+      avgProductivityValue: number | null;
+      moodValueMap: Record<string, number>;
+      productivityValueMap: Record<string, number>;
+      monthlyMoodScores: Record<
+        string,
+        { avg: number; count: number; sum: number }
+      >;
+      monthlyProductivityScores: Record<
+        string,
+        { avg: number; count: number; sum: number }
+      >;
+      completionRate: {
+        mood: number;
+        productivity: number;
+      };
+    }> = await response.json();
 
     if (!result.success) {
       throw new Error(result.message || "Failed to fetch notes analytics");
@@ -235,22 +273,41 @@ export class NotesService {
 
   /**
    * Get mood trends over time
-   */
-  static async getMoodTrends(
+   */ static async getMoodTrends(
     startDate?: string,
     endDate?: string
   ): Promise<{
-    weeklyMoods: Record<string, Record<string, number>>;
-    totalNotesAnalyzed: number;
+    trends: Array<{
+      month: string;
+      averageMood: number;
+      count: number;
+      distribution: Array<{
+        label: string;
+        value: number;
+        count: number;
+      }>;
+    }>;
+    moodValueMap: Record<string, number>;
   }> {
     const params = new URLSearchParams();
     if (startDate) params.append("startDate", startDate);
     if (endDate) params.append("endDate", endDate);
-
     const response = await fetch(
       `${API_BASE_URL}/notes/analytics/mood-trends?${params}`
     );
-    const result: ApiResponse<any> = await response.json();
+    const result: ApiResponse<{
+      trends: Array<{
+        month: string;
+        averageMood: number;
+        count: number;
+        distribution: Array<{
+          label: string;
+          value: number;
+          count: number;
+        }>;
+      }>;
+      moodValueMap: Record<string, number>;
+    }> = await response.json();
 
     if (!result.success) {
       throw new Error(result.message || "Failed to fetch mood trends");
@@ -261,30 +318,33 @@ export class NotesService {
 
   /**
    * Get productivity correlation with habits
-   */
-  static async getProductivityCorrelation(): Promise<{
-    correlationData: Array<{
-      date: string;
-      productivity: string;
-      completionRate: number;
-      completedHabits: number;
-      totalHabits: number;
+   */ static async getProductivityCorrelation(): Promise<{
+    correlations: Array<{
+      habitId: string;
+      habitName: string;
+      datesCompletedCount: number;
+      datesNotCompletedCount: number;
+      avgProductivityWithCompletion: number | null;
+      avgProductivityWithoutCompletion: number | null;
+      productivityImpact: number | null;
     }>;
-    productivityGroups: Record<
-      string,
-      {
-        avgCompletionRate: number;
-        totalDays: number;
-        totalCompletedHabits: number;
-        totalHabits: number;
-      }
-    >;
-    totalDaysAnalyzed: number;
+    productivityValueMap: Record<string, number>;
   }> {
     const response = await fetch(
       `${API_BASE_URL}/notes/analytics/productivity-correlation`
     );
-    const result: ApiResponse<any> = await response.json();
+    const result: ApiResponse<{
+      correlations: Array<{
+        habitId: string;
+        habitName: string;
+        datesCompletedCount: number;
+        datesNotCompletedCount: number;
+        avgProductivityWithCompletion: number | null;
+        avgProductivityWithoutCompletion: number | null;
+        productivityImpact: number | null;
+      }>;
+      productivityValueMap: Record<string, number>;
+    }> = await response.json();
 
     if (!result.success) {
       throw new Error(
@@ -297,8 +357,7 @@ export class NotesService {
 
   /**
    * Get calendar data for notes
-   */
-  static async getNotesCalendar(
+   */ static async getNotesCalendar(
     year: number,
     month: number
   ): Promise<{
@@ -318,12 +377,57 @@ export class NotesService {
     const response = await fetch(
       `${API_BASE_URL}/notes/calendar/${year}/${month}`
     );
-    const result: ApiResponse<any> = await response.json();
+    const result: ApiResponse<{
+      year: number;
+      month: number;
+      notes: Array<{
+        date: string;
+        id: string;
+        hasContent: boolean;
+        contentPreview: string;
+        mood?: string;
+        moodValue?: number;
+        productivityLevel?: string;
+        productivityValue?: number;
+      }>;
+    }> = await response.json();
 
     if (!result.success) {
       throw new Error(result.message || "Failed to fetch calendar data");
     }
 
-    return result.data;
+    // Transform the data to the format expected by the NotesCalendar component
+    const calendarData: Record<
+      string,
+      {
+        hasNote: boolean;
+        mood?: string;
+        productivityLevel?: string;
+        contentLength: number;
+      }
+    > = {};
+
+    // Populate the calendar data with entries from the notes array
+    if (result.data.notes && Array.isArray(result.data.notes)) {
+      result.data.notes.forEach((note) => {
+        if (note.date) {
+          calendarData[note.date] = {
+            hasNote: true,
+            mood: note.mood,
+            productivityLevel: note.productivityLevel,
+            contentLength: note.hasContent
+              ? note.contentPreview?.length || 0
+              : 0,
+          };
+        }
+      });
+    }
+
+    return {
+      year: result.data.year,
+      month: result.data.month,
+      totalNotes: result.data.notes?.length || 0,
+      calendarData: calendarData,
+    };
   }
 }

@@ -180,7 +180,7 @@ export const validateDailyNote = async (
   // Validate mood if provided
   if (noteData.mood !== undefined) {
     const moods = await optionsService.getMoods();
-    if (!moods.includes(noteData.mood)) {
+    if (!moods.some((m) => m.label === noteData.mood)) {
       errors.push({
         field: "mood",
         message: "Invalid mood value",
@@ -191,7 +191,7 @@ export const validateDailyNote = async (
   // Validate productivity level if provided
   if (noteData.productivityLevel !== undefined) {
     const levels = await optionsService.getProductivityLevels();
-    if (!levels.includes(noteData.productivityLevel)) {
+    if (!levels.some((l) => l.label === noteData.productivityLevel)) {
       errors.push({
         field: "productivityLevel",
         message: "Invalid productivity level value",

@@ -54,6 +54,28 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
 
   const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
 
+  // Debug function for calendar data
+  const debugCalendarData = () => {
+    if (!calendarData) {
+      console.log("Calendar data is null or undefined");
+      return;
+    }
+
+    console.log("Calendar data structure:", {
+      year: calendarData.year,
+      month: calendarData.month,
+      totalNotes: calendarData.totalNotes,
+      calendarDataKeys: calendarData.calendarData
+        ? Object.keys(calendarData.calendarData)
+        : "undefined",
+    });
+  };
+
+  // Call debug function once
+  React.useEffect(() => {
+    debugCalendarData();
+  }, [calendarData]);
+
   const handleDayClick = (date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
     navigate(`/daily/${dateStr}`);
@@ -117,15 +139,17 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
               </div>
             ))}
           </div>
-
           {/* Calendar Days */}
           <div className="grid grid-cols-7 gap-1">
             {calendarDays.map((date) => {
               const dateStr = format(date, "yyyy-MM-dd");
-              const dayData = calendarData?.calendarData[dateStr];
+              // Add a null check to make sure calendarData and calendarData.calendarData exist
+              const dayData = calendarData?.calendarData
+                ? calendarData.calendarData[dateStr]
+                : undefined;
               const isCurrentMonth = isSameMonth(date, currentDate);
               const isCurrentDay = isToday(date);
-              const hasNote = dayData?.hasNote;
+              const hasNote = dayData?.hasNote || false;
               const isHovered = hoveredDay === dateStr;
 
               return (
@@ -166,7 +190,6 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
                   </div>
-
                   {/* Note Indicators */}
                   {hasNote && dayData && (
                     <div className="space-y-1">
@@ -196,7 +219,7 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
                       )}
 
                       {/* Content Length Indicator */}
-                      {dayData.contentLength > 0 && (
+                      {dayData.contentLength && dayData.contentLength > 0 && (
                         <div className="flex justify-center">
                           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                             <FileText className="w-2 h-2 mr-1" />

@@ -4,6 +4,17 @@ import { asyncHandler } from "../middleware/errorHandler";
 
 export const getMoods = asyncHandler(async (req: Request, res: Response) => {
   const moods = await optionsService.getMoods();
+
+  // If the legacy flag is set, only return the labels for backward compatibility
+  if (req.query.legacy === "true") {
+    const moodLabels = moods.map((mood) => mood.label);
+    res.status(200).json({
+      success: true,
+      data: moodLabels,
+    });
+    return;
+  }
+
   res.status(200).json({
     success: true,
     data: moods,
@@ -34,6 +45,17 @@ export const removeMood = asyncHandler(async (req: Request, res: Response) => {
 export const getProductivityLevels = asyncHandler(
   async (req: Request, res: Response) => {
     const levels = await optionsService.getProductivityLevels();
+
+    // If the legacy flag is set, only return the labels for backward compatibility
+    if (req.query.legacy === "true") {
+      const levelLabels = levels.map((level) => level.label);
+      res.status(200).json({
+        success: true,
+        data: levelLabels,
+      });
+      return;
+    }
+
     res.status(200).json({
       success: true,
       data: levels,
