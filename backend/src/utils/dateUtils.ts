@@ -17,7 +17,10 @@ export const getTodayDateString = (): string => {
  * @returns Formatted date string
  */
 export const formatDateToString = (date: Date): string => {
-  return date.toISOString().split("T")[0];
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
 };
 
 /**
@@ -26,7 +29,10 @@ export const formatDateToString = (date: Date): string => {
  * @returns Date object
  */
 export const parseDate = (dateString: string): Date => {
-  return new Date(dateString);
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(year, month - 1, day); // month - 1 because months are 0-indexed in JS
+  date.setHours(0, 0, 0, 0); // Reset time to midnight
+  return date;
 };
 
 /**
@@ -98,6 +104,10 @@ export const getDatesBetween = (
   if (endDate < startDate) {
     return [];
   }
+
+  // Reset hours to avoid timezone issues
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999); // Set to end of day
 
   // Use a loop to add all dates to the array
   const currentDate = new Date(startDate);

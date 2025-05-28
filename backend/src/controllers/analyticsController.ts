@@ -16,6 +16,7 @@ import {
   parseDate,
   getDateDaysAgo,
   getTodayDateString,
+  formatDateToString,
 } from "../utils/dateUtils";
 import { analyticsCache } from "../utils/cacheUtils";
 import * as analyticsService from "../services/analyticsService";
@@ -635,8 +636,13 @@ export const getMonthlyAnalytics = asyncHandler(
       const startDate = new Date(yearNum, monthNum, 1);
       const endDate = new Date(yearNum, monthNum + 1, 0); // Last day of month
 
-      const startDateStr = startDate.toISOString().split("T")[0];
-      const endDateStr = endDate.toISOString().split("T")[0];
+      // Reset time components to avoid timezone issues
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+
+      // Format dates as YYYY-MM-DD strings
+      const startDateStr = formatDateToString(startDate);
+      const endDateStr = formatDateToString(endDate);
 
       // Get date range for the month
       const dateRange = getDatesBetween(startDateStr, endDateStr);
