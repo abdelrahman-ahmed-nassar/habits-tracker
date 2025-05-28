@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Daily from "./pages/Daily";
 import Weekly from "./pages/Weekly";
 import Monthly from "./pages/Monthly";
+import Analytics from "./pages/Analytics";
 import Streaks from "./pages/Streaks";
 import Settings from "./pages/Settings";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,7 +25,9 @@ function App() {
             <Route path="monthly" element={<Monthly />} />
             <Route path="monthly/:date" element={<Monthly />} />
             <Route path="monthly/:date/:month" element={<Monthly />} />
-            <Route path="analytics" element={<div>Analytics</div>} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="analytics/overview" element={<Analytics />} />
+            <Route path="analytics/:habitId" element={<Analytics />} />
             <Route path="streaks" element={<Streaks />} />
             <Route path="notes" element={<div>Notes</div>} />
             <Route path="settings" element={<Settings />} />
