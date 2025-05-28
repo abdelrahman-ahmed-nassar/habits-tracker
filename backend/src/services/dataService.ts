@@ -780,15 +780,24 @@ export const calculateHabitAnalytics = async (
   if (completions.length === 0) {
     return {
       habitId,
+      habitName: habit.name,
       successRate: 0,
       bestDayOfWeek: 0,
       worstDayOfWeek: 0,
       longestStreak: 0,
       totalCompletions: 0,
       averageCompletionsPerWeek: 0,
+      currentStreak: habit.currentStreak,
+      bestStreak: habit.bestStreak,
       currentCounter: habit.currentCounter,
+      completionHistory: [],
     };
   }
+
+  // Sort completions by date
+  const sortedCompletions = [...completions].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
 
   // Total completions
   const totalCompletions = completions.filter((c) => c.completed).length;
@@ -799,59 +808,62 @@ export const calculateHabitAnalytics = async (
   // Longest streak (just use the habit's bestStreak)
   const longestStreak = habit.bestStreak;
 
-  // Completions by day of week
-  const dayCompletions = [0, 0, 0, 0, 0, 0, 0]; // Sun-Sat
-  const dayAttempts = [0, 0, 0, 0, 0, 0, 0];
-
-  completions.forEach((completion) => {
+  // Calculate completion rates by day of week
+  const dayStats = Array(7)
+    .fill(0)
+    .map(() => ({ total: 0, completed: 0 }));
+  sortedCompletions.forEach((completion) => {
     const date = new Date(completion.date);
     const dayOfWeek = date.getDay();
-
-    dayAttempts[dayOfWeek]++;
+    dayStats[dayOfWeek].total++;
     if (completion.completed) {
-      dayCompletions[dayOfWeek]++;
+      dayStats[dayOfWeek].completed++;
     }
   });
 
-  // Best and worst days (with at least one attempt)
-  let bestDay = 0;
-  let worstDay = 0;
-  let bestRate = 0;
-  let worstRate = 1;
+  // Calculate success rates for each day
+  const dayOfWeekRates = dayStats.map((stats, index) => ({
+    dayOfWeek: index,
+    successRate: stats.total > 0 ? stats.completed / stats.total : 0,
+  }));
 
-  for (let i = 0; i < 7; i++) {
-    if (dayAttempts[i] > 0) {
-      const rate = dayCompletions[i] / dayAttempts[i];
-      if (rate > bestRate) {
-        bestRate = rate;
-        bestDay = i;
-      }
-      if (rate < worstRate) {
-        worstRate = rate;
-        worstDay = i;
-      }
-    }
-  }
+  // Find best and worst days
+  const bestDayOfWeek = dayOfWeekRates.reduce(
+    (best, current) =>
+      current.successRate > dayOfWeekRates[best].successRate
+        ? current.dayOfWeek
+        : best,
+    0
+  );
+  const worstDayOfWeek = dayOfWeekRates.reduce(
+    (worst, current) =>
+      current.successRate < dayOfWeekRates[worst].successRate
+        ? current.dayOfWeek
+        : worst,
+    0
+  );
 
-  // Average completions per week
-  const firstCompletion = new Date(completions[0].date);
-  const lastCompletion = new Date(completions[completions.length - 1].date);
-  const totalDays =
-    Math.ceil(
-      (lastCompletion.getTime() - firstCompletion.getTime()) /
-        (1000 * 60 * 60 * 24)
-    ) + 1;
-  const totalWeeks = Math.max(1, totalDays / 7);
-  const averageCompletionsPerWeek = totalCompletions / totalWeeks;
+  // Prepare completion history
+  const completionHistory = sortedCompletions.map((completion) => ({
+    date: completion.date,
+    completed: completion.completed,
+    value: completion.value,
+  }));
+
   return {
     habitId,
+    habitName: habit.name,
     successRate,
-    bestDayOfWeek: bestDay,
-    worstDayOfWeek: worstDay,
+    bestDayOfWeek,
+    worstDayOfWeek,
     longestStreak,
     totalCompletions,
-    averageCompletionsPerWeek,
+    averageCompletionsPerWeek:
+      totalCompletions / (sortedCompletions.length / 7),
+    currentStreak: habit.currentStreak,
+    bestStreak: habit.bestStreak,
     currentCounter: habit.currentCounter,
+    completionHistory,
   };
 };
 
