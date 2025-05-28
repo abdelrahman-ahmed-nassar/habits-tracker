@@ -1,7 +1,8 @@
 {
   "name": "habits-tracker-workspace",
   "version": "1.0.0",
-  "description": "Personal habit tracking desktop application",  "scripts": {
+  "description": "Personal habit tracking desktop application",
+  "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "dev": "node dev-electron.js",
     "build": "node build-electron.js",

@@ -33,17 +33,21 @@ habits-tracker/
 You have several options:
 
 #### For Windows Users:
+
 1. **Use the batch file** (recommended):
    - Double-click `Start Development.bat` in the project root directory
 
 #### For Linux/Mac/Bash Users:
+
 1. **Use the shell script**:
+
 ```bash
 # From the project root
 ./start-development.sh
 ```
 
 #### Using npm:
+
 ```bash
 # From the project root
 npm run dev
@@ -60,18 +64,22 @@ This will start:
 You have several options:
 
 #### For Windows Users:
+
 1. **Use the batch file** (recommended):
    - Double-click `Build Executable.bat` in the project root directory
    - This will build the backend, frontend, and create the packaged application
 
 #### For Linux/Mac/Bash Users:
+
 1. **Use the shell script**:
+
 ```bash
 # From the project root
 ./build-executable.sh
 ```
 
 #### Using npm:
+
 ```bash
 # From the project root
 npm run build
@@ -279,6 +287,7 @@ The application now consistently uses port 5002 for the backend server to avoid 
 - Port conflicts can be resolved using the `Update Ports.bat` utility
 
 To verify port consistency across the codebase:
+
 ```bash
 # Run the port checker utility
 npm run check-ports

@@ -6,8 +6,6 @@ interface ApiResponse<T> {
   message?: string;
 }
 
-
-
 interface AnalyticsCacheSettings {
   enabled: boolean;
   ttl: number;

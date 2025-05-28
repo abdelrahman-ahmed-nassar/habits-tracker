@@ -1,12 +1,10 @@
-const API_BASE_URL = 'http://localhost:5002/api';
+const API_BASE_URL = "http://localhost:5002/api";
 
 interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
 }
-
-
 
 interface Record {
   id: string;
@@ -53,11 +51,11 @@ export class RecordsService {
   static async getDailyRecords(date: string): Promise<DailyRecords> {
     const response = await fetch(`${API_BASE_URL}/records/daily/${date}`);
     const result: ApiResponse<DailyRecords> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch daily records');
+      throw new Error(result.message || "Failed to fetch daily records");
     }
-    
+
     return result.data;
   }
 
@@ -68,11 +66,11 @@ export class RecordsService {
   static async getWeeklyRecords(startDate: string): Promise<WeeklyRecords> {
     const response = await fetch(`${API_BASE_URL}/records/weekly/${startDate}`);
     const result: ApiResponse<WeeklyRecords> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch weekly records');
+      throw new Error(result.message || "Failed to fetch weekly records");
     }
-    
+
     return result.data;
   }
 
@@ -81,14 +79,19 @@ export class RecordsService {
    * @param year - Year (e.g., 2024)
    * @param month - Month (1-12)
    */
-  static async getMonthlyRecords(year: number, month: number): Promise<MonthlyRecords> {
-    const response = await fetch(`${API_BASE_URL}/records/monthly/${year}/${month}`);
+  static async getMonthlyRecords(
+    year: number,
+    month: number
+  ): Promise<MonthlyRecords> {
+    const response = await fetch(
+      `${API_BASE_URL}/records/monthly/${year}/${month}`
+    );
     const result: ApiResponse<MonthlyRecords> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch monthly records');
+      throw new Error(result.message || "Failed to fetch monthly records");
     }
-    
+
     return result.data;
   }
 
@@ -99,11 +102,11 @@ export class RecordsService {
   static async getHabitRecords(habitId: string): Promise<Record[]> {
     const response = await fetch(`${API_BASE_URL}/habits/${habitId}/records`);
     const result: ApiResponse<Record[]> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch habit records');
+      throw new Error(result.message || "Failed to fetch habit records");
     }
-    
+
     return result.data;
   }
 
@@ -112,21 +115,24 @@ export class RecordsService {
    * @param habitId - ID of the habit
    * @param date - Date in YYYY-MM-DD format
    */
-  static async markHabitComplete(habitId: string, date: string): Promise<Record> {
+  static async markHabitComplete(
+    habitId: string,
+    date: string
+  ): Promise<Record> {
     const response = await fetch(`${API_BASE_URL}/habits/${habitId}/complete`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ date }),
     });
-    
+
     const result: ApiResponse<Record> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to mark habit as complete');
+      throw new Error(result.message || "Failed to mark habit as complete");
     }
-    
+
     return result.data;
   }
 
@@ -136,14 +142,17 @@ export class RecordsService {
    * @param date - Date in YYYY-MM-DD format
    */
   static async deleteCompletion(habitId: string, date: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/habits/${habitId}/complete/${date}`, {
-      method: 'DELETE',
-    });
-    
+    const response = await fetch(
+      `${API_BASE_URL}/habits/${habitId}/complete/${date}`,
+      {
+        method: "DELETE",
+      }
+    );
+
     const result: ApiResponse<void> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to delete completion');
+      throw new Error(result.message || "Failed to delete completion");
     }
   }
 
@@ -152,21 +161,24 @@ export class RecordsService {
    * @param habitId - ID of the habit
    * @param date - Date in YYYY-MM-DD format
    */
-  static async toggleCompletion(habitId: string, date: string): Promise<Record> {
+  static async toggleCompletion(
+    habitId: string,
+    date: string
+  ): Promise<Record> {
     const response = await fetch(`${API_BASE_URL}/completions/toggle`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ habitId, date }),
     });
-    
+
     const result: ApiResponse<Record> = await response.json();
-    
+
     if (!result.success) {
-      throw new Error(result.message || 'Failed to toggle completion');
+      throw new Error(result.message || "Failed to toggle completion");
     }
-    
+
     return result.data;
   }
 }

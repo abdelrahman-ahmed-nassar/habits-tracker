@@ -58,7 +58,8 @@ function createWindow() {
   });
 }
 
-function startBackend() {  if (isDev) {
+function startBackend() {
+  if (isDev) {
     // In development, assume backend is running separately
     console.log(
       "Development mode: Backend should be running separately on port 5002"
@@ -74,7 +75,8 @@ function startBackend() {  if (isDev) {
 
     backendProcess = spawn("node", [backendPath], {
       cwd: path.join(process.resourcesPath, "backend"),
-      stdio: ["pipe", "pipe", "pipe"],      env: {
+      stdio: ["pipe", "pipe", "pipe"],
+      env: {
         ...process.env,
         NODE_ENV: "production",
         PORT: "5002",

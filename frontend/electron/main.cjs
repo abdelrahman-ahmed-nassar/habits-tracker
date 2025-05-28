@@ -81,7 +81,8 @@ function createWindow() {
   });
 }
 
-function startBackend() {  if (isDev) {
+function startBackend() {
+  if (isDev) {
     // In development, assume backend is running separately
     console.log(
       "Development mode: Backend should be running separately on port 5002"
@@ -91,29 +92,44 @@ function startBackend() {  if (isDev) {
 
   // In production, start the bundled backend
   let backendPath;
-  
+
   if (app.isPackaged) {
     // When properly packaged with electron-builder
-    backendPath = path.join(process.resourcesPath, "backend", "backend", "src", "index.js");
+    backendPath = path.join(
+      process.resourcesPath,
+      "backend",
+      "backend",
+      "src",
+      "index.js"
+    );
   } else {
     // When running manually (not from development mode)
-    backendPath = path.join(__dirname, "../../backend/dist/backend/src/index.js");
+    backendPath = path.join(
+      __dirname,
+      "../../backend/dist/backend/src/index.js"
+    );
   }
 
   try {
     console.log("Starting backend from:", backendPath);
-    
+
     // Make sure the path exists
     if (!fs.existsSync(backendPath)) {
       console.error(`Backend path does not exist: ${backendPath}`);
-      
+
       // Try to find the backend
       const possibleLocations = [
-        path.join(process.resourcesPath, "backend", "backend", "src", "index.js"),
+        path.join(
+          process.resourcesPath,
+          "backend",
+          "backend",
+          "src",
+          "index.js"
+        ),
         path.join(process.resourcesPath, "backend", "index.js"),
-        path.join(__dirname, "../../backend/dist/backend/src/index.js")
+        path.join(__dirname, "../../backend/dist/backend/src/index.js"),
       ];
-      
+
       for (const loc of possibleLocations) {
         if (fs.existsSync(loc)) {
           console.log(`Found backend at alternative location: ${loc}`);
@@ -121,9 +137,12 @@ function startBackend() {  if (isDev) {
           break;
         }
       }
-      
+
       if (!fs.existsSync(backendPath)) {
-        dialog.showErrorBox("Backend Error", "Could not find the backend server files.");
+        dialog.showErrorBox(
+          "Backend Error",
+          "Could not find the backend server files."
+        );
         app.quit();
         return;
       }
