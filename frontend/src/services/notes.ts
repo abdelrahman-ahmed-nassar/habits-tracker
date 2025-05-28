@@ -99,12 +99,11 @@ export class NotesService {
       throw new Error(result.message || "Failed to delete note");
     }
   }
-
   /**
    * Get available moods
    */
   static async getMoods(): Promise<string[]> {
-    const response = await fetch(`${API_BASE_URL}/options/moods`);
+    const response = await fetch(`${API_BASE_URL}/options/moods?legacy=true`);
     const result: ApiResponse<string[]> = await response.json();
 
     if (!result.success) {
@@ -150,12 +149,13 @@ export class NotesService {
       throw new Error(result.message || "Failed to remove mood");
     }
   }
-
   /**
    * Get available productivity levels
    */
   static async getProductivityLevels(): Promise<string[]> {
-    const response = await fetch(`${API_BASE_URL}/options/productivity-levels`);
+    const response = await fetch(
+      `${API_BASE_URL}/options/productivity-levels?legacy=true`
+    );
     const result: ApiResponse<string[]> = await response.json();
 
     if (!result.success) {
