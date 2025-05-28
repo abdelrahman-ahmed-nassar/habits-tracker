@@ -28,7 +28,14 @@
 ### From the Source Code
 If you're working with the source code version of the application, you have several ways to start it:
 
+#### For Windows Users:
 1. **Easy Method**: Double-click `Start Habits Tracker.bat` in the project root directory.
+   - This will automatically start the application in either production or development mode.
+   - If a production build exists, it will run that; otherwise, it will start in development mode.
+
+#### For Linux/Mac/Bash Users:
+1. Run the bash script: `./start-app.sh`
+   - This provides the same functionality as the batch file but works in bash environments.
 
 2. **Development Mode**: Double-click `Start Development.bat` to start in development mode with hot-reloading.
 

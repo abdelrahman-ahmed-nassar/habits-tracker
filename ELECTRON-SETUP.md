@@ -30,6 +30,20 @@ habits-tracker/
 
 ### Development Mode
 
+You have several options:
+
+#### For Windows Users:
+1. **Use the batch file** (recommended):
+   - Double-click `Start Development.bat` in the project root directory
+
+#### For Linux/Mac/Bash Users:
+1. **Use the shell script**:
+```bash
+# From the project root
+./start-development.sh
+```
+
+#### Using npm:
 ```bash
 # From the project root
 npm run dev
@@ -37,12 +51,27 @@ npm run dev
 
 This will start:
 
-- Backend server (port 5000)
+- Backend server (port 5002)
 - Frontend dev server (port 5173)
 - Electron app (connects to dev server)
 
 ### Production Build
 
+You have several options:
+
+#### For Windows Users:
+1. **Use the batch file** (recommended):
+   - Double-click `Build Executable.bat` in the project root directory
+   - This will build the backend, frontend, and create the packaged application
+
+#### For Linux/Mac/Bash Users:
+1. **Use the shell script**:
+```bash
+# From the project root
+./build-executable.sh
+```
+
+#### Using npm:
 ```bash
 # From the project root
 npm run build

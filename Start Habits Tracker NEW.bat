@@ -23,7 +23,7 @@ REM Check if running in development or production mode
 if exist "frontend\dist\index.html" (
     echo Running in production mode...
     
-    REM Check if backend is already running
+    REM Check if backend is already in use
     netstat -ano | findstr :5002 >nul
     if %ERRORLEVEL% EQU 0 (
         echo Port 5002 is already in use. The backend may already be running.
