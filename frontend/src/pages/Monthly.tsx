@@ -133,23 +133,29 @@ const Monthly: React.FC = () => {
       setLoading(false);
     }
   }, []);
-
   // Navigation functions
   const goToPreviousMonth = () => {
     const newDate = subMonths(currentDate, 1);
     setCurrentDate(newDate);
-    fetchMonthlyData(newDate);
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth() + 1;
+    navigate(`/monthly/${year}/${month}`);
   };
 
   const goToNextMonth = () => {
     const newDate = addMonths(currentDate, 1);
     setCurrentDate(newDate);
-    fetchMonthlyData(newDate);
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth() + 1;
+    navigate(`/monthly/${year}/${month}`);
   };
+  
   const goToCurrentMonth = () => {
     const today = new Date();
     setCurrentDate(today);
-    fetchMonthlyData(today);
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    navigate(`/monthly/${year}/${month}`);
   };
   // Handle day click - redirect to daily page
   const handleDayClick = (dayData: {
@@ -196,12 +202,24 @@ const Monthly: React.FC = () => {
     a.click();
     window.URL.revokeObjectURL(url);
     toast.success("Monthly data exported successfully!");
-  };
-
-  // Initialize data
+  };  // Initialize data
   useEffect(() => {
     fetchMonthlyData(currentDate);
   }, [fetchMonthlyData, currentDate]);
+
+  // Handle URL parameter changes when navigating directly or refreshing
+  useEffect(() => {
+    if (yearParam && monthParam) {
+      const year = parseInt(yearParam, 10);
+      const month = parseInt(monthParam, 10) - 1; // Convert to 0-based month
+      const urlDate = new Date(year, month, 1);
+      
+      // Only update if the URL date is different from current date
+      if (urlDate.getTime() !== currentDate.getTime()) {
+        setCurrentDate(urlDate);
+      }
+    }
+  }, [yearParam, monthParam, currentDate]); // React to URL parameter changes
 
   // Calendar grid setup
   const monthStart = startOfMonth(currentDate);

@@ -22,8 +22,7 @@ function App() {
             <Route path="weekly" element={<Weekly />} />
             <Route path="weekly/:date" element={<Weekly />} />
             <Route path="monthly" element={<Monthly />} />
-            <Route path="monthly/:date" element={<Monthly />} />
-            <Route path="monthly/:date/:month" element={<Monthly />} />
+            <Route path="monthly/:year/:month" element={<Monthly />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="analytics/overview" element={<Analytics />} />
             <Route path="analytics/:habitId" element={<Analytics />} />
