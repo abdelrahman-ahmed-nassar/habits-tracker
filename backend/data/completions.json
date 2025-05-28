@@ -115,11 +115,11 @@
     "completedAt": "2025-05-27T12:52:14.824Z"
   },
   {
-    "id": "7d0ff9ee-8ad8-4c19-a5c3-663f2b22e050",
+    "id": "298308ee-64ad-48da-bc98-fb978747cc39",
     "habitId": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
     "date": "2025-05-26",
-    "completed": false,
-    "completedAt": "2025-05-27T12:33:20.164Z"
+    "completed": true,
+    "completedAt": "2025-05-28T21:33:26.814Z"
   },
   {
     "id": "481414df-671b-4db2-803e-eb67b3577ee0",

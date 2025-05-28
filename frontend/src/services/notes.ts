@@ -186,7 +186,6 @@ export class NotesService {
       throw new Error(result.message || "Failed to add productivity level");
     }
   }
-
   /**
    * Remove a productivity level
    */
@@ -205,5 +204,126 @@ export class NotesService {
     if (!result.success) {
       throw new Error(result.message || "Failed to remove productivity level");
     }
+  }
+
+  /**
+   * Get notes analytics overview
+   */
+  static async getNotesAnalytics(): Promise<{
+    totalNotes: number;
+    notesWithMood: number;
+    notesWithProductivity: number;
+    moodDistribution: Record<string, number>;
+    productivityDistribution: Record<string, number>;
+    monthlyFrequency: Record<string, number>;
+    avgContentLength: number;
+    longestStreak: number;
+    completionRate: {
+      mood: number;
+      productivity: number;
+    };
+  }> {
+    const response = await fetch(`${API_BASE_URL}/notes/analytics/overview`);
+    const result: ApiResponse<any> = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to fetch notes analytics");
+    }
+
+    return result.data;
+  }
+
+  /**
+   * Get mood trends over time
+   */
+  static async getMoodTrends(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{
+    weeklyMoods: Record<string, Record<string, number>>;
+    totalNotesAnalyzed: number;
+  }> {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+
+    const response = await fetch(
+      `${API_BASE_URL}/notes/analytics/mood-trends?${params}`
+    );
+    const result: ApiResponse<any> = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to fetch mood trends");
+    }
+
+    return result.data;
+  }
+
+  /**
+   * Get productivity correlation with habits
+   */
+  static async getProductivityCorrelation(): Promise<{
+    correlationData: Array<{
+      date: string;
+      productivity: string;
+      completionRate: number;
+      completedHabits: number;
+      totalHabits: number;
+    }>;
+    productivityGroups: Record<
+      string,
+      {
+        avgCompletionRate: number;
+        totalDays: number;
+        totalCompletedHabits: number;
+        totalHabits: number;
+      }
+    >;
+    totalDaysAnalyzed: number;
+  }> {
+    const response = await fetch(
+      `${API_BASE_URL}/notes/analytics/productivity-correlation`
+    );
+    const result: ApiResponse<any> = await response.json();
+
+    if (!result.success) {
+      throw new Error(
+        result.message || "Failed to fetch productivity correlation"
+      );
+    }
+
+    return result.data;
+  }
+
+  /**
+   * Get calendar data for notes
+   */
+  static async getNotesCalendar(
+    year: number,
+    month: number
+  ): Promise<{
+    year: number;
+    month: number;
+    totalNotes: number;
+    calendarData: Record<
+      string,
+      {
+        hasNote: boolean;
+        mood?: string;
+        productivityLevel?: string;
+        contentLength: number;
+      }
+    >;
+  }> {
+    const response = await fetch(
+      `${API_BASE_URL}/notes/calendar/${year}/${month}`
+    );
+    const result: ApiResponse<any> = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to fetch calendar data");
+    }
+
+    return result.data;
   }
 }
