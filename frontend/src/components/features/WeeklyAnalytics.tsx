@@ -175,9 +175,9 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
                     {day.completedHabits}/{day.totalHabits}
                   </div>
                 </div>
-                <div className="relative w-14 flex flex-col items-center h-48">
+                <div className="relative w-14 flex flex-col items-center justify-end h-48">
                   <div
-                    className={`w-10 md:w-12 ${barColor} hover:w-12 transition-all rounded-t-lg shadow-sm hover:shadow`}
+                    className={`w-10 md:w-12 ${barColor} hover:w-12 transition-all rounded-t-lg shadow-sm hover:shadow absolute bottom-0`}
                     style={{
                       height: `${Math.max(
                         Math.min(day.completionRate, 100),
@@ -188,12 +188,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
                       day.completionRate
                     )}% completed (${day.completedHabits}/${day.totalHabits})`}
                   ></div>
-                  <div
-                    className="w-10 md:w-12 bg-gray-100 dark:bg-gray-700"
-                    style={{
-                      height: `${100 - Math.min(day.completionRate, 100)}%`,
-                    }}
-                  ></div>
+                  <div className="w-10 md:w-12 bg-gray-100 dark:bg-gray-700 absolute bottom-0 -z-10 h-full"></div>
                 </div>
                 <div className="mt-2 text-xs font-medium text-center">
                   {day.dayName.substring(0, 3)}
