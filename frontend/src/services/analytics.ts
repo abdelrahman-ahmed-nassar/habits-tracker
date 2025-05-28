@@ -33,7 +33,7 @@ interface AnalyticsOverview {
   }>;
 }
 
-interface HabitAnalytics {
+export interface HabitAnalytics {
   habitId: string;
   habitName: string;
   successRate: number;
@@ -174,6 +174,58 @@ interface QuarterAnalytics {
   }>;
 }
 
+export interface EnhancedHabitAnalytics {
+  habitId: string;
+  habitName: string;
+  period: {
+    startDate: string;
+    endDate: string;
+    description: string;
+  };
+  basicStats: {
+    totalDays: number;
+    completedDays: number;
+    successRate: number;
+    currentStreak: number;
+    bestStreak: number;
+  };
+  counterStats: {
+    totalValue: number;
+    goalValue: number;
+    progress: number;
+    completions: Array<{
+      date: string;
+      value: number;
+    }>;
+  } | null;
+  dayOfWeekStats: Array<{
+    dayOfWeek: number;
+    totalDays: number;
+    completedDays: number;
+    successRate: number;
+    dayName: string;
+  }>;
+  bestDay: {
+    dayOfWeek: number;
+    dayName: string;
+  } | null;
+  worstDay: {
+    dayOfWeek: number;
+    dayName: string;
+  } | null;
+  topStreaks: Array<{
+    startDate: string;
+    endDate: string;
+    length: number;
+  }>;
+  monthlyTrends: Array<{
+    month: number;
+    successRate: number;
+    completions: number;
+    monthName: string;
+  }>;
+}
+
 class AnalyticsService {
   /**
    * Get overall analytics data
@@ -190,6 +242,21 @@ class AnalyticsService {
   async getHabitAnalytics(habitId: string): Promise<HabitAnalytics> {
     const response = await axios.get(
       `${API_BASE_URL}/analytics/habits/${habitId}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get enhanced analytics for a specific habit with detailed data
+   * @param habitId - The ID of the habit
+   * @param period - The period for analytics (7days, 30days, 90days, 365days)
+   */
+  async getEnhancedHabitAnalytics(
+    habitId: string,
+    period: string = "30days"
+  ): Promise<EnhancedHabitAnalytics> {
+    const response = await axios.get(
+      `${API_BASE_URL}/analytics/habits/${habitId}?period=${period}`
     );
     return response.data.data;
   }

@@ -16,10 +16,11 @@ import Progress from "../components/ui/Progress";
 import Badge from "../components/ui/Badge";
 import OverallAnalytics from "../components/features/OverallAnalytics";
 import HabitOverview from "../components/features/HabitOverview";
+import EnhancedAnalyticsCharts from "../components/features/EnhancedAnalyticsCharts";
 import AnalyticsSkeleton from "../components/skeletons/AnalyticsSkeleton";
 import HabitDetailSkeleton from "../components/skeletons/HabitDetailSkeleton";
 import { Habit } from "@shared/types/habit";
-import { HabitAnalytics } from "@shared/types/analytics";
+import { HabitAnalytics, EnhancedHabitAnalytics } from "../services/analytics";
 import { toast } from "react-toastify";
 
 interface HabitCardProps {
@@ -101,28 +102,39 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
   const [habitAnalytics, setHabitAnalytics] = useState<HabitAnalytics | null>(
     null
   );
+  const [enhancedAnalytics, setEnhancedAnalytics] =
+    useState<EnhancedHabitAnalytics | null>(null);
   const [habit, setHabit] = useState<Habit | null>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("30days");
+
+  const periodOptions = [
+    { value: "7days", label: "Last 7 Days" },
+    { value: "30days", label: "Last 30 Days" },
+    { value: "90days", label: "Last 90 Days" },
+    { value: "365days", label: "Last Year" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [analyticsData, habitData] = await Promise.all([
+        const [analyticsData, habitData, enhancedData] = await Promise.all([
           analyticsService.getHabitAnalytics(habitId),
           habitsService.getHabit(habitId),
+          analyticsService.getEnhancedHabitAnalytics(habitId, selectedPeriod),
         ]);
         setHabitAnalytics(analyticsData);
         setHabit(habitData);
+        setEnhancedAnalytics(enhancedData);
       } catch (error) {
         console.error("Failed to fetch habit analytics:", error);
         toast.error("Failed to load habit analytics");
       } finally {
         setLoading(false);
       }
-    };
+    };    fetchData();
+  }, [habitId, selectedPeriod]);
 
-    fetchData();
-  }, [habitId]);
   if (loading) {
     return (
       <div className="p-6">
@@ -131,7 +143,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
     );
   }
 
-  if (!habitAnalytics || !habit) {
+  if (!habitAnalytics || !habit || !enhancedAnalytics) {
     return (
       <div className="text-center p-8">
         <p>No analytics data available for this habit.</p>
@@ -144,16 +156,34 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center">
-        <Button onClick={onBack} variant="ghost" size="sm">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back
-        </Button>
-        <h2 className="text-2xl font-bold ml-2">{habit.name}</h2>{" "}
-        {habit.tag && (
-          <Badge variant="primary" className="ml-2">
-            {habit.tag}
-          </Badge>
-        )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <Button onClick={onBack} variant="ghost" size="sm">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </Button>
+          <h2 className="text-2xl font-bold ml-2">{habit.name}</h2>
+          {habit.tag && (
+            <Badge variant="primary" className="ml-2">
+              {habit.tag}
+            </Badge>
+          )}
+        </div>
+
+        {/* Period Selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-600">Period:</span>
+          <select
+            value={selectedPeriod}
+            onChange={(e) => setSelectedPeriod(e.target.value)}
+            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {periodOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -165,8 +195,8 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
             <div className="flex items-center">
               <Percent className="w-5 h-5 text-green-500 mr-2" />
               <span className="text-2xl font-bold">
-                {habitAnalytics.successRate
-                  ? habitAnalytics.successRate.toFixed(1)
+                {enhancedAnalytics.basicStats?.successRate
+                  ? (enhancedAnalytics.basicStats.successRate * 100).toFixed(1)
                   : 0}
                 %
               </span>
@@ -182,7 +212,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
             <div className="flex items-center">
               <Flame className="w-5 h-5 text-orange-500 mr-2" />
               <span className="text-2xl font-bold">
-                {habitAnalytics.currentStreak || 0}
+                {enhancedAnalytics.basicStats?.currentStreak || 0}
               </span>
             </div>
           </div>
@@ -196,7 +226,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
             <div className="flex items-center">
               <Award className="w-5 h-5 text-yellow-500 mr-2" />
               <span className="text-2xl font-bold">
-                {habitAnalytics.bestStreak || 0}
+                {enhancedAnalytics.basicStats?.bestStreak || 0}
               </span>
             </div>
           </div>
@@ -205,23 +235,25 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">
-              Goal Progress
+              Days Completed
             </h3>
             <div className="flex items-center">
               <Calendar className="w-5 h-5 text-blue-500 mr-2" />
               <span className="text-2xl font-bold">
-                {habit.goalType === "streak"
-                  ? `${habitAnalytics.currentStreak || 0}/${habit.goalValue}`
-                  : `${habitAnalytics.currentCounter || 0}/${habit.goalValue}`}
+                {enhancedAnalytics.basicStats?.completedDays || 0}/
+                {enhancedAnalytics.basicStats?.totalDays || 0}
               </span>
             </div>
           </div>
         </Card>
       </div>
 
-      {/* Completion History Chart */}
+      {/* Enhanced Analytics Charts */}
+      <EnhancedAnalyticsCharts analytics={enhancedAnalytics} />
+
+      {/* Legacy Completion History Chart (keep for now as fallback) */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Completion History</h3>{" "}
+        <h3 className="font-semibold mb-4">Recent Completion History</h3>
         {habitAnalytics.completionHistory &&
         habitAnalytics.completionHistory.length > 0 ? (
           <div className="overflow-x-auto">
@@ -257,9 +289,9 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         )}
       </Card>
 
-      {/* Detailed Analytics */}
+      {/* Habit Details */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Detailed Analytics</h3>
+        <h3 className="font-semibold mb-4">Habit Details</h3>
         <div className="space-y-4">
           <p>
             <span className="font-medium">Repetition Pattern:</span>{" "}
@@ -279,6 +311,13 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
           <p>
             <span className="font-medium">Created:</span>{" "}
             {new Date(habit.createdAt).toLocaleDateString()}
+          </p>
+          <p>
+            <span className="font-medium">Analysis Period:</span>{" "}
+            {enhancedAnalytics.period?.description} (
+            {new Date(enhancedAnalytics.period?.startDate).toLocaleDateString()}{" "}
+            - {new Date(enhancedAnalytics.period?.endDate).toLocaleDateString()}
+            )
           </p>
         </div>
       </Card>
