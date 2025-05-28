@@ -12,11 +12,10 @@ const MoodsManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const fetchMoods = async () => {
     try {
       setIsLoading(true);
-      const data = await OptionsService.getMoods();
+      const data = await OptionsService.getMoodLabels();
       setMoods(data);
       setError(null);
     } catch (err) {

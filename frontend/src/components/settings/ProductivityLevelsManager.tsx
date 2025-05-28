@@ -12,11 +12,10 @@ const ProductivityLevelsManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const fetchLevels = async () => {
     try {
       setIsLoading(true);
-      const data = await OptionsService.getProductivityLevels();
+      const data = await OptionsService.getProductivityLabels();
       setLevels(data);
       setError(null);
     } catch (err) {
