@@ -16,6 +16,7 @@ import {
   ArrowUp,
   ArrowDown,
   Calendar,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -29,6 +30,76 @@ import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Progress from "../components/ui/Progress";
 import CounterInput from "../components/ui/CounterInput";
+import WeeklyAnalytics from "../components/features/WeeklyAnalytics";
+import ErrorBoundary from "../components/ui/ErrorBoundary";
+
+interface WeeklyAnalyticsData {
+  startDate: string;
+  endDate: string;
+  dailyStats: Array<{
+    date: string;
+    dayOfWeek: number;
+    dayName: string;
+    totalHabits: number;
+    completedHabits: number;
+    completionRate: number;
+  }>;
+  weeklyStats: {
+    overallSuccessRate: number;
+    totalCompletions: number;
+    mostProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    leastProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    mostProductiveHabit: {
+      habitId: string;
+      habitName: string;
+      activeDaysCount: number;
+      completedDaysCount: number;
+      successRate: number;
+      completedDates: string[];
+    };
+  };
+  habitStats: Array<{
+    habitId: string;
+    habitName: string;
+    activeDaysCount: number;
+    completedDaysCount: number;
+    successRate: number;
+    completedDates: string[];
+  }>;
+}
+
+const transformAnalyticsData = (
+  apiResponse: any
+): WeeklyAnalyticsData | null => {
+  if (!apiResponse?.dailyStats?.length) return null;
+  return {
+    startDate: apiResponse.startDate,
+    endDate: apiResponse.endDate,
+    dailyStats: apiResponse.dailyStats,
+    weeklyStats: {
+      overallSuccessRate: apiResponse.weeklyStats?.overallSuccessRate || 0,
+      totalCompletions: apiResponse.weeklyStats?.totalCompletions || 0,
+      mostProductiveDay: apiResponse.weeklyStats?.mostProductiveDay || null,
+      leastProductiveDay: apiResponse.weeklyStats?.leastProductiveDay || null,
+      mostProductiveHabit: apiResponse.weeklyStats?.mostProductiveHabit || null,
+    },
+    habitStats: apiResponse.habitStats || [],
+  };
+};
 
 interface Record {
   id: string;
@@ -439,6 +510,8 @@ const Weekly: React.FC = () => {
   );
   const [weekStats, setWeekStats] = useState<WeekStats | null>(null);
   const [lastWeekStats, setLastWeekStats] = useState<WeekStats | null>(null);
+  const [weeklyAnalyticsData, setWeeklyAnalyticsData] =
+    useState<WeeklyAnalyticsData | null>(null);
 
   // Format date range for display
   const weekDateRangeDisplay = `${format(currentWeekStart, "MMM d")} - ${format(
@@ -615,17 +688,23 @@ const Weekly: React.FC = () => {
         const analytics = await analyticsService.getWeeklyAnalytics(
           formattedDate
         );
+        const transformedData = transformAnalyticsData(analytics);
 
-        // Validate analytics data
-        if (
-          !analytics ||
-          !analytics.dailyStats ||
-          !Array.isArray(analytics.dailyStats)
-        ) {
+        if (!transformedData) {
           console.error("Invalid analytics data structure:", analytics);
           toast.error("Received invalid analytics data format");
+          setWeeklyAnalyticsData(null);
           setLoading(false);
           return;
+        }
+
+        try {
+          // Save the transformed analytics data for use with the WeeklyAnalytics component
+          setWeeklyAnalyticsData(transformedData);
+        } catch (error) {
+          console.error("Error processing analytics data:", error);
+          toast.error("Could not process analytics data");
+          setWeeklyAnalyticsData(null);
         }
 
         // Use the analytics data directly from the API structure
@@ -745,6 +824,7 @@ const Weekly: React.FC = () => {
       } catch (err) {
         console.error("Error fetching weekly analytics:", err);
         toast.error("Failed to load weekly analytics");
+        setWeeklyAnalyticsData(null);
         // Continue without analytics data
       }
     } catch (error) {
@@ -1039,216 +1119,254 @@ const Weekly: React.FC = () => {
       </div>
 
       {/* Weekly Stats Overview */}
-      {weekStats && (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
-          {/* Completion Rate Card */}
-          <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Weekly Progress</h3>
-                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                  <ArrowUp
-                    className={`w-5 h-5 ${
+      {loading ? (
+        <div className="flex justify-center py-8">
+          <div className="animate-pulse flex flex-col items-center">
+            <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+            <div className="h-36 w-full max-w-3xl bg-gray-100 dark:bg-gray-800 rounded"></div>
+          </div>
+        </div>
+      ) : weeklyAnalyticsData ? (
+        <div className="mb-8">
+          <ErrorBoundary
+            fallback={
+              <Card className="p-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">
+                      Weekly Analytics Unavailable
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      There was a problem displaying the weekly analytics. Basic
+                      stats are still available below.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            }
+          >
+            <WeeklyAnalytics analytics={weeklyAnalyticsData} />
+          </ErrorBoundary>
+        </div>
+      ) : (
+        weekStats && (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
+            {/* Completion Rate Card */}
+            <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Weekly Progress</h3>
+                  <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                    <ArrowUp
+                      className={`w-5 h-5 ${
+                        weekStats.completionTrend === "up"
+                          ? "text-green-500"
+                          : weekStats.completionTrend === "down"
+                          ? "text-red-500 rotate-180"
+                          : "text-gray-400"
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                <div className="relative mb-6 pt-2">
+                  <div className="flex justify-between mb-1 text-sm">
+                    <span>Completion Rate</span>
+                    <span className="font-semibold">
+                      {Math.round(weekStats.completionRate)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                      style={{ width: `${weekStats.completionRate}%` }}
+                    ></div>
+                  </div>
+
+                  {lastWeekStats && (
+                    <>
+                      <div className="flex justify-between mt-3 mb-1 text-sm">
+                        <span>Last Week</span>
+                        <span className="font-semibold">
+                          {Math.round(lastWeekStats.completionRate)}%
+                        </span>
+                      </div>
+                      <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden opacity-70">
+                        <div
+                          className="h-full bg-gray-400 dark:bg-gray-600 rounded-full"
+                          style={{ width: `${lastWeekStats.completionRate}%` }}
+                        ></div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center text-sm">
+                  <div
+                    className={`flex items-center ${
                       weekStats.completionTrend === "up"
                         ? "text-green-500"
                         : weekStats.completionTrend === "down"
-                        ? "text-red-500 rotate-180"
-                        : "text-gray-400"
+                        ? "text-red-500"
+                        : "text-gray-500"
                     }`}
-                  />
+                  >
+                    {weekStats.completionTrend === "up" && (
+                      <ArrowUp className="w-4 h-4 mr-1" />
+                    )}
+                    {weekStats.completionTrend === "down" && (
+                      <ArrowDown className="w-4 h-4 mr-1" />
+                    )}
+                    {weekStats.completionTrend === "same" && (
+                      <span className="w-4 h-4 mr-1">—</span>
+                    )}
+                    {lastWeekStats && weekStats.completionTrend && (
+                      <span>
+                        {Math.abs(
+                          Math.round(
+                            weekStats.completionRate -
+                              lastWeekStats.completionRate
+                          )
+                        )}
+                        %
+                        {weekStats.completionTrend === "up"
+                          ? " increase"
+                          : weekStats.completionTrend === "down"
+                          ? " decrease"
+                          : " change"}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="relative mb-6 pt-2">
-                <div className="flex justify-between mb-1 text-sm">
-                  <span>Completion Rate</span>
-                  <span className="font-semibold">
-                    {Math.round(weekStats.completionRate)}%
-                  </span>
-                </div>
-                <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
-                    style={{ width: `${weekStats.completionRate}%` }}
-                  ></div>
-                </div>
+            {/* Best Day Card */}
+            {weekStats.bestDay && (
+              <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Most Productive</h3>
+                    <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                      <Check className="w-5 h-5 text-green-500" />
+                    </div>
+                  </div>
 
-                {lastWeekStats && (
-                  <>
-                    <div className="flex justify-between mt-3 mb-1 text-sm">
-                      <span>Last Week</span>
-                      <span className="font-semibold">
-                        {Math.round(lastWeekStats.completionRate)}%
+                  <div className="flex items-center mb-6">
+                    <div className="w-16 h-16 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4">
+                      <span className="text-2xl font-bold text-green-700 dark:text-green-300">
+                        {format(parseISO(weekStats.bestDay.date), "dd")}
                       </span>
                     </div>
-                    <div className="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden opacity-70">
+                    <div>
+                      <div className="text-2xl font-bold">
+                        {format(parseISO(weekStats.bestDay.date), "EEEE")}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {format(parseISO(weekStats.bestDay.date), "MMMM d")}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="flex justify-between mb-1 text-sm">
+                      <span>Completion Rate</span>
+                      <span className="font-semibold">
+                        {Math.round(weekStats.bestDay.completionRate)}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gray-400 dark:bg-gray-600 rounded-full"
-                        style={{ width: `${lastWeekStats.completionRate}%` }}
+                        className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
+                        style={{
+                          width: `${weekStats.bestDay.completionRate}%`,
+                        }}
                       ></div>
                     </div>
-                  </>
-                )}
-              </div>
-
-              <div className="flex items-center text-sm">
-                <div
-                  className={`flex items-center ${
-                    weekStats.completionTrend === "up"
-                      ? "text-green-500"
-                      : weekStats.completionTrend === "down"
-                      ? "text-red-500"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {weekStats.completionTrend === "up" && (
-                    <ArrowUp className="w-4 h-4 mr-1" />
-                  )}
-                  {weekStats.completionTrend === "down" && (
-                    <ArrowDown className="w-4 h-4 mr-1" />
-                  )}
-                  {weekStats.completionTrend === "same" && (
-                    <span className="w-4 h-4 mr-1">—</span>
-                  )}
-                  {lastWeekStats && weekStats.completionTrend && (
-                    <span>
-                      {Math.abs(
-                        Math.round(
-                          weekStats.completionRate -
-                            lastWeekStats.completionRate
-                        )
-                      )}
-                      %
-                      {weekStats.completionTrend === "up"
-                        ? " increase"
-                        : weekStats.completionTrend === "down"
-                        ? " decrease"
-                        : " change"}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Best Day Card */}
-          {weekStats.bestDay && (
-            <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Most Productive</h3>
-                  <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-                    <Check className="w-5 h-5 text-green-500" />
                   </div>
-                </div>
 
-                <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4">
-                    <span className="text-2xl font-bold text-green-700 dark:text-green-300">
-                      {format(parseISO(weekStats.bestDay.date), "dd")}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">
-                      {format(parseISO(weekStats.bestDay.date), "EEEE")}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {format(parseISO(weekStats.bestDay.date), "MMMM d")}
+                  <Link
+                    to={`/daily/${weekStats.bestDay.date}`}
+                    className="text-blue-500 hover:text-blue-600 text-sm flex items-center mt-3"
+                  >
+                    <span>View Details</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Areas for Improvement */}
+            {weekStats.worstDay && (
+              <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Needs Attention</h3>
+                    <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-amber-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
                     </div>
                   </div>
-                </div>
 
-                <div className="mb-3">
-                  <div className="flex justify-between mb-1 text-sm">
-                    <span>Completion Rate</span>
-                    <span className="font-semibold">
-                      {Math.round(weekStats.bestDay.completionRate)}%
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
-                      style={{ width: `${weekStats.bestDay.completionRate}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <Link
-                  to={`/daily/${weekStats.bestDay.date}`}
-                  className="text-blue-500 hover:text-blue-600 text-sm flex items-center mt-3"
-                >
-                  <span>View Details</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Areas for Improvement */}
-          {weekStats.worstDay && (
-            <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Needs Attention</h3>
-                  <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-amber-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-4">
-                    <span className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                      {format(parseISO(weekStats.worstDay.date), "dd")}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">
-                      {format(parseISO(weekStats.worstDay.date), "EEEE")}
+                  <div className="flex items-center mb-6">
+                    <div className="w-16 h-16 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-4">
+                      <span className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                        {format(parseISO(weekStats.worstDay.date), "dd")}
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {format(parseISO(weekStats.worstDay.date), "MMMM d")}
+                    <div>
+                      <div className="text-2xl font-bold">
+                        {format(parseISO(weekStats.worstDay.date), "EEEE")}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {format(parseISO(weekStats.worstDay.date), "MMMM d")}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mb-3">
-                  <div className="flex justify-between mb-1 text-sm">
-                    <span>Completion Rate</span>
-                    <span className="font-semibold">
-                      {Math.round(weekStats.worstDay.completionRate)}%
-                    </span>
+                  <div className="mb-3">
+                    <div className="flex justify-between mb-1 text-sm">
+                      <span>Completion Rate</span>
+                      <span className="font-semibold">
+                        {Math.round(weekStats.worstDay.completionRate)}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full"
+                        style={{
+                          width: `${weekStats.worstDay.completionRate}%`,
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full"
-                      style={{ width: `${weekStats.worstDay.completionRate}%` }}
-                    ></div>
-                  </div>
-                </div>
 
-                <Link
-                  to={`/daily/${weekStats.worstDay.date}`}
-                  className="text-blue-500 hover:text-blue-600 text-sm flex items-center mt-3"
-                >
-                  <span>View Details</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Link>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                  <Link
+                    to={`/daily/${weekStats.worstDay.date}`}
+                    className="text-blue-500 hover:text-blue-600 text-sm flex items-center mt-3"
+                  >
+                    <span>View Details</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )
       )}
 
       {/* Daily Habits Board - Vertical columns for each day */}

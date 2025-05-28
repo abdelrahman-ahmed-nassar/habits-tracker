@@ -53,8 +53,8 @@
     "goalType": "streak",
     "goalValue": 1,
     "currentStreak": 1,
-    "bestStreak": 5,
-    "currentCounter": 4,
+    "bestStreak": 6,
+    "currentCounter": 7,
     "createdAt": "2024-03-20",
     "motivationNote": "Reflect on your day as the sun sets",
     "isActive": true
@@ -67,9 +67,9 @@
     "repetition": "daily",
     "goalType": "streak",
     "goalValue": 1,
-    "currentStreak": 0,
-    "bestStreak": 4,
-    "currentCounter": 3,
+    "currentStreak": 6,
+    "bestStreak": 6,
+    "currentCounter": 6,
     "createdAt": "2024-03-20",
     "motivationNote": "End your day with spiritual peace",
     "isActive": true
