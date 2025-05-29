@@ -12,7 +12,7 @@
     "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "Start your day with spiritual connection",
-    "isActive": true
+    "isActive": false
   },
   {
     "id": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
@@ -27,7 +27,7 @@
     "currentCounter": 5,
     "createdAt": "2024-03-20",
     "motivationNote": "Take a spiritual break during your busy day h",
-    "isActive": true
+    "isActive": false
   },
   {
     "id": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
@@ -42,7 +42,7 @@
     "currentCounter": 4,
     "createdAt": "2024-03-20",
     "motivationNote": "Maintain spiritual focus in the afternoon",
-    "isActive": true
+    "isActive": false
   },
   {
     "id": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
@@ -266,21 +266,6 @@
     "isActive": true
   },
   {
-    "id": "water-1",
-    "name": "? ??? ??????",
-    "description": "Drink 8 glasses of water daily - Updated",
-    "tag": "?????",
-    "repetition": "daily",
-    "goalType": "counter",
-    "goalValue": 8,
-    "currentStreak": 1,
-    "bestStreak": 1,
-    "currentCounter": 8,
-    "createdAt": "2024-03-20",
-    "motivationNote": "Stay hydrated for better health",
-    "isActive": true
-  },
-  {
     "id": "reading-1",
     "name": "Read Books",
     "description": "Read for 30 minutes daily",
@@ -343,6 +328,7 @@
     "bestStreak": 0,
     "currentCounter": 0,
     "isActive": true,
-    "createdAt": "2025-05-29T15:05:38.809Z"
+    "createdAt": "2025-05-29T15:05:38.809Z",
+    "motivationNote": ""
   }
 ]

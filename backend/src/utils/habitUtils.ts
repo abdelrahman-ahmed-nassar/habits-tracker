@@ -46,7 +46,13 @@ export const filterHabitsByActiveStatus = (
   habits: Habit[],
   isActive: boolean
 ): Habit[] => {
-  return habits.filter((habit) => habit.isActive === isActive);
+  if (isActive) {
+    // For active habits, make sure to include those that don't have isActive explicitly set to false
+    return habits.filter((habit) => habit.isActive !== false);
+  } else {
+    // For inactive habits, explicitly check for false
+    return habits.filter((habit) => habit.isActive === false);
+  }
 };
 
 type SortDirection = "asc" | "desc";

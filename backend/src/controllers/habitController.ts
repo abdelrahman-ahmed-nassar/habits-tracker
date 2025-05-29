@@ -45,7 +45,12 @@ export const getAllHabits = asyncHandler(
 
     // Process active status filter
     if (active !== undefined) {
-      filterOptions.isActive = active === "true";
+      if (active === "all") {
+        // Don't filter by active status when "all" is specified
+        filterOptions.isActive = undefined;
+      } else {
+        filterOptions.isActive = active === "true";
+      }
     }
 
     // Process sorting

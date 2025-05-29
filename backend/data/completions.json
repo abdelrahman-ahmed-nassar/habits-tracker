@@ -342,14 +342,6 @@
     "completedAt": "2025-05-27T16:39:36.666Z"
   },
   {
-    "id": "6cc962b8-8fea-4340-9fed-058fa2956587",
-    "habitId": "water-1",
-    "date": "2025-05-27",
-    "completed": true,
-    "value": 8,
-    "completedAt": "2025-05-27T16:39:36.666Z"
-  },
-  {
     "id": "6992c26c-83f8-4357-80ef-720a0159c115",
     "habitId": "reading-1",
     "date": "2025-05-27",

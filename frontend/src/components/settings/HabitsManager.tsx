@@ -1,5 +1,12 @@
+// filepath: s:\projects\habits-tracker\frontend\src\components\settings\HabitsManager.tsx
 import React, { useState, useEffect } from "react";
-import { PlusCircle, Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  PlusCircle,
+  Edit,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
 import Card, { CardContent } from "../ui/Card";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
@@ -46,7 +53,8 @@ const HabitsManager: React.FC = () => {
   const fetchHabits = async () => {
     try {
       setIsLoading(true);
-      const data = await habitsService.getAllHabits();
+      // Explicitly request all habits including inactive ones
+      const data = await habitsService.getAllHabits(true);
       setHabits(data);
       setError(null);
     } catch (err) {
@@ -56,6 +64,7 @@ const HabitsManager: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -80,6 +89,7 @@ const HabitsManager: React.FC = () => {
     setCurrentHabitId(null);
     setShowForm(true);
   };
+
   const handleOpenEditForm = (habit: Habit) => {
     setFormData({
       name: habit.name,
@@ -96,6 +106,7 @@ const HabitsManager: React.FC = () => {
     setCurrentHabitId(habit.id);
     setShowForm(true);
   };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -165,6 +176,7 @@ const HabitsManager: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
   const handleDelete = async (id: string) => {
     if (
       !window.confirm(
@@ -183,7 +195,8 @@ const HabitsManager: React.FC = () => {
       console.error(err);
     }
   };
-    const handleToggleActive = async (habit: Habit) => {
+
+  const handleToggleActive = async (habit: Habit) => {
     try {
       setIsSubmitting(true);
       // Create a request object with only the necessary fields
@@ -196,11 +209,13 @@ const HabitsManager: React.FC = () => {
         goalType: habit.goalType,
         goalValue: habit.goalValue,
         motivationNote: habit.motivationNote || "",
-        isActive: !habit.isActive
+        isActive: !habit.isActive,
       };
-      
+
       await habitsService.updateHabit(habit.id, updateRequest);
-      toast.success(`Habit ${!habit.isActive ? 'activated' : 'deactivated'} successfully`);
+      toast.success(
+        `Habit ${!habit.isActive ? "activated" : "deactivated"} successfully`
+      );
       await fetchHabits();
     } catch (err) {
       toast.error("Failed to update habit status");
@@ -234,7 +249,6 @@ const HabitsManager: React.FC = () => {
           {formData.repetition === "weekly" ? "Days of week" : "Days of month"}
         </label>
         <div className="flex flex-wrap gap-2">
-          {" "}
           {days.map((day, index) => (
             <button
               key={index}
@@ -254,6 +268,10 @@ const HabitsManager: React.FC = () => {
     );
   };
 
+  // Separate active and inactive habits
+  const activeHabits = habits.filter((habit) => habit.isActive !== false);
+  const inactiveHabits = habits.filter((habit) => habit.isActive === false);
+
   if (isLoading) {
     return (
       <Card>
@@ -263,6 +281,78 @@ const HabitsManager: React.FC = () => {
       </Card>
     );
   }
+
+  // Render a habit card
+  const renderHabitCard = (habit: Habit) => (
+    <Card key={habit.id}>
+      <CardContent
+        className={`p-4 ${habit.isActive === false ? "opacity-70" : ""}`}
+      >
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <h3 className="font-semibold text-lg">{habit.name}</h3>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {habit.description}
+            </div>
+          </div>
+          <div className="flex space-x-2">
+            <button
+              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+              onClick={() => handleOpenEditForm(habit)}
+            >
+              <Edit size={16} />
+            </button>
+            <button
+              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
+              onClick={() => handleDelete(habit.id)}
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-2">
+          <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs">
+            {habit.repetition}
+          </span>
+          <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs">
+            {habit.tag}
+          </span>
+          <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs">
+            Goal: {habit.goalValue}{" "}
+            {habit.goalType === "streak" ? "days" : "times"}
+          </span>
+          {habit.isActive === false && (
+            <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs">
+              Inactive
+            </span>
+          )}
+        </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div>Current Streak: {habit.currentStreak}</div>
+          <div>Best Streak: {habit.bestStreak}</div>
+        </div>
+        <div className="mt-3 flex items-center">
+          <button
+            className="flex items-center text-sm font-medium"
+            onClick={() => handleToggleActive(habit)}
+            disabled={isSubmitting}
+          >
+            {habit.isActive !== false ? (
+              <>
+                <ToggleRight className="h-5 w-5 text-green-600 mr-1" />
+                <span>Active</span>
+              </>
+            ) : (
+              <>
+                <ToggleLeft className="h-5 w-5 text-gray-400 mr-1" />
+                <span>Inactive</span>
+              </>
+            )}
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="space-y-6">
@@ -275,11 +365,13 @@ const HabitsManager: React.FC = () => {
           Create Habit
         </Button>
       </div>
+
       {error && (
         <div className="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg mb-4">
           {error}
         </div>
       )}
+
       {habits.length === 0 ? (
         <Card>
           <CardContent className="p-6">
@@ -289,75 +381,46 @@ const HabitsManager: React.FC = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {habits.map((habit) => (
-            <Card key={habit.id}>              <CardContent className={`p-4 ${habit.isActive === false ? 'opacity-60' : ''}`}>
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-semibold text-lg">{habit.name}</h3>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {habit.description}
-                    </div>
+        <div className="space-y-8">
+          {/* Active Habits Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Active Habits</h3>
+            {activeHabits.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {activeHabits.map((habit) => renderHabitCard(habit))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-center text-gray-500 dark:text-gray-400">
+                    No active habits found.
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
-                      onClick={() => handleOpenEditForm(habit)}
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200"
-                      onClick={() => handleDelete(habit.id)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Inactive Habits Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Inactive Habits</h3>
+            {inactiveHabits.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {inactiveHabits.map((habit) => renderHabitCard(habit))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="text-center text-gray-500 dark:text-gray-400">
+                    No inactive habits found.
                   </div>
-                </div>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs">
-                    {habit.repetition}
-                  </span>
-                  <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs">
-                    {habit.tag}
-                  </span>
-                  <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs">
-                    Goal: {habit.goalValue} {habit.goalType === "streak" ? "days" : "times"}
-                  </span>
-                  {habit.isActive === false && (
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs">
-                      Inactive
-                    </span>
-                  )}
-                </div>                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  <div>Current Streak: {habit.currentStreak}</div>
-                  <div>Best Streak: {habit.bestStreak}</div>
-                </div>
-                <div className="mt-3 flex items-center">
-                  <button
-                    className="flex items-center text-sm font-medium"
-                    onClick={() => handleToggleActive(habit)}
-                    disabled={isSubmitting}
-                  >
-                    {habit.isActive !== false ? (
-                      <>
-                        <ToggleRight className="h-5 w-5 text-green-600 mr-1" />
-                        <span>Active</span>
-                      </>
-                    ) : (
-                      <>
-                        <ToggleLeft className="h-5 w-5 text-gray-400 mr-1" />
-                        <span>Inactive</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
-      )}{" "}
-      {/* Create/Edit Habit Form Modal */}{" "}
+      )}
+
+      {/* Create/Edit Habit Form Modal */}
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
@@ -422,14 +485,15 @@ const HabitsManager: React.FC = () => {
             onChange={handleInputChange}
             required
             fullWidth
-          />          <Input
+          />
+          <Input
             label="Motivation Note"
             name="motivationNote"
             value={formData.motivationNote || ""}
             onChange={handleInputChange}
             fullWidth
           />
-          
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Status
@@ -438,7 +502,9 @@ const HabitsManager: React.FC = () => {
               <button
                 type="button"
                 className="flex items-center focus:outline-none"
-                onClick={() => setFormData({...formData, isActive: !formData.isActive})}
+                onClick={() =>
+                  setFormData({ ...formData, isActive: !formData.isActive })
+                }
               >
                 {formData.isActive ? (
                   <>
@@ -453,7 +519,8 @@ const HabitsManager: React.FC = () => {
                 )}
               </button>
             </div>
-          </div>{" "}
+          </div>
+
           <div className="flex justify-end gap-2">
             <Button
               variant="secondary"

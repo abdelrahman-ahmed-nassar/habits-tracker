@@ -28,9 +28,12 @@ interface HabitRecord {
 class HabitsService {
   /**
    * Get all habits
+   * @param includeInactive - Whether to include inactive habits (defaults to false)
    */
-  async getAllHabits(): Promise<Habit[]> {
-    const response = await axios.get(`${API_BASE_URL}/habits`);
+  async getAllHabits(includeInactive: boolean = false): Promise<Habit[]> {
+    const response = await axios.get(
+      `${API_BASE_URL}/habits${includeInactive ? "?active=all" : ""}`
+    );
     return response.data.data;
   }
 
