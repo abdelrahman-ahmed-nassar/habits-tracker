@@ -89,6 +89,14 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
     useState<ProductivityCorrelationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  // Add new state for mood trends view mode
+  const [moodTrendsViewMode, setMoodTrendsViewMode] = useState<
+    "monthly" | "daily"
+  >("monthly");
+  // Add new state for productivity trends view mode
+  const [productivityTrendsViewMode, setProductivityTrendsViewMode] = useState<
+    "monthly" | "daily"
+  >("monthly");
 
   // Fetch analytics data function - moved before useEffect to fix initialization order
   const fetchAnalyticsData = useCallback(async () => {
@@ -172,7 +180,153 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
       ],
     };
-  }, [moodTrends]);
+  }, [moodTrends]); // Create daily mood trends chart data from notes prop
+  const dailyMoodTrendChartData = useMemo(() => {
+    if (!notes || notes.length === 0) return null;
+
+    // Filter notes with mood data and get mood value map
+    const notesWithMood = notes.filter((note) => note.mood);
+    if (notesWithMood.length === 0) return null;
+
+    // Use mood value mapping from analytics data if available, otherwise use Arabic mood values
+    let moodValueMap: Record<string, number>;
+
+    if (
+      analyticsData?.moodValueMap &&
+      Object.keys(analyticsData.moodValueMap).length > 0
+    ) {
+      moodValueMap = analyticsData.moodValueMap;
+      console.log("Using analytics mood value map:", moodValueMap);
+    } else if (
+      moodTrends?.moodValueMap &&
+      Object.keys(moodTrends.moodValueMap).length > 0
+    ) {
+      moodValueMap = moodTrends.moodValueMap;
+      console.log("Using mood trends value map:", moodValueMap);
+    } else {
+      // Fallback mapping based on your Arabic mood values
+      moodValueMap = {
+        مبسوط: 10,
+        حزين: 2,
+        عادي: 5,
+        متوتر: 3,
+        هادي: 6,
+        متضايق: 2,
+        متحفز: 8,
+        تعبان: 1,
+        نشيط: 9,
+        كويس: 7,
+        جديد: 6,
+        أمل: 8,
+        // English fallbacks if any
+        "😊": 9,
+        Happy: 9,
+        "🤗": 8,
+        Excited: 8,
+        "😎": 7,
+        Confident: 7,
+        "😌": 6,
+        Peaceful: 6,
+        "🤔": 5,
+        Thoughtful: 5,
+        "😔": 4,
+        Melancholy: 4,
+        "😰": 3,
+        Anxious: 3,
+        "😴": 3,
+        Tired: 3,
+        "😡": 2,
+        Angry: 2,
+        "😢": 1,
+        Sad: 1,
+      };
+      console.log("Using fallback mood value map:", moodValueMap);
+    } // Sort notes by date and create daily data
+    const sortedNotes = [...notesWithMood]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-30); // Last 30 days
+
+    console.log(
+      "Processing notes with mood:",
+      sortedNotes.map((n) => ({ date: n.date, mood: n.mood }))
+    );
+    const dailyMoodData = sortedNotes.map((note) => {
+      const moodValue = moodValueMap[note.mood!] || 5;
+      console.log(`Mood "${note.mood}" mapped to value: ${moodValue}`);
+      return {
+        date: note.date,
+        mood: note.mood!,
+        moodValue,
+      };
+    });
+
+    console.log("Final daily mood data:", dailyMoodData);
+
+    return {
+      options: {
+        chart: {
+          id: "daily-mood-trends-chart",
+          toolbar: {
+            show: false,
+          },
+          animations: {
+            enabled: true,
+          },
+        },
+        xaxis: {
+          categories: dailyMoodData.map((data) =>
+            format(parseISO(data.date), "MMM dd")
+          ),
+          labels: {
+            rotate: -45,
+            trim: true,
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Mood Score",
+          },
+          min: 0,
+          max: 10,
+        },
+        colors: ["#10B981"],
+        stroke: {
+          width: 3,
+          curve: "smooth" as const,
+        },
+        markers: {
+          size: 6,
+        },
+        tooltip: {
+          x: {
+            formatter: (
+              _value: number,
+              { dataPointIndex }: { dataPointIndex: number }
+            ) => {
+              const data = dailyMoodData[dataPointIndex];
+              return format(parseISO(data.date), "EEEE, MMM dd, yyyy");
+            },
+          },
+          y: {
+            formatter: (
+              value: number,
+              { dataPointIndex }: { dataPointIndex: number }
+            ) => {
+              const data = dailyMoodData[dataPointIndex];
+              return `${data.mood} (${value.toFixed(1)}/10)`;
+            },
+          },
+        },
+      },
+      series: [
+        {
+          name: "Daily Mood",
+          data: dailyMoodData.map((data) => data.moodValue),
+        },
+      ],
+    };
+  }, [notes, analyticsData?.moodValueMap, moodTrends?.moodValueMap]);
+
   // Create productivity trends chart data using monthly productivity data
   const productivityTrendChartData = useMemo(() => {
     if (!analyticsData?.monthlyProductivityScores) return null;
@@ -207,7 +361,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             text: "Average Productivity Score",
           },
           min: 0,
-          max: 10,
+          max: 6,
         },
         colors: ["#6366F1"], // Indigo color
         stroke: {
@@ -219,7 +373,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         tooltip: {
           y: {
-            formatter: (value: number) => `${value.toFixed(1)} / 10`,
+            formatter: (value: number) => `${value.toFixed(1)} / 6`,
           },
         },
       },
@@ -231,6 +385,148 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       ],
     };
   }, [analyticsData?.monthlyProductivityScores]);
+
+  // Create daily productivity trends chart data from notes prop
+  const dailyProductivityTrendChartData = useMemo(() => {
+    if (!notes || notes.length === 0) return null;
+
+    // Filter notes with productivity data and get productivity value map
+    const notesWithProductivity = notes.filter(
+      (note) => note.productivityLevel
+    );
+    if (notesWithProductivity.length === 0) return null;
+
+    // Use productivity value mapping from analytics data if available, otherwise use fallback
+    let productivityValueMap: Record<string, number>;
+
+    if (
+      analyticsData?.productivityValueMap &&
+      Object.keys(analyticsData.productivityValueMap).length > 0
+    ) {
+      productivityValueMap = analyticsData.productivityValueMap;
+      console.log(
+        "Using analytics productivity value map:",
+        productivityValueMap
+      );
+    } else {
+      // Fallback mapping for actual productivity levels in your data
+      productivityValueMap = {
+        Bruh: 1,
+        "Very Low ⚡": 2,
+        "Low ⚡⚡": 3,
+        "Medium ⚡⚡": 4,
+        "High ⚡⚡⚡⚡": 5,
+        "Very High ⚡⚡⚡⚡⚡⚡": 6,
+        // Arabic fallbacks
+        "منخفض جداً": 1,
+        "Very Low": 2,
+        منخفض: 3,
+        Low: 3,
+        متوسط: 4,
+        Medium: 4,
+        عالي: 5,
+        High: 5,
+        "عالي جداً": 6,
+        "Very High": 6,
+      };
+      console.log(
+        "Using fallback productivity value map:",
+        productivityValueMap
+      );
+    }
+
+    // Sort notes by date and create daily data
+    const sortedNotes = [...notesWithProductivity]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-30); // Last 30 days
+
+    console.log(
+      "Processing notes with productivity:",
+      sortedNotes.map((n) => ({
+        date: n.date,
+        productivity: n.productivityLevel,
+      }))
+    );
+
+    const dailyProductivityData = sortedNotes.map((note) => {
+      const productivityValue =
+        productivityValueMap[note.productivityLevel!] || 5;
+      console.log(
+        `Productivity "${note.productivityLevel}" mapped to value: ${productivityValue}`
+      );
+      return {
+        date: note.date,
+        productivity: note.productivityLevel!,
+        productivityValue,
+      };
+    });
+
+    console.log("Final daily productivity data:", dailyProductivityData);
+
+    return {
+      options: {
+        chart: {
+          id: "daily-productivity-trends-chart",
+          toolbar: {
+            show: false,
+          },
+          animations: {
+            enabled: true,
+          },
+        },
+        xaxis: {
+          categories: dailyProductivityData.map((data) =>
+            format(parseISO(data.date), "MMM dd")
+          ),
+          labels: {
+            rotate: -45,
+            trim: true,
+          },
+        },
+        yaxis: {
+          title: {
+            text: "Productivity Score",
+          },
+          min: 0,
+          max: 6,
+        },
+        colors: ["#6366F1"],
+        stroke: {
+          width: 3,
+          curve: "smooth" as const,
+        },
+        markers: {
+          size: 6,
+        },
+        tooltip: {
+          x: {
+            formatter: (
+              _value: number,
+              { dataPointIndex }: { dataPointIndex: number }
+            ) => {
+              const data = dailyProductivityData[dataPointIndex];
+              return format(parseISO(data.date), "EEEE, MMM dd, yyyy");
+            },
+          },
+          y: {
+            formatter: (
+              value: number,
+              { dataPointIndex }: { dataPointIndex: number }
+            ) => {
+              const data = dailyProductivityData[dataPointIndex];
+              return `${data.productivity} (${value.toFixed(1)}/6)`;
+            },
+          },
+        },
+      },
+      series: [
+        {
+          name: "Daily Productivity",
+          data: dailyProductivityData.map((data) => data.productivityValue),
+        },
+      ],
+    };
+  }, [notes, analyticsData?.productivityValueMap]);
 
   // Create productivity correlation chart data for habits impact
   const productivityCorrelationChartData = useMemo(() => {
@@ -606,7 +902,8 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
           </Card>
         )}{" "}
       {/* Mood Trends */}
-      {moodTrends && moodTrends.trends && moodTrends.trends.length > 0 && (
+      {((moodTrends && moodTrends.trends && moodTrends.trends.length > 0) ||
+        (notes && notes.filter((n) => n.mood).length > 0)) && (
         <Card>
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -614,34 +911,69 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 <TrendingUp className="w-5 h-5 mr-2 text-green-500" />
                 Mood Trends Over Time
               </h3>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="date"
-                  value={dateRange.start}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({ ...prev, start: e.target.value }))
-                  }
-                  className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-                />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  to
-                </span>
-                <input
-                  type="date"
-                  value={dateRange.end}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({ ...prev, end: e.target.value }))
-                  }
-                  className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-                />
-                <Button size="sm" onClick={handleDateRangeChange}>
-                  <Filter className="w-4 h-4" />
-                </Button>
+              <div className="flex items-center space-x-4">
+                {/* View Mode Toggle */}
+                <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setMoodTrendsViewMode("monthly")}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      moodTrendsViewMode === "monthly"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => setMoodTrendsViewMode("daily")}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      moodTrendsViewMode === "daily"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Daily
+                  </button>
+                </div>
+
+                {/* Date Range Filters (only for monthly view) */}
+                {moodTrendsViewMode === "monthly" && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="date"
+                      value={dateRange.start}
+                      onChange={(e) =>
+                        setDateRange((prev) => ({
+                          ...prev,
+                          start: e.target.value,
+                        }))
+                      }
+                      className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      to
+                    </span>
+                    <input
+                      type="date"
+                      value={dateRange.end}
+                      onChange={(e) =>
+                        setDateRange((prev) => ({
+                          ...prev,
+                          end: e.target.value,
+                        }))
+                      }
+                      className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
+                    />
+                    <Button size="sm" onClick={handleDateRangeChange}>
+                      <Filter className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Line Chart for Mood Trends */}
-            {moodTrendChartData && (
+            {/* Monthly Mood Trends Chart */}
+            {moodTrendsViewMode === "monthly" && moodTrendChartData && (
               <div className="mt-4">
                 <Chart
                   options={moodTrendChartData.options}
@@ -649,29 +981,90 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   type="line"
                   height={300}
                 />
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                  Based on{" "}
+                  {moodTrends?.trends.reduce(
+                    (sum, trend) => sum + trend.count,
+                    0
+                  ) || 0}{" "}
+                  notes with mood data
+                </div>
               </div>
             )}
 
-            <div className="mt-6 text-sm text-gray-600 dark:text-gray-400">
-              Based on{" "}
-              {moodTrends.trends.reduce((sum, trend) => sum + trend.count, 0)}{" "}
-              notes with mood data
-            </div>
+            {/* Daily Mood Trends Chart */}
+            {moodTrendsViewMode === "daily" && dailyMoodTrendChartData && (
+              <div className="mt-4">
+                <Chart
+                  options={dailyMoodTrendChartData.options}
+                  series={dailyMoodTrendChartData.series}
+                  type="line"
+                  height={300}
+                />
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                  Based on {notes.filter((n) => n.mood).length} notes with mood
+                  data (last 30 days)
+                </div>
+              </div>
+            )}
+
+            {/* Show message if no data available for selected view */}
+            {moodTrendsViewMode === "monthly" && !moodTrendChartData && (
+              <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
+                No monthly mood trend data available
+              </div>
+            )}
+
+            {moodTrendsViewMode === "daily" && !dailyMoodTrendChartData && (
+              <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
+                No daily mood data available. Start tracking your mood in notes
+                to see trends!
+              </div>
+            )}
           </div>
         </Card>
       )}{" "}
       {/* Productivity Trends */}
-      {analyticsData?.monthlyProductivityScores &&
-        Object.keys(analyticsData.monthlyProductivityScores).length > 0 && (
-          <Card>
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+      {((analyticsData?.monthlyProductivityScores &&
+        Object.keys(analyticsData.monthlyProductivityScores).length > 0) ||
+        (notes && notes.filter((n) => n.productivityLevel).length > 0)) && (
+        <Card>
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
                 <LineChartIcon className="w-5 h-5 mr-2 text-indigo-500" />
                 Productivity Trends Over Time
               </h3>
+              <div className="flex items-center space-x-4">
+                {/* View Mode Toggle */}
+                <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setProductivityTrendsViewMode("monthly")}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      productivityTrendsViewMode === "monthly"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => setProductivityTrendsViewMode("daily")}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      productivityTrendsViewMode === "daily"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    Daily
+                  </button>
+                </div>
+              </div>
+            </div>
 
-              {/* Line Chart for Productivity Trends */}
-              {productivityTrendChartData && (
+            {/* Monthly Productivity Trends Chart */}
+            {productivityTrendsViewMode === "monthly" &&
+              productivityTrendChartData && (
                 <div className="mt-4">
                   <Chart
                     options={productivityTrendChartData.options}
@@ -679,20 +1072,53 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                     type="line"
                     height={300}
                   />
+                  <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    Based on{" "}
+                    {analyticsData?.monthlyProductivityScores
+                      ? Object.values(
+                          analyticsData.monthlyProductivityScores
+                        ).reduce((sum, data) => sum + data.count, 0)
+                      : 0}{" "}
+                    notes with productivity data
+                  </div>
                 </div>
               )}
 
-              <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                Based on{" "}
-                {Object.values(analyticsData.monthlyProductivityScores).reduce(
-                  (sum, data) => sum + data.count,
-                  0
-                )}{" "}
-                notes with productivity data
-              </div>
-            </div>
-          </Card>
-        )}{" "}
+            {/* Daily Productivity Trends Chart */}
+            {productivityTrendsViewMode === "daily" &&
+              dailyProductivityTrendChartData && (
+                <div className="mt-4">
+                  <Chart
+                    options={dailyProductivityTrendChartData.options}
+                    series={dailyProductivityTrendChartData.series}
+                    type="line"
+                    height={300}
+                  />
+                  <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                    Based on {notes.filter((n) => n.productivityLevel).length}{" "}
+                    notes with productivity data (last 30 days)
+                  </div>
+                </div>
+              )}
+
+            {/* Show message if no data available for selected view */}
+            {productivityTrendsViewMode === "monthly" &&
+              !productivityTrendChartData && (
+                <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
+                  No monthly productivity trend data available
+                </div>
+              )}
+
+            {productivityTrendsViewMode === "daily" &&
+              !dailyProductivityTrendChartData && (
+                <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
+                  No daily productivity data available. Start tracking your
+                  productivity in notes to see trends!
+                </div>
+              )}
+          </div>
+        </Card>
+      )}{" "}
       {/* Productivity Correlation */}
       {productivityCorrelation &&
         productivityCorrelation.correlations &&
