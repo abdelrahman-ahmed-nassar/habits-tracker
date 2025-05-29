@@ -25,9 +25,15 @@ const ProductivityLevelsManager: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchLevels();
+  }, []);
+
+  // Cleanup toasts when component unmounts to prevent stale messages
+  useEffect(() => {
+    return () => {
+      toast.dismiss();
+    };
   }, []);
 
   const handleAddLevel = async (e: React.FormEvent) => {

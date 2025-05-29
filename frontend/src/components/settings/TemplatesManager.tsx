@@ -46,10 +46,21 @@ const TemplatesManager: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchTemplates();
   }, []);
+  // Cleanup toasts when component unmounts to prevent stale messages
+  useEffect(() => {
+    return () => {
+      toast.dismiss();
+    };
+  }, []);
+
+  const handleCloseForm = () => {
+    // Clear any pending toasts when closing the form
+    toast.dismiss();
+    setShowForm(false);
+  };
 
   const handleOpenCreateForm = () => {
     setFormData(defaultTemplateData);
@@ -170,13 +181,11 @@ const TemplatesManager: React.FC = () => {
           Create Template
         </Button>
       </div>
-
       {error && (
         <div className="p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg mb-4">
           {error}
         </div>
       )}
-
       {templates.length === 0 ? (
         <Card>
           <CardContent className="p-6">
@@ -225,11 +234,10 @@ const TemplatesManager: React.FC = () => {
           ))}
         </div>
       )}
-
-      {/* Create/Edit Template Form Modal */}
+      {/* Create/Edit Template Form Modal */}{" "}
       <Modal
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={handleCloseForm}
         title={formMode === "create" ? "Create Template" : "Edit Template"}
         size="full"
       >
@@ -242,7 +250,6 @@ const TemplatesManager: React.FC = () => {
             required
             fullWidth
           />
-
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Template Content
@@ -272,7 +279,6 @@ const TemplatesManager: React.FC = () => {
               onRtlChange={setIsRtl}
             />
           </div>
-
           <div className="mt-4">
             <h4 className="font-medium text-sm mb-2">Preview</h4>
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -283,12 +289,15 @@ const TemplatesManager: React.FC = () => {
                 </pre>
               </div>
             </div>
-          </div>
-
+          </div>{" "}
           <div className="flex justify-end gap-2">
             <Button
               variant="secondary"
-              onClick={() => setShowForm(false)}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleCloseForm();
+              }}
               disabled={isSubmitting}
             >
               Cancel

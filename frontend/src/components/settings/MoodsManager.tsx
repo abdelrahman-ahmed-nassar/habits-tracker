@@ -25,9 +25,15 @@ const MoodsManager: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchMoods();
+  }, []);
+
+  // Cleanup toasts when component unmounts to prevent stale messages
+  useEffect(() => {
+    return () => {
+      toast.dismiss();
+    };
   }, []);
 
   const handleAddMood = async (e: React.FormEvent) => {

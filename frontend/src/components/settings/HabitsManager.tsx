@@ -54,10 +54,22 @@ const HabitsManager: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchHabits();
   }, []);
+
+  // Cleanup toasts when component unmounts to prevent stale messages
+  useEffect(() => {
+    return () => {
+      toast.dismiss();
+    };
+  }, []);
+
+  const handleCloseForm = () => {
+    // Clear any pending toasts when closing the form
+    toast.dismiss();
+    setShowForm(false);
+  };
 
   const handleOpenCreateForm = () => {
     setFormData(defaultHabitData);
@@ -291,10 +303,10 @@ const HabitsManager: React.FC = () => {
           ))}
         </div>
       )}{" "}
-      {/* Create/Edit Habit Form Modal */}
+      {/* Create/Edit Habit Form Modal */}{" "}
       <Modal
         isOpen={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={handleCloseForm}
         title={formMode === "create" ? "Create Habit" : "Edit Habit"}
         size="full"
         fullHeight={true}
@@ -308,7 +320,6 @@ const HabitsManager: React.FC = () => {
             required
             fullWidth
           />
-
           <Input
             label="Description"
             name="description"
@@ -316,7 +327,6 @@ const HabitsManager: React.FC = () => {
             onChange={handleInputChange}
             fullWidth
           />
-
           <Input
             label="Tag"
             name="tag"
@@ -325,7 +335,6 @@ const HabitsManager: React.FC = () => {
             required
             fullWidth
           />
-
           <Select
             label="Repetition"
             name="repetition"
@@ -338,9 +347,7 @@ const HabitsManager: React.FC = () => {
             ]}
             fullWidth
           />
-
           {renderDaySelector()}
-
           <Select
             label="Goal Type"
             name="goalType"
@@ -352,7 +359,6 @@ const HabitsManager: React.FC = () => {
             ]}
             fullWidth
           />
-
           <Input
             label="Goal Value"
             name="goalValue"
@@ -363,19 +369,21 @@ const HabitsManager: React.FC = () => {
             required
             fullWidth
           />
-
           <Input
             label="Motivation Note"
             name="motivationNote"
             value={formData.motivationNote || ""}
             onChange={handleInputChange}
             fullWidth
-          />
-
+          />{" "}
           <div className="flex justify-end gap-2">
             <Button
               variant="secondary"
-              onClick={() => setShowForm(false)}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleCloseForm();
+              }}
               disabled={isSubmitting}
             >
               Cancel

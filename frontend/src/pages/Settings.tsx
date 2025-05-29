@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Briefcase, MessageSquare, Zap, FileText } from "lucide-react";
+import { toast } from "react-toastify";
 import PageContainer from "../components/layout/PageContainer";
 import HabitsManager from "../components/settings/HabitsManager";
 import MoodsManager from "../components/settings/MoodsManager";
@@ -12,6 +13,12 @@ const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>("habits"); // These states are for future use with asynchronous data loading
   const isLoading = false;
   const error = null;
+
+  const handleTabChange = (newTab: SettingsTab) => {
+    // Clear any existing toasts when switching tabs to prevent stale messages
+    toast.dismiss();
+    setActiveTab(newTab);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -37,9 +44,8 @@ const Settings: React.FC = () => {
         </p>
 
         <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab("habits")}
+          <nav className="flex space-x-8">            <button
+              onClick={() => handleTabChange("habits")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "habits"
                   ? "border-blue-500 text-blue-600 dark:text-blue-500"
@@ -50,10 +56,8 @@ const Settings: React.FC = () => {
                 <Briefcase className="w-4 h-4 mr-2" />
                 <span>Habits</span>
               </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("moods")}
+            </button>            <button
+              onClick={() => handleTabChange("moods")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "moods"
                   ? "border-blue-500 text-blue-600 dark:text-blue-500"
@@ -64,10 +68,8 @@ const Settings: React.FC = () => {
                 <MessageSquare className="w-4 h-4 mr-2" />
                 <span>Moods</span>
               </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("productivity")}
+            </button>            <button
+              onClick={() => handleTabChange("productivity")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "productivity"
                   ? "border-blue-500 text-blue-600 dark:text-blue-500"
@@ -78,10 +80,8 @@ const Settings: React.FC = () => {
                 <Zap className="w-4 h-4 mr-2" />
                 <span>Productivity Levels</span>
               </div>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("templates")}
+            </button>            <button
+              onClick={() => handleTabChange("templates")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "templates"
                   ? "border-blue-500 text-blue-600 dark:text-blue-500"
