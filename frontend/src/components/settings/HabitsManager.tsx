@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import Card, { CardContent } from "../ui/Card";
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
@@ -18,6 +18,7 @@ interface HabitFormData {
   goalType: "counter" | "streak";
   goalValue: number;
   motivationNote?: string;
+  isActive: boolean;
 }
 
 const defaultHabitData: HabitFormData = {
@@ -28,6 +29,7 @@ const defaultHabitData: HabitFormData = {
   goalType: "streak",
   goalValue: 1,
   motivationNote: "",
+  isActive: true,
 };
 
 const HabitsManager: React.FC = () => {
@@ -78,7 +80,6 @@ const HabitsManager: React.FC = () => {
     setCurrentHabitId(null);
     setShowForm(true);
   };
-
   const handleOpenEditForm = (habit: Habit) => {
     setFormData({
       name: habit.name,
@@ -88,22 +89,27 @@ const HabitsManager: React.FC = () => {
       goalType: habit.goalType,
       goalValue: habit.goalValue,
       motivationNote: habit.motivationNote || "",
+      isActive: habit.isActive !== false, // Default to true if not specified
     });
     setSelectedDays(habit.specificDays || []);
     setFormMode("edit");
     setCurrentHabitId(habit.id);
     setShowForm(true);
   };
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target as HTMLInputElement; // Cast to HTMLInputElement to access type
 
     if (name === "goalValue") {
       setFormData({
         ...formData,
         [name]: parseInt(value) || 1, // Ensure it's a positive number
+      });
+    } else if (type === "checkbox" && name === "isActive") {
+      setFormData({
+        ...formData,
+        isActive: (e.target as HTMLInputElement).checked,
       });
     } else {
       setFormData({
@@ -159,7 +165,6 @@ const HabitsManager: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
   const handleDelete = async (id: string) => {
     if (
       !window.confirm(
@@ -176,6 +181,32 @@ const HabitsManager: React.FC = () => {
     } catch (err) {
       toast.error("Failed to delete habit");
       console.error(err);
+    }
+  };
+    const handleToggleActive = async (habit: Habit) => {
+    try {
+      setIsSubmitting(true);
+      // Create a request object with only the necessary fields
+      const updateRequest = {
+        name: habit.name,
+        description: habit.description || "",
+        tag: habit.tag,
+        repetition: habit.repetition,
+        specificDays: habit.specificDays,
+        goalType: habit.goalType,
+        goalValue: habit.goalValue,
+        motivationNote: habit.motivationNote || "",
+        isActive: !habit.isActive
+      };
+      
+      await habitsService.updateHabit(habit.id, updateRequest);
+      toast.success(`Habit ${!habit.isActive ? 'activated' : 'deactivated'} successfully`);
+      await fetchHabits();
+    } catch (err) {
+      toast.error("Failed to update habit status");
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -260,8 +291,7 @@ const HabitsManager: React.FC = () => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {habits.map((habit) => (
-            <Card key={habit.id}>
-              <CardContent className="p-4">
+            <Card key={habit.id}>              <CardContent className={`p-4 ${habit.isActive === false ? 'opacity-60' : ''}`}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-semibold text-lg">{habit.name}</h3>
@@ -294,10 +324,33 @@ const HabitsManager: React.FC = () => {
                   <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs">
                     Goal: {habit.goalValue} {habit.goalType === "streak" ? "days" : "times"}
                   </span>
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {habit.isActive === false && (
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs">
+                      Inactive
+                    </span>
+                  )}
+                </div>                <div className="text-sm text-gray-600 dark:text-gray-400">
                   <div>Current Streak: {habit.currentStreak}</div>
                   <div>Best Streak: {habit.bestStreak}</div>
+                </div>
+                <div className="mt-3 flex items-center">
+                  <button
+                    className="flex items-center text-sm font-medium"
+                    onClick={() => handleToggleActive(habit)}
+                    disabled={isSubmitting}
+                  >
+                    {habit.isActive !== false ? (
+                      <>
+                        <ToggleRight className="h-5 w-5 text-green-600 mr-1" />
+                        <span>Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <ToggleLeft className="h-5 w-5 text-gray-400 mr-1" />
+                        <span>Inactive</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </CardContent>
             </Card>
@@ -369,14 +422,38 @@ const HabitsManager: React.FC = () => {
             onChange={handleInputChange}
             required
             fullWidth
-          />
-          <Input
+          />          <Input
             label="Motivation Note"
             name="motivationNote"
             value={formData.motivationNote || ""}
             onChange={handleInputChange}
             fullWidth
-          />{" "}
+          />
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Status
+            </label>
+            <div className="flex items-center">
+              <button
+                type="button"
+                className="flex items-center focus:outline-none"
+                onClick={() => setFormData({...formData, isActive: !formData.isActive})}
+              >
+                {formData.isActive ? (
+                  <>
+                    <ToggleRight className="h-6 w-6 text-green-600 mr-2" />
+                    <span>Active</span>
+                  </>
+                ) : (
+                  <>
+                    <ToggleLeft className="h-6 w-6 text-gray-400 mr-2" />
+                    <span>Inactive</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>{" "}
           <div className="flex justify-end gap-2">
             <Button
               variant="secondary"
