@@ -226,7 +226,61 @@ export interface EnhancedHabitAnalytics {
   }>;
 }
 
-class AnalyticsService {
+interface NotesAnalyticsOverview {
+  totalNotes: number;
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  moodDistribution: Record<string, number>;
+  productivityDistribution: Record<string, number>;
+  trendsOverTime: Array<{
+    date: string;
+    noteCount: number;
+    avgMoodScore: number;
+    avgProductivityScore: number;
+  }>;
+  insights: string[];
+}
+
+interface MoodTrends {
+  trends: Array<{
+    period: string;
+    averageMoodScore: number;
+    moodDistribution: Record<string, number>;
+  }>;
+  overallTrend: "improving" | "declining" | "stable";
+  insights: string[];
+}
+
+interface ProductivityCorrelation {
+  correlations: Array<{
+    habitId: string;
+    habitName: string;
+    correlationScore: number;
+    significance: "high" | "medium" | "low";
+  }>;
+  productivityTrends: Array<{
+    date: string;
+    averageProductivity: number;
+    completedHabits: number;
+  }>;
+  insights: string[];
+}
+
+interface NotesCalendar {
+  year: number;
+  month: number;
+  notes: Array<{
+    date: string;
+    hasNote: boolean;
+    mood: string;
+    productivityLevel: string;
+    notePreview: string;
+  }>;
+}
+
+export class AnalyticsService {
   /**
    * Get overall analytics data
    */
@@ -312,6 +366,78 @@ class AnalyticsService {
    */
   async clearAnalyticsCache(): Promise<void> {
     await axios.post(`${API_BASE_URL}/analytics/clear-cache`);
+  }
+
+  /**
+   * Get notes analytics overview
+   * @param startDate - Optional start date in YYYY-MM-DD format
+   * @param endDate - Optional end date in YYYY-MM-DD format
+   */
+  async getNotesAnalyticsOverview(
+    startDate?: string,
+    endDate?: string
+  ): Promise<NotesAnalyticsOverview> {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+
+    const response = await axios.get(
+      `${API_BASE_URL}/notes/analytics/overview?${params.toString()}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get mood trends from notes
+   * @param startDate - Optional start date in YYYY-MM-DD format
+   * @param endDate - Optional end date in YYYY-MM-DD format
+   * @param period - Grouping period: "day", "week", "month"
+   */
+  async getMoodTrends(
+    startDate?: string,
+    endDate?: string,
+    period: "day" | "week" | "month" = "day"
+  ): Promise<MoodTrends> {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+    params.append("period", period);
+
+    const response = await axios.get(
+      `${API_BASE_URL}/notes/analytics/mood-trends?${params.toString()}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get productivity correlation with habits
+   * @param startDate - Optional start date in YYYY-MM-DD format
+   * @param endDate - Optional end date in YYYY-MM-DD format
+   */
+  async getProductivityCorrelation(
+    startDate?: string,
+    endDate?: string
+  ): Promise<ProductivityCorrelation> {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+
+    const response = await axios.get(
+      `${API_BASE_URL}/notes/analytics/productivity-correlation?${params.toString()}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get notes calendar for a specific month
+   * @param year - Year number
+   * @param month - Month number (1-12)
+   */
+  async getNotesCalendar(year: number, month: number): Promise<NotesCalendar> {
+    const response = await axios.get(
+      `${API_BASE_URL}/notes/calendar/${year}/${month}`
+    );
+    return response.data.data;
   }
 }
 

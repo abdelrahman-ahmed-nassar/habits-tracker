@@ -939,7 +939,165 @@ DELETE /notes/:id
 }
 ```
 
-### 6. Settings Management (`/settings`)
+### 6. Notes Analytics (`/notes/analytics`)
+
+#### Get Notes Analytics Overview
+
+```http
+GET /notes/analytics/overview
+```
+
+**Query Parameters:**
+
+- `startDate` (optional): Start date for analytics (ISO date string)
+- `endDate` (optional): End date for analytics (ISO date string)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "totalNotes": number,
+    "dateRange": {
+      "start": "string (ISO date)",
+      "end": "string (ISO date)"
+    },
+    "moodDistribution": {
+      "happy": number,
+      "neutral": number,
+      "sad": number,
+      "anxious": number,
+      "excited": number
+    },
+    "productivityDistribution": {
+      "very_low": number,
+      "low": number,
+      "medium": number,
+      "high": number,
+      "very_high": number
+    },
+    "trendsOverTime": [
+      {
+        "date": "string (ISO date)",
+        "noteCount": number,
+        "avgMoodScore": number,
+        "avgProductivityScore": number
+      }
+    ],
+    "insights": [
+      "string"
+    ]
+  }
+}
+```
+
+#### Get Mood Trends
+
+```http
+GET /notes/analytics/mood-trends
+```
+
+**Query Parameters:**
+
+- `startDate` (optional): Start date for analytics (ISO date string)
+- `endDate` (optional): End date for analytics (ISO date string)
+- `period` (optional): Grouping period - "day", "week", "month" (default: "day")
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "trends": [
+      {
+        "period": "string",
+        "averageMoodScore": number,
+        "moodDistribution": {
+          "happy": number,
+          "neutral": number,
+          "sad": number,
+          "anxious": number,
+          "excited": number
+        }
+      }
+    ],
+    "overallTrend": "improving" | "declining" | "stable",
+    "insights": [
+      "string"
+    ]
+  }
+}
+```
+
+#### Get Productivity Correlation
+
+```http
+GET /notes/analytics/productivity-correlation
+```
+
+**Query Parameters:**
+
+- `startDate` (optional): Start date for analytics (ISO date string)
+- `endDate` (optional): End date for analytics (ISO date string)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "correlations": [
+      {
+        "habitId": "string",
+        "habitName": "string",
+        "correlationScore": number,
+        "significance": "high" | "medium" | "low"
+      }
+    ],
+    "productivityTrends": [
+      {
+        "date": "string (ISO date)",
+        "averageProductivity": number,
+        "completedHabits": number
+      }
+    ],
+    "insights": [
+      "string"
+    ]
+  }
+}
+```
+
+#### Get Notes Calendar
+
+```http
+GET /notes/calendar/:year/:month
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "year": number,
+    "month": number,
+    "notes": [
+      {
+        "date": "string (ISO date)",
+        "hasNote": boolean,
+        "mood": "string",
+        "productivityLevel": "string",
+        "notePreview": "string"
+      }
+    ]
+  }
+}
+```
+
+### 7. Settings Management (`/settings`)
 
 #### Get Settings
 
@@ -993,7 +1151,7 @@ PUT /settings
 }
 ```
 
-### 7. Options Management (`/options`)
+### 8. Options Management (`/options`)
 
 #### Get Moods
 
@@ -1101,7 +1259,7 @@ DELETE /options/productivity-levels/:level
 }
 ```
 
-### 8. Backup Management (`/backup`)
+### 9. Backup Management (`/backup`)
 
 #### Create Backup
 
@@ -1146,7 +1304,7 @@ POST /backup/restore
 }
 ```
 
-### 9. Tags Management (`/tags`)
+### 10. Tags Management (`/tags`)
 
 #### Get All Tags
 
@@ -1261,7 +1419,7 @@ DELETE /tags/:id
 }
 ```
 
-### 10. Note Templates Management (`/templates`)
+### 11. Note Templates Management (`/templates`)
 
 #### Get All Templates
 

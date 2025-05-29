@@ -5,6 +5,9 @@ import { format, startOfWeek } from "date-fns";
 import { ApexOptions } from "apexcharts";
 import QuarterAnalytics from "../components/QuarterAnalytics";
 import WeeklyAnalytics from "../components/features/WeeklyAnalytics";
+import NotesAnalytics from "../components/features/NotesAnalytics";
+import { DailyNote } from "@shared/types/note";
+import { NotesService } from "../services/notes";
 
 interface DashboardData {
   totalHabits: number;
@@ -96,12 +99,32 @@ interface MonthlyAnalytics {
   };
 }
 
+interface NotesAnalyticsOverview {
+  totalNotes: number;
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  moodDistribution: Record<string, number>;
+  productivityDistribution: Record<string, number>;
+  trendsOverTime: Array<{
+    date: string;
+    noteCount: number;
+    avgMoodScore: number;
+    avgProductivityScore: number;
+  }>;
+  insights: string[];
+}
+
 const Home: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
   const [monthlyData, setMonthlyData] = useState<MonthlyAnalytics | null>(null);
   const [weeklyData, setWeeklyData] = useState<WeeklyAnalytics | null>(null);
+  const [notesAnalytics, setNotesAnalytics] =
+    useState<NotesAnalyticsOverview | null>(null);
+  const [notes, setNotes] = useState<DailyNote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -109,7 +132,6 @@ const Home: React.FC = () => {
       try {
         const analytics = await analyticsService.getOverallAnalytics();
         setDashboardData(analytics);
-        console.log(analytics);
 
         // Fetch weekly data
         const startDate = startOfWeek(new Date());
@@ -125,10 +147,15 @@ const Home: React.FC = () => {
           currentDate.getMonth() + 1
         );
 
+        // Fetch notes and notes analytics
+        const allNotes = await NotesService.getAllNotes();
+        const notesOverview =
+          await analyticsService.getNotesAnalyticsOverview();
+
         setMonthlyData(monthlyAnalytics);
         setWeeklyData(weeklyAnalytics);
-        console.log(monthlyAnalytics);
-        console.log(weeklyAnalytics);
+        setNotes(allNotes);
+        setNotesAnalytics(notesOverview);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -754,6 +781,69 @@ const Home: React.FC = () => {
     );
   };
 
+  const renderNotesAnalyticsOverview = () => {
+    if (!notesAnalytics) return null;
+
+    return (
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          📝 Notes Analytics Overview
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {notesAnalytics.totalNotes || 0}
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 text-sm">
+              Total Notes
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {notesAnalytics.moodDistribution
+                ? Object.keys(notesAnalytics.moodDistribution).length
+                : 0}
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 text-sm">
+              Mood Types
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {notesAnalytics.productivityDistribution
+                ? Object.keys(notesAnalytics.productivityDistribution).length
+                : 0}
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 text-sm">
+              Productivity Levels
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+              {Math.round((notesAnalytics.totalNotes || 0) / 30)}
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 text-sm">
+              Notes/Month Avg
+            </div>
+          </div>
+        </div>
+
+        {notesAnalytics.insights && notesAnalytics.insights.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">
+              📊 Key Insights
+            </h4>
+            <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
+              {notesAnalytics.insights.slice(0, 3).map((insight, index) => (
+                <li key={index}>{insight}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -981,6 +1071,23 @@ const Home: React.FC = () => {
         {renderMonthlyTrendChart()}
         {renderMostConsistentHabits()}
       </div>
+
+      {/* Notes Analytics Section */}
+      {(notesAnalytics || notes.length > 0) && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            📝 Notes & Mood Analytics
+          </h2>
+          <div className="grid grid-cols-1 gap-6">
+            {notesAnalytics && renderNotesAnalyticsOverview()}
+            {notes.length > 0 && (
+              <div>
+                <NotesAnalytics notes={notes} />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
         {getQuarterStartDates().map((quarter, index) => (
