@@ -72,10 +72,12 @@ export const calculateAllHabitsAnalytics = async (
   const completions = allCompletions.filter(
     (c: CompletionRecord) => c.date >= startDate && c.date <= endDate
   );
+  // Get active habits only
+  const activeHabits = habits.filter((habit) => habit.isActive);
 
-  // Calculate analytics for each habit
+  // Calculate analytics for each active habit
   const habitsAnalytics = await Promise.all(
-    habits.map(async (habit) => {
+    activeHabits.map(async (habit) => {
       const habitCompletions = completions.filter(
         (c: CompletionRecord) => c.habitId === habit.id
       );

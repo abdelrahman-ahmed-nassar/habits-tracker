@@ -18,7 +18,11 @@ export const getAllHabits = asyncHandler(
 
     // Parse query params for filtering and sorting
     let { sort, filter, tag, active } = req.query;
-    active = "true";
+
+    // Always filter out inactive habits unless explicitly requested
+    if (active === undefined) {
+      active = "true";
+    }
 
     // Set up filter options
     const filterOptions: {
@@ -77,6 +81,9 @@ export const getHabitById = asyncHandler(
     res.status(200).json({
       success: true,
       data: habit,
+      ...(habit.isActive === false && {
+        warning: "This habit is currently inactive",
+      }),
     });
   }
 );

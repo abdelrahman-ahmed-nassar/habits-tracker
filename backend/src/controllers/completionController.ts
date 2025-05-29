@@ -17,14 +17,21 @@ export const getDailyCompletions = asyncHandler(
     // Validate date format
     if (!isValidDateFormat(date)) {
       throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
-    }
-
-    // Get all completions for this date
+    } // Get all completions for this date
     const completions = await dataService.getCompletionsByDate(date);
+
+    // Get all habits to filter out inactive ones
+    const habits = await dataService.getHabits();
+    const activeHabitIds = habits.filter((h) => h.isActive).map((h) => h.id);
+
+    // Filter completions to only include active habits
+    const filteredCompletions = completions.filter((c) =>
+      activeHabitIds.includes(c.habitId)
+    );
 
     res.status(200).json({
       success: true,
-      data: completions,
+      data: filteredCompletions,
     });
   }
 );
@@ -36,12 +43,20 @@ export const getDailyCompletions = asyncHandler(
 export const getHabitCompletions = asyncHandler(
   async (req: Request, res: Response) => {
     const { habitId } = req.params;
-    const { startDate, endDate } = req.query;
-
-    // Check if habit exists
+    const { startDate, endDate } = req.query; // Check if habit exists
     const habit = await dataService.getHabitById(habitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${habitId} not found`, 404);
+    }
+
+    // Check if habit is active
+    if (!habit.isActive) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+        warning:
+          "This habit is inactive and its completions are not being tracked",
+      });
     }
 
     // Get completion records for this habit
@@ -85,12 +100,15 @@ export const markHabitComplete = asyncHandler(
 
     if (!date) {
       throw new AppError("Date is required", 400);
-    }
-
-    // Check if habit exists
+    } // Check if habit exists
     const habit = await dataService.getHabitById(targetHabitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${targetHabitId} not found`, 404);
+    }
+
+    // Prevent marking inactive habits as complete
+    if (!habit.isActive) {
+      throw new AppError(`Cannot mark inactive habit as complete`, 400);
     }
 
     // Create completion data
@@ -146,12 +164,15 @@ export const deleteCompletion = asyncHandler(
     // Validate date format
     if (!isValidDateFormat(date)) {
       throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
-    }
-
-    // Check if habit exists
+    } // Check if habit exists
     const habit = await dataService.getHabitById(targetHabitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${targetHabitId} not found`, 404);
+    }
+
+    // Prevent deleting completions for inactive habits
+    if (!habit.isActive) {
+      throw new AppError(`Cannot modify completions for inactive habits`, 400);
     }
 
     // Check if completion record exists
@@ -195,13 +216,19 @@ export const getCompletionsInRange = asyncHandler(
     // Validate date formats
     if (!isValidDateFormat(startDate) || !isValidDateFormat(endDate)) {
       throw new AppError("Invalid date format. Use YYYY-MM-DD", 400);
-    }
-
-    // Get all completions
+    } // Get all completions
     const completions = await dataService.getCompletions();
-    // Filter by date range (inclusive)
+
+    // Get all habits to filter out inactive ones
+    const habits = await dataService.getHabits();
+    const activeHabitIds = habits.filter((h) => h.isActive).map((h) => h.id);
+
+    // Filter by date range (inclusive) and only include active habits
     const filtered = completions.filter(
-      (c) => c.date >= startDate && c.date <= endDate
+      (c) =>
+        c.date >= startDate &&
+        c.date <= endDate &&
+        activeHabitIds.includes(c.habitId)
     );
 
     res.status(200).json({
@@ -226,13 +253,18 @@ export const updateCompletion = asyncHandler(
 
     if (!completion) {
       throw new AppError(`Completion with ID ${id} not found`, 404);
-    }
-
-    // Check if habit exists
+    } // Check if habit exists
     const habit = await dataService.getHabitById(completion.habitId);
     if (!habit) {
       throw new AppError(`Habit with ID ${completion.habitId} not found`, 404);
-    } // For counter type habits, ensure value is provided when completed is true
+    }
+
+    // Prevent updating completions for inactive habits
+    if (!habit.isActive) {
+      throw new AppError(`Cannot update completions for inactive habits`, 400);
+    }
+
+    // For counter type habits, ensure value is provided when completed is true
     if (habit.goalType === "counter" && completed && value === undefined) {
       throw new AppError("Value is required for counter-type habits", 400);
     }
@@ -289,12 +321,14 @@ export const createCompletionsBatch = asyncHandler(
         "Completions array is required and must not be empty",
         400
       );
-    }
-
-    // Validate each completion in the batch
+    } // Validate each completion in the batch
     const validatedCompletions: Array<
       Omit<CompletionRecord, "id" | "completedAt">
     > = [];
+
+    // Get all habits to check active status
+    const allHabits = await dataService.getHabits();
+    const activeHabitIds = allHabits.filter((h) => h.isActive).map((h) => h.id);
 
     for (const completionData of completions) {
       const { habitId, date, completed, value } = completionData;
@@ -308,6 +342,11 @@ export const createCompletionsBatch = asyncHandler(
       const habit = await dataService.getHabitById(habitId);
       if (!habit) {
         throw new AppError(`Habit with ID ${habitId} not found`, 404);
+      }
+
+      // Skip inactive habits
+      if (!habit.isActive) {
+        continue; // Skip this completion and move to the next one
       }
 
       const completionToCreate: Omit<CompletionRecord, "id" | "completedAt"> = {
