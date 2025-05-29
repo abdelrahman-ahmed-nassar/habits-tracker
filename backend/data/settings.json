@@ -5,9 +5,9 @@
   "reminderTime": "09:00",
   "backupEnabled": true,
   "backupFrequency": "daily",
-  "lastBackupDate": "2025-05-25",
+  "lastBackupDate": "2025-05-29",
   "analytics": {
     "cacheEnabled": false,
-    "cacheDuration":0.0000001
+    "cacheDuration": 1e-7
   }
 }
