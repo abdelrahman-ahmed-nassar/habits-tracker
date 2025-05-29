@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Daily from "./pages/Daily";
 import Weekly from "./pages/Weekly";
 import Monthly from "./pages/Monthly";
+import Yearly from "./pages/Yearly";
 import Analytics from "./pages/Analytics";
 import Notes from "./pages/Notes";
 import Settings from "./pages/Settings";
@@ -24,6 +25,8 @@ function App() {
             <Route path="weekly/:date" element={<Weekly />} />
             <Route path="monthly" element={<Monthly />} />
             <Route path="monthly/:year/:month" element={<Monthly />} />
+            <Route path="yearly" element={<Yearly />} />
+            <Route path="yearly/:year" element={<Yearly />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="analytics/overview" element={<Analytics />} />
             <Route path="analytics/:habitId" element={<Analytics />} />

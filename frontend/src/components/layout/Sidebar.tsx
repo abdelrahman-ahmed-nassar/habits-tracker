@@ -16,14 +16,15 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
   const location = useLocation();
   const todayDate = format(new Date(), "yyyy-MM-dd");
+  const currentYear = format(new Date(), "yyyy");
 
   const navigation = [
     { path: "/", icon: Home, label: "Home" },
     { path: `/daily/${todayDate}`, icon: Calendar, label: "Daily" },
     { path: "/weekly", icon: Calendar, label: "Weekly" },
     { path: "/monthly", icon: Calendar, label: "Monthly" },
+    { path: `/yearly/${currentYear}`, icon: Calendar, label: "Yearly" },
     { path: "/analytics", icon: BarChart2, label: "Analytics" },
-
     { path: "/notes", icon: BookOpen, label: "Notes" },
     { path: "/settings", icon: Settings, label: "Settings" },
   ];
@@ -46,6 +47,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
               const isActive =
                 item.label === "Daily"
                   ? location.pathname.startsWith("/daily")
+                  : item.label === "Weekly"
+                  ? location.pathname.startsWith("/weekly")
+                  : item.label === "Monthly"
+                  ? location.pathname.startsWith("/monthly")
+                  : item.label === "Yearly"
+                  ? location.pathname.startsWith("/yearly")
                   : location.pathname === item.path;
               return (
                 <li key={item.path}>
