@@ -192,7 +192,9 @@
     "specificDays": [
       0,
       1,
-      2
+      3,
+      6,
+      4
     ],
     "goalType": "streak",
     "goalValue": 1,
@@ -316,7 +318,9 @@
     "repetition": "monthly",
     "specificDays": [
       1,
-      2
+      2,
+      6,
+      7
     ],
     "goalType": "counter",
     "goalValue": 8,

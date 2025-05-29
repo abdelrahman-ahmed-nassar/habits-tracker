@@ -203,11 +203,12 @@ const HabitsManager: React.FC = () => {
           {formData.repetition === "weekly" ? "Days of week" : "Days of month"}
         </label>
         <div className="flex flex-wrap gap-2">
+          {" "}
           {days.map((day, index) => (
             <button
               key={index}
               type="button"
-              className={`px-3 py-1 text-sm rounded-full \${
+              className={`px-3 py-1 text-sm rounded-full ${
                 selectedDays.includes(index)
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -291,7 +292,7 @@ const HabitsManager: React.FC = () => {
                     {habit.tag}
                   </span>
                   <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs">
-                    {habit.goalType}: {habit.goalValue}
+                    Goal: {habit.goalValue} {habit.goalType === "streak" ? "days" : "times"}
                   </span>
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
