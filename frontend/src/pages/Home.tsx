@@ -546,7 +546,7 @@ const Home: React.FC = () => {
       {
         name: "Current Month Completion",
         data: monthlyData.dailyCompletionCounts.map((day) =>
-          Math.round((day.completionRate || 0) * 100)
+          Math.min(100, Math.round((day.completionRate || 0) * 100))
         ),
       },
     ];

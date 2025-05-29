@@ -676,14 +676,20 @@ export const getMonthlyAnalytics = asyncHandler(
                 h.specificDays?.includes(parseDate(date).getDate())))
         );
 
+        // Count unique completed habits instead of total completion records
+        const uniqueCompletedHabits = new Set(dayCompletions.map(c => c.habitId)).size;
+
+        // Calculate completion rate and ensure it doesn't exceed 100%
+        const calculatedRate = dayHabits.length > 0 ? uniqueCompletedHabits / dayHabits.length : 0;
+        const cappedCompletionRate = Math.min(1.0, calculatedRate);
+
         return {
           date,
           dayOfWeek: parseDate(date).getDay(),
           dayName: getDayName(parseDate(date).getDay()),
-          count: dayCompletions.length,
+          count: uniqueCompletedHabits,
           totalHabits: dayHabits.length,
-          completionRate:
-            dayHabits.length > 0 ? dayCompletions.length / dayHabits.length : 0,
+          completionRate: cappedCompletionRate,
         };
       });
 
@@ -743,10 +749,14 @@ export const getMonthlyAnalytics = asyncHandler(
           0
         );
 
+        // Calculate and cap success rate at 100%
+        const calculatedSuccessRate = totalHabits > 0 ? completedHabits / totalHabits : 0;
+        const cappedSuccessRate = Math.min(1.0, calculatedSuccessRate);
+        
         return {
           dayOfWeek: i,
           dayName: getDayName(i),
-          successRate: totalHabits > 0 ? completedHabits / totalHabits : 0,
+          successRate: cappedSuccessRate,
           totalHabits,
           completedHabits,
         };
@@ -758,12 +768,23 @@ export const getMonthlyAnalytics = asyncHandler(
         (sum, h) => sum + h.activeDaysCount,
         0
       );
-      const totalCompletions = monthlyCompletions.filter(
-        (c) => c.completed
-      ).length;
+      
+      // Count unique completed habits per day instead of total completions
+      const uniqueCompletionsPerDay = dateRange.reduce((total, date) => {
+        const dayCompletions = monthlyCompletions.filter(
+          (c) => c.date === date && c.completed
+        );
+        // Count unique habit IDs completed for this date
+        const uniqueCompletedHabits = new Set(dayCompletions.map(c => c.habitId)).size;
+        return total + uniqueCompletedHabits;
+      }, 0);
+      
+      // Use uniqueCompletionsPerDay as totalCompletions
+      const totalCompletions = uniqueCompletionsPerDay;
 
-      const overallCompletionRate =
-        totalActiveDays > 0 ? totalCompletions / totalActiveDays : 0;
+      // Calculate and cap the overall completion rate at 100%
+      const calculatedOverallRate = totalActiveDays > 0 ? uniqueCompletionsPerDay / totalActiveDays : 0;
+      const overallCompletionRate = Math.min(1.0, calculatedOverallRate);
 
       const mostProductiveHabit =
         [...habitStats]
