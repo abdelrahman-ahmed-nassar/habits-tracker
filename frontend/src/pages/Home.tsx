@@ -4,6 +4,7 @@ import ReactApexChart from "react-apexcharts";
 import { format, startOfWeek } from "date-fns";
 import { ApexOptions } from "apexcharts";
 import QuarterAnalytics from "../components/QuarterAnalytics";
+import WeeklyAnalytics from "../components/features/WeeklyAnalytics";
 
 interface DashboardData {
   totalHabits: number;
@@ -25,6 +26,55 @@ interface DashboardData {
     bestStreak: number;
     currentCounter: number;
   }[];
+}
+
+interface WeeklyAnalytics {
+  startDate: string;
+  endDate: string;
+  dailyStats: Array<{
+    date: string;
+    dayOfWeek: number;
+    dayName: string;
+    totalHabits: number;
+    completedHabits: number;
+    completionRate: number;
+  }>;
+  weeklyStats: {
+    overallSuccessRate: number;
+    totalCompletions: number;
+    mostProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    leastProductiveDay: {
+      date: string;
+      dayOfWeek: number;
+      dayName: string;
+      totalHabits: number;
+      completedHabits: number;
+      completionRate: number;
+    };
+    mostProductiveHabit: {
+      habitId: string;
+      habitName: string;
+      activeDaysCount: number;
+      completedDaysCount: number;
+      successRate: number;
+      completedDates: string[];
+    };
+  };
+  habitStats: Array<{
+    habitId: string;
+    habitName: string;
+    activeDaysCount: number;
+    completedDaysCount: number;
+    successRate: number;
+    completedDates: string[];
+  }>;
 }
 
 interface MonthlyAnalytics {
@@ -51,6 +101,7 @@ const Home: React.FC = () => {
     null
   );
   const [monthlyData, setMonthlyData] = useState<MonthlyAnalytics | null>(null);
+  const [weeklyData, setWeeklyData] = useState<WeeklyAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -75,6 +126,7 @@ const Home: React.FC = () => {
         );
 
         setMonthlyData(monthlyAnalytics);
+        setWeeklyData(weeklyAnalytics);
         console.log(monthlyAnalytics);
         console.log(weeklyAnalytics);
       } catch (error) {
@@ -115,6 +167,121 @@ const Home: React.FC = () => {
       { startDate: `${currentYear}-07-01`, title: "Q3 Analytics" },
       { startDate: `${currentYear}-10-01`, title: "Q4 Analytics" },
     ];
+  };
+
+  const renderWeeklyDailyBreakdown = () => {
+    if (!weeklyData) return null;
+
+    const options: ApexOptions = {
+      chart: {
+        type: "area",
+        height: 350,
+        toolbar: {
+          show: false,
+        },
+        animations: {
+          enabled: true,
+          speed: 800,
+        },
+      },
+      stroke: {
+        curve: "smooth",
+        width: 3,
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.3,
+          stops: [0, 90, 100],
+        },
+      },
+      colors: ["#3B82F6"],
+      xaxis: {
+        categories: weeklyData.dailyStats.map((day) => day.dayName),
+        labels: {
+          style: {
+            fontSize: "12px",
+            colors: "#6B7280",
+          },
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Completion Rate (%)",
+          style: {
+            fontSize: "14px",
+            fontWeight: "bold",
+            color: "#374151",
+          },
+        },
+        min: 0,
+        max: 100,
+        labels: {
+          formatter: function (val: number) {
+            return Math.round(val) + "%";
+          },
+        },
+      },
+      tooltip: {
+        y: {
+          formatter: function (val: number, { dataPointIndex }) {
+            const dayData = weeklyData.dailyStats[dataPointIndex];
+            return `${Math.round(val)}% (${dayData.completedHabits}/${
+              dayData.totalHabits
+            } habits)`;
+          },
+        },
+        x: {
+          formatter: function (_val: number, { dataPointIndex }) {
+            const dayData = weeklyData.dailyStats[dataPointIndex];
+            return `${dayData.dayName} - ${format(
+              new Date(dayData.date),
+              "MMM dd"
+            )}`;
+          },
+        },
+      },
+      markers: {
+        size: 5,
+        colors: ["#3B82F6"],
+        strokeColors: "#fff",
+        strokeWidth: 2,
+        hover: {
+          size: 7,
+        },
+      },
+    };
+
+    const series = [
+      {
+        name: "Daily Completion Rate",
+        data: weeklyData.dailyStats.map((day) =>
+          Math.round(day.completionRate)
+        ),
+      },
+    ];
+
+    return (
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-4">
+          This Week's Daily Performance
+        </h3>
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Track your daily completion rates for the current week (Overall:{" "}
+            {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%)
+          </p>
+        </div>
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="area"
+          height={350}
+        />
+      </div>
+    );
   };
 
   const renderDailyCompletionChart = () => {
@@ -381,12 +548,143 @@ const Home: React.FC = () => {
           type="line"
           height={350}
         />
-        <div className="mt-4 flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-          <span>
-            Total Completions: {monthlyData.monthlyStats.totalCompletions}
-          </span>
-          <span>Days Tracked: {monthlyData.dailyCompletionCounts.length}</span>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <span className="block text-lg font-bold text-blue-600 dark:text-blue-400">
+              {monthlyData.monthlyStats.totalCompletions}
+            </span>
+            <span className="text-gray-500 dark:text-gray-400">
+              Total Completions
+            </span>
+          </div>
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <span className="block text-lg font-bold text-green-600 dark:text-green-400">
+              {monthlyData.dailyCompletionCounts.length}
+            </span>
+            <span className="text-gray-500 dark:text-gray-400">
+              Days Tracked
+            </span>
+          </div>
+          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <span className="block text-lg font-bold text-purple-600 dark:text-purple-400">
+              {Math.round(monthlyData.monthlyStats.overallCompletionRate * 100)}
+              %
+            </span>
+            <span className="text-gray-500 dark:text-gray-400">
+              Monthly Average
+            </span>
+          </div>
         </div>
+      </div>
+    );
+  };
+
+  const renderWeeklyHabitsPerformance = () => {
+    if (!weeklyData || !weeklyData.habitStats) return null;
+
+    // Get top 8 habits by success rate for display
+    const topHabits = weeklyData.habitStats
+      .filter((habit) => habit.activeDaysCount > 0)
+      .sort((a, b) => b.successRate - a.successRate)
+      .slice(0, 8);
+
+    if (topHabits.length === 0) return null;
+
+    const options: ApexOptions = {
+      chart: {
+        type: "bar",
+        height: 400,
+        toolbar: {
+          show: false,
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          borderRadius: 4,
+          dataLabels: {
+            position: "center",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val: number) {
+          return Math.round(val) + "%";
+        },
+        style: {
+          fontSize: "12px",
+          fontWeight: "bold",
+        },
+      },
+      colors: ["#10B981"],
+      xaxis: {
+        min: 0,
+        max: 100,
+        labels: {
+          formatter: function (val: string) {
+            return val + "%";
+          },
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: "12px",
+          },
+        },
+      },
+      tooltip: {
+        y: {
+          formatter: function (val: number, { dataPointIndex }) {
+            const habit = topHabits[dataPointIndex];
+            return `${Math.round(val)}% (${habit.completedDaysCount}/${
+              habit.activeDaysCount
+            } days)`;
+          },
+        },
+        x: {
+          formatter: function (_val: number, { dataPointIndex }) {
+            const habit = topHabits[dataPointIndex];
+            return habit.habitName;
+          },
+        },
+      },
+      grid: {
+        borderColor: "#E5E7EB",
+        strokeDashArray: 3,
+      },
+    };
+
+    const series = [
+      {
+        name: "Success Rate",
+        data: topHabits.map((habit) => ({
+          x:
+            habit.habitName.length > 25
+              ? habit.habitName.substring(0, 25) + "..."
+              : habit.habitName,
+          y: Math.round(habit.successRate * 100),
+        })),
+      },
+    ];
+
+    return (
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-4">
+          Weekly Habits Performance
+        </h3>
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Top performing habits this week by success rate
+          </p>
+        </div>
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="bar"
+          height={400}
+        />
       </div>
     );
   };
@@ -481,6 +779,64 @@ const Home: React.FC = () => {
         </div>
       </div>
 
+      {/* Quick Analytics Overview */}
+      {weeklyData && monthlyData && (
+        <div className="mb-8 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-lg p-6 border border-indigo-200 dark:border-indigo-700">
+          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+            📈 Analytics Overview
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%
+              </div>
+              <div className="text-gray-600 dark:text-gray-300">
+                Weekly Success
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {weeklyData.weeklyStats.totalCompletions} completions
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {Math.round(
+                  monthlyData.monthlyStats.overallCompletionRate * 100
+                )}
+                %
+              </div>
+              <div className="text-gray-600 dark:text-gray-300">
+                Monthly Average
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {monthlyData.monthlyStats.totalCompletions} total
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {Math.round((dashboardData?.last30DaysSuccessRate || 0) * 100)}%
+              </div>
+              <div className="text-gray-600 dark:text-gray-300">
+                30-Day Trend
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Overall performance
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {dashboardData?.longestStreakHabit.bestStreak || 0}
+              </div>
+              <div className="text-gray-600 dark:text-gray-300">
+                Best Streak
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {dashboardData?.longestStreakHabit.habitName || "N/A"}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex flex-col items-center">
@@ -529,11 +885,97 @@ const Home: React.FC = () => {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {dashboardData?.longestStreakHabit.bestStreak} days
           </p>
+          <p className="text-xs text-gray-400 text-center mt-1">
+            {dashboardData?.longestStreakHabit.habitName}
+          </p>
         </div>
       </div>
 
+      {/* Weekly Summary Cards */}
+      {weeklyData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg shadow text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium opacity-90">This Week</h3>
+                <p className="text-2xl font-bold">
+                  {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%
+                </p>
+                <p className="text-xs opacity-80">Overall Success</p>
+              </div>
+              <span className="text-3xl opacity-80">📊</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-lg shadow text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium opacity-90">Completions</h3>
+                <p className="text-2xl font-bold">
+                  {weeklyData.weeklyStats.totalCompletions}
+                </p>
+                <p className="text-xs opacity-80">This Week</p>
+              </div>
+              <span className="text-3xl opacity-80">✅</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-lg shadow text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium opacity-90">Best Day</h3>
+                <p className="text-xl font-bold">
+                  {weeklyData.weeklyStats.mostProductiveDay?.dayName || "N/A"}
+                </p>
+                <p className="text-xs opacity-80">
+                  {weeklyData.weeklyStats.mostProductiveDay?.completionRate ||
+                    0}
+                  % completion
+                </p>
+              </div>
+              <span className="text-3xl opacity-80">🌟</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 rounded-lg shadow text-white">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium opacity-90">Top Habit</h3>
+                <p className="text-sm font-bold">
+                  {weeklyData.weeklyStats.mostProductiveHabit?.habitName?.substring(
+                    0,
+                    12
+                  ) +
+                    (weeklyData.weeklyStats.mostProductiveHabit?.habitName
+                      ?.length > 12
+                      ? "..."
+                      : "") || "N/A"}
+                </p>
+                <p className="text-xs opacity-80">
+                  {Math.round(
+                    (weeklyData.weeklyStats.mostProductiveHabit?.successRate ||
+                      0) * 100
+                  )}
+                  % success
+                </p>
+              </div>
+              <span className="text-3xl opacity-80">🏆</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Weekly Analytics Section */}
+      {weeklyData && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            Current Week Analytics
+          </h2>
+          <WeeklyAnalytics analytics={weeklyData} />
+        </div>
+      )}
+
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {renderWeeklyDailyBreakdown()}
+        {renderWeeklyHabitsPerformance()}
         {renderDailyCompletionChart()}
         {renderHabitProgressChart()}
         {renderMonthlyTrendChart()}
