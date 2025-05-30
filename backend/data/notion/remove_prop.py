@@ -14,7 +14,7 @@ from typing import List, Dict, Any
 # =============================================================================
 
 # Name of the JSON file to process (in the same directory)
-JSON_FILENAME = "2021.json"
+JSON_FILENAME = "2025.json"
 
 # List of property names to remove
 PROPERTIES_TO_REMOVE = [
@@ -39,6 +39,9 @@ PROPERTIES_TO_REMOVE = [
            "الحالة المزاجية",
             "الصورة",
             "الربع السنوي",
+            "Created time",
+            "habits streak",
+            "ما الجديد ؟",
 ]
 
 # =============================================================================

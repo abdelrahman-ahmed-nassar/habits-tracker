@@ -1,12 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { format } from "date-fns";
-import {
-  Home,
-  Calendar,
-  BarChart2,
-  Settings,
-  BookOpen,
-} from "lucide-react";
+import { Home, Calendar, BarChart2, Settings, BookOpen } from "lucide-react";
 
 interface SidebarProps {
   isMobile: boolean;

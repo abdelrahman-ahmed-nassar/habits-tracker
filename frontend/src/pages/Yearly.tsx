@@ -10,7 +10,6 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  Calendar,
   Download,
   BarChart2,
   Award,
@@ -25,7 +24,6 @@ import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Progress from "../components/ui/Progress";
 import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
 import QuarterAnalytics from "../components/QuarterAnalytics";
 
 interface YearlyMonthData {
@@ -128,132 +126,148 @@ const Yearly: React.FC = () => {
   }, []);
 
   // Fetch yearly data by aggregating monthly analytics
-  const fetchYearlyData = useCallback(async (date: Date) => {
-    setLoading(true);
-    setError(null);
+  const fetchYearlyData = useCallback(
+    async (date: Date) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const year = date.getFullYear();
-      const yearStart = startOfYear(date);
-      const yearEnd = endOfYear(date);
-      const monthsInYear = eachMonthOfInterval({ start: yearStart, end: yearEnd });
-
-      // Fetch analytics for each month of the year
-      const monthDataPromises = monthsInYear.map((monthDate) => {
-        const monthYear = monthDate.getFullYear();
-        const month = monthDate.getMonth() + 1; // 1-based month
-        return analyticsService.getMonthlyAnalytics(monthYear, month);
-      });
-
-      const monthlyResults = await Promise.all(monthDataPromises);
-
-      // Calculate aggregate yearly statistics
-      let totalCompletions = 0;
-      let overallCompletionRateSum = 0;
-      let bestMonthRate = 0;
-      let worstMonthRate = 1;
-      let bestMonth: YearlyMonthData | null = null;
-      let worstMonth: YearlyMonthData | null = null;
-      let habitCompletionRates: Record<string, { count: number; total: number; name: string }> = {};
-
-      // Process monthly data
-      const monthsData: YearlyMonthData[] = monthlyResults.map((data, index) => {
-        const monthNum = index + 1;
-        const monthDate = new Date(year, index, 1);
-        const monthName = format(monthDate, "MMMM");
-        const completionRate = data.monthlyStats.overallCompletionRate;
-        totalCompletions += data.monthlyStats.totalCompletions;
-
-        // Find best and worst months
-        if (completionRate > bestMonthRate) {
-          bestMonthRate = completionRate;
-          bestMonth = {
-            month: monthNum,
-            monthName,
-            completionRate,
-          };
-        }
-
-        if (completionRate < worstMonthRate) {
-          worstMonthRate = completionRate;
-          worstMonth = {
-            month: monthNum,
-            monthName,
-            completionRate,
-          };
-        }
-
-        // Aggregate habit data
-        data.habitStats.forEach((habit) => {
-          if (!habitCompletionRates[habit.habitId]) {
-            habitCompletionRates[habit.habitId] = {
-              count: 0,
-              total: 0,
-              name: habit.habitName,
-            };
-          }
-          habitCompletionRates[habit.habitId].count += habit.completedDaysCount;
-          habitCompletionRates[habit.habitId].total += habit.activeDaysCount;
+      try {
+        const year = date.getFullYear();
+        const yearStart = startOfYear(date);
+        const yearEnd = endOfYear(date);
+        const monthsInYear = eachMonthOfInterval({
+          start: yearStart,
+          end: yearEnd,
         });
 
-        overallCompletionRateSum += completionRate;
+        // Fetch analytics for each month of the year
+        const monthDataPromises = monthsInYear.map((monthDate) => {
+          const monthYear = monthDate.getFullYear();
+          const month = monthDate.getMonth() + 1; // 1-based month
+          return analyticsService.getMonthlyAnalytics(monthYear, month);
+        });
 
-        return {
-          month: monthNum,
-          monthName,
-          completionRate,
-          totalCompletions: data.monthlyStats.totalCompletions,
-          totalHabits: data.monthlyStats.totalHabits,
+        const monthlyResults = await Promise.all(monthDataPromises);
+
+        // Calculate aggregate yearly statistics
+        let totalCompletions = 0;
+        let overallCompletionRateSum = 0;
+        let bestMonthRate = 0;
+        let worstMonthRate = 1;
+        let bestMonth: YearlyMonthData | null = null;
+        let worstMonth: YearlyMonthData | null = null;
+        const habitCompletionRates: Record<
+          string,
+          { count: number; total: number; name: string }
+        > = {};
+
+        // Process monthly data
+        const monthsData: YearlyMonthData[] = monthlyResults.map(
+          (data, index) => {
+            const monthNum = index + 1;
+            const monthDate = new Date(year, index, 1);
+            const monthName = format(monthDate, "MMMM");
+            const completionRate = data.monthlyStats.overallCompletionRate;
+            totalCompletions += data.monthlyStats.totalCompletions; // Find best and worst months
+            if (completionRate > bestMonthRate) {
+              bestMonthRate = completionRate;
+              bestMonth = {
+                month: monthNum,
+                monthName,
+                completionRate,
+                totalCompletions: data.monthlyStats.totalCompletions,
+                totalHabits: data.monthlyStats.totalHabits,
+              };
+            }
+
+            if (completionRate < worstMonthRate) {
+              worstMonthRate = completionRate;
+              worstMonth = {
+                month: monthNum,
+                monthName,
+                completionRate,
+                totalCompletions: data.monthlyStats.totalCompletions,
+                totalHabits: data.monthlyStats.totalHabits,
+              };
+            }
+
+            // Aggregate habit data
+            data.habitStats.forEach((habit) => {
+              if (!habitCompletionRates[habit.habitId]) {
+                habitCompletionRates[habit.habitId] = {
+                  count: 0,
+                  total: 0,
+                  name: habit.habitName,
+                };
+              }
+              habitCompletionRates[habit.habitId].count +=
+                habit.completedDaysCount;
+              habitCompletionRates[habit.habitId].total +=
+                habit.activeDaysCount;
+            });
+
+            overallCompletionRateSum += completionRate;
+
+            return {
+              month: monthNum,
+              monthName,
+              completionRate,
+              totalCompletions: data.monthlyStats.totalCompletions,
+              totalHabits: data.monthlyStats.totalHabits,
+            };
+          }
+        );
+
+        // Calculate yearly average completion rate
+        const yearlyAvgCompletionRate =
+          overallCompletionRateSum / monthsData.length;
+
+        // Get top habits
+        const topHabits = Object.entries(habitCompletionRates)
+          .map(([habitId, data]) => ({
+            habitId,
+            habitName: data.name,
+            completionRate: data.total > 0 ? data.count / data.total : 0,
+          }))
+          .sort((a, b) => b.completionRate - a.completionRate)
+          .slice(0, 5);
+
+        // Get quarter data
+        const quarters = getQuarterData(year);
+
+        // Create the yearly analytics data structure
+        const yearlyAnalytics: YearlyAnalytics = {
+          year,
+          months: monthsData,
+          quarters,
+          topHabits,
+          yearlyStats: {
+            totalHabits: monthsData.length > 0 ? monthsData[0].totalHabits : 0,
+            totalCompletions,
+            overallCompletionRate: yearlyAvgCompletionRate,
+            bestMonth,
+            worstMonth,
+            bestHabit: topHabits.length > 0 ? topHabits[0] : null,
+          },
         };
-      });
 
-      // Calculate yearly average completion rate
-      const yearlyAvgCompletionRate = overallCompletionRateSum / monthsData.length;
+        setYearlyData(yearlyAnalytics);
 
-      // Get top habits
-      const topHabits = Object.entries(habitCompletionRates)
-        .map(([habitId, data]) => ({
-          habitId,
-          habitName: data.name,
-          completionRate: data.total > 0 ? data.count / data.total : 0,
-        }))
-        .sort((a, b) => b.completionRate - a.completionRate)
-        .slice(0, 5);
-
-      // Get quarter data
-      const quarters = getQuarterData(year);
-
-      // Create the yearly analytics data structure
-      const yearlyAnalytics: YearlyAnalytics = {
-        year,
-        months: monthsData,
-        quarters,
-        topHabits,
-        yearlyStats: {
-          totalHabits: monthsData.length > 0 ? monthsData[0].totalHabits : 0,
-          totalCompletions,
-          overallCompletionRate: yearlyAvgCompletionRate,
-          bestMonth,
-          worstMonth,
-          bestHabit: topHabits.length > 0 ? topHabits[0] : null,
-        },
-      };
-
-      setYearlyData(yearlyAnalytics);
-
-      // Update URL without causing navigation
-      const newPath = `/yearly/${year}`;
-      if (window.location.pathname !== newPath) {
-        window.history.replaceState(null, "", newPath);
+        // Update URL without causing navigation
+        const newPath = `/yearly/${year}`;
+        if (window.location.pathname !== newPath) {
+          window.history.replaceState(null, "", newPath);
+        }
+      } catch (err) {
+        console.error("Error fetching yearly data:", err);
+        setError("Failed to load yearly data");
+        toast.error("Failed to load yearly analytics");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error fetching yearly data:", err);
-      setError("Failed to load yearly data");
-      toast.error("Failed to load yearly analytics");
-    } finally {
-      setLoading(false);
-    }
-  }, [getQuarterData]);
+    },
+    [getQuarterData]
+  );
 
   // Navigation functions
   const goToPreviousYear = () => {
@@ -340,7 +354,9 @@ const Yearly: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center space-y-4">
           <p className="text-red-600 dark:text-red-400">{error}</p>
-          <Button onClick={() => fetchYearlyData(currentDate)}>Try Again</Button>
+          <Button onClick={() => fetchYearlyData(currentDate)}>
+            Try Again
+          </Button>
         </div>
       </div>
     );
@@ -496,7 +512,10 @@ const Yearly: React.FC = () => {
                       {yearlyData.yearlyStats.bestHabit.habitName}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {Math.round(yearlyData.yearlyStats.bestHabit.completionRate * 100)}% success rate
+                      {Math.round(
+                        yearlyData.yearlyStats.bestHabit.completionRate * 100
+                      )}
+                      % success rate
                     </p>
                   </div>
                 </CardContent>
@@ -539,7 +558,9 @@ const Yearly: React.FC = () => {
                       },
                     },
                     xaxis: {
-                      categories: yearlyData.months.map((month) => month.monthName),
+                      categories: yearlyData.months.map(
+                        (month) => month.monthName
+                      ),
                       axisBorder: {
                         show: false,
                       },
@@ -568,8 +589,8 @@ const Yearly: React.FC = () => {
                   series={[
                     {
                       name: "Completion Rate",
-                      data: yearlyData.months.map(
-                        (month) => Math.round(month.completionRate * 100)
+                      data: yearlyData.months.map((month) =>
+                        Math.round(month.completionRate * 100)
                       ),
                     },
                   ]}
