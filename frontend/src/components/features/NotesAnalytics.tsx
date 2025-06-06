@@ -196,13 +196,11 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       Object.keys(analyticsData.moodValueMap).length > 0
     ) {
       moodValueMap = analyticsData.moodValueMap;
-      console.log("Using analytics mood value map:", moodValueMap);
     } else if (
       moodTrends?.moodValueMap &&
       Object.keys(moodTrends.moodValueMap).length > 0
     ) {
       moodValueMap = moodTrends.moodValueMap;
-      console.log("Using mood trends value map:", moodValueMap);
     } else {
       // Fallback mapping based on your Arabic mood values
       moodValueMap = {
@@ -240,19 +238,13 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         "😢": 1,
         Sad: 1,
       };
-      console.log("Using fallback mood value map:", moodValueMap);
     } // Sort notes by date and create daily data
     const sortedNotes = [...notesWithMood]
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-30); // Last 30 days
 
-    console.log(
-      "Processing notes with mood:",
-      sortedNotes.map((n) => ({ date: n.date, mood: n.mood }))
-    );
     const dailyMoodData = sortedNotes.map((note) => {
       const moodValue = moodValueMap[note.mood!] || 5;
-      console.log(`Mood "${note.mood}" mapped to value: ${moodValue}`);
       return {
         date: note.date,
         mood: note.mood!,
@@ -260,7 +252,6 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       };
     });
 
-    console.log("Final daily mood data:", dailyMoodData);
 
     return {
       options: {
@@ -404,10 +395,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       Object.keys(analyticsData.productivityValueMap).length > 0
     ) {
       productivityValueMap = analyticsData.productivityValueMap;
-      console.log(
-        "Using analytics productivity value map:",
-        productivityValueMap
-      );
+
     } else {
       // Fallback mapping for actual productivity levels in your data
       productivityValueMap = {
@@ -429,10 +417,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         "عالي جداً": 6,
         "Very High": 6,
       };
-      console.log(
-        "Using fallback productivity value map:",
-        productivityValueMap
-      );
+
     }
 
     // Sort notes by date and create daily data
@@ -440,20 +425,11 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-30); // Last 30 days
 
-    console.log(
-      "Processing notes with productivity:",
-      sortedNotes.map((n) => ({
-        date: n.date,
-        productivity: n.productivityLevel,
-      }))
-    );
+
 
     const dailyProductivityData = sortedNotes.map((note) => {
       const productivityValue =
         productivityValueMap[note.productivityLevel!] || 5;
-      console.log(
-        `Productivity "${note.productivityLevel}" mapped to value: ${productivityValue}`
-      );
       return {
         date: note.date,
         productivity: note.productivityLevel!,
@@ -461,7 +437,6 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       };
     });
 
-    console.log("Final daily productivity data:", dailyProductivityData);
 
     return {
       options: {

@@ -11,8 +11,8 @@
     "isActive": true,
     "currentStreak": 1,
     "bestStreak": 11,
-    "currentCounter": 238,
-    "createdAt": "2025-05-29T20:49:46.331Z"
+    "currentCounter": 239,
+    "createdAt": "2020-05-29T20:49:46.331Z"
   },
   {
     "id": "22bdb212-7942-4a8a-b238-7406ce9f3e14",
@@ -26,8 +26,8 @@
     "isActive": true,
     "currentStreak": 1,
     "bestStreak": 13,
-    "currentCounter": 39,
-    "createdAt": "2025-05-29T20:51:28.280Z"
+    "currentCounter": 227,
+    "createdAt": "2020-05-29T20:51:28.280Z"
   },
   {
     "id": "cbf5651d-b1f4-43fa-ba56-659b44643af8",
@@ -39,10 +39,10 @@
     "goalValue": 60,
     "motivationNote": "عن عُمَارَةَ بْنِ رُؤَيْبَةَ، عَنْ أَبِيهِ، قَالَ: سَمِعْتُ رَسُولَ اللهِ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، يَقُولُ: «لَنْ يَلِجَ النَّارَ أَحَدٌ صَلَّى قَبْلَ طُلُوعِ الشَّمْسِ، وَقَبْلَ غُرُوبِهَا» - يَعْنِي الْفَجْرَ وَالْعَصْرَ .",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:51:57.915Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 220,
+    "createdAt": "2020-05-29T20:51:57.915Z"
   },
   {
     "id": "f6fbc557-f7fb-4b4e-a2cc-6feb91363063",
@@ -54,10 +54,10 @@
     "goalValue": 60,
     "motivationNote": "، وقوله أيضاً: «رأس الأمر الإسلام، وعموده الصلاة، وذروة سنامه الجهاد في سبيل الله»",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:52:39.688Z"
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "currentCounter": 41,
+    "createdAt": "2020-05-29T20:52:39.688Z"
   },
   {
     "id": "1da961bd-7266-4b22-a1dd-72215d429bc3",
@@ -69,10 +69,10 @@
     "goalValue": 60,
     "motivationNote": "من صلى الفجر في جماعة ، ثم قعد يذكر الله حتى تطلع الشمس ، ثم صلى ركعتين ، كانت له أجر حجة وعمرة ، تامة تامة تامة ”",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:53:05.989Z"
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "currentCounter": 31,
+    "createdAt": "2020-05-29T20:53:05.989Z"
   },
   {
     "id": "19a1182f-10fb-4588-9277-4a16eb0b2172",
@@ -84,10 +84,10 @@
     "goalValue": 999,
     "motivationNote": "العهد الذي بيننا وبينهم الصلاة، فمن تركها فقد كفر",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:55:09.737Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 329,
+    "createdAt": "2020-05-29T20:55:09.737Z"
   },
   {
     "id": "05dd725d-53ce-4eb2-869e-f50c52928315",
@@ -99,10 +99,10 @@
     "goalValue": 999,
     "motivationNote": "your place is not there!",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:56:56.253Z"
+    "currentStreak": 1,
+    "bestStreak": 12,
+    "currentCounter": 106,
+    "createdAt": "2020-05-29T20:56:56.253Z"
   },
   {
     "id": "4316618c-0345-456a-95e6-cba292162caa",
@@ -114,10 +114,10 @@
     "goalValue": 1,
     "motivationNote": "Language changes how you think!",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:58:19.375Z"
+    "currentStreak": 1,
+    "bestStreak": 10,
+    "currentCounter": 42,
+    "createdAt": "2020-05-29T20:58:19.375Z"
   },
   {
     "id": "15375139-33fe-4303-b4b7-88d04e3f3e36",
@@ -129,10 +129,10 @@
     "goalValue": 60,
     "motivationNote": "في الحديث: إذا استيقظ أحدكم فليقل: الحمدلله الذي رد علي روحي, وعافاني في جسدي, وأذن لي بذكره. رواه الترمذي والنسائي.",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T20:59:07.693Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 213,
+    "createdAt": "2020-05-29T20:59:07.693Z"
   },
   {
     "id": "537afcb7-7f55-4efb-913a-85826ec2471c",
@@ -144,10 +144,10 @@
     "goalValue": 60,
     "motivationNote": "قال رسول الله صلى الله عليه وآله وسلم: «من قال حين يأوي إلى فراشه: لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير، لا حول ولا قوة إلا بالله العلي العظيم، سبحان الله والحمد لله ولا إله إلا الله والله أكبر - غُفِرت له ذنوبُه أو خطاياه وإن كانت مثل زَبَدِ البحر» أخرجه ابن حبان في صحيحه.",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:00:07.800Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 236,
+    "createdAt": "2020-05-29T21:00:07.800Z"
   },
   {
     "id": "3d42cbd7-6a64-461e-a340-b805229ee65a",
@@ -159,10 +159,10 @@
     "goalValue": 60,
     "motivationNote": "يَا أَيُّهَا الَّذِينَ آَمَنُوا اذْكُرُوا اللَّهَ ذِكْرًا كَثِيرًا * وَسَبِّحُوهُ بُكْرَةً وَأَصِيلًا * هُوَ الَّذِي يُصَلِّي عَلَيْكُمْ وَمَلَائِكَتُهُ لِيُخْرِجَكُمْ مِنَ الظُّلُمَاتِ إِلَى النُّورِ وَكَانَ بِالْمُؤْمِنِينَ رَحِيمًا ",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:03:56.567Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 194,
+    "createdAt": "2020-05-29T21:03:56.567Z"
   },
   {
     "id": "949c0f4d-f04e-4955-b5eb-3cc98b56a7d0",
@@ -174,10 +174,10 @@
     "goalValue": 1,
     "motivationNote": " يَا أَيُّهَا الَّذِينَ آَمَنُوا اذْكُرُوا اللَّهَ ذِكْرًا كَثِيرًا * وَسَبِّحُوهُ بُكْرَةً وَأَصِيلًا * هُوَ الَّذِي يُصَلِّي عَلَيْكُمْ وَمَلَائِكَتُهُ لِيُخْرِجَكُمْ مِنَ الظُّلُمَاتِ إِلَى النُّورِ وَكَانَ بِالْمُؤْمِنِينَ رَحِيمًا ",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:04:40.978Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 228,
+    "createdAt": "2020-05-29T21:04:40.978Z"
   },
   {
     "id": "5848f55f-1e7c-48fa-b51c-ea23ff76a37d",
@@ -189,10 +189,10 @@
     "goalValue": 60,
     "motivationNote": "what gets planed gets improved!",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:05:18.895Z"
+    "currentStreak": 1,
+    "bestStreak": 13,
+    "currentCounter": 201,
+    "createdAt": "2020-05-29T21:05:18.895Z"
   },
   {
     "id": "41f0226b-830a-4157-9837-a3575c23ae1d",
@@ -204,10 +204,10 @@
     "goalValue": 614,
     "motivationNote": " كِتَابٌ أَنْزَلْنَاهُ إِلَيْكَ مُبَارَكٌ لِيَدَّبَّرُوا آيَاتِهِ",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:06:11.363Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 99,
+    "createdAt": "2020-05-29T21:06:11.363Z"
   },
   {
     "id": "9b2cbe60-1981-4ae7-9523-e93a82b30608",
@@ -219,10 +219,10 @@
     "goalValue": 30,
     "motivationNote": " كِتَابٌ أَنْزَلْنَاهُ إِلَيْكَ مُبَارَكٌ لِيَدَّبَّرُوا آيَاتِهِ",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:07:01.181Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 197,
+    "createdAt": "2020-05-29T21:07:01.181Z"
   },
   {
     "id": "16eee4bf-94f0-447b-bbd7-348de4c59491",
@@ -234,10 +234,10 @@
     "goalValue": 30,
     "motivationNote": "{وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ إِنَّ الَّذِينَ يَسْتَكْبِرُونَ عَنْ عِبَادَتِي سَيَدْخُلُونَ جَهَنَّمَ دَاخِرِينَ } (غافر: 60)",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:07:31.360Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 196,
+    "createdAt": "2020-05-29T21:07:31.360Z"
   },
   {
     "id": "44237b66-0c0a-4727-b736-6906ea5a8064",
@@ -249,10 +249,10 @@
     "goalValue": 30,
     "motivationNote": "مما جاء عن النبي صلى الله عليه وسلم من أحاديث في فضائل القرآن: ما رواه أبو داود عن عبد الله بن عمرو بن العاص رضي الله عنهما قال: قال رسول الله صلى الله عليه وسلم: (من قام بعشر آيات لم يكتب من الغافلين، ومن قام بمائة آية كتب من القانتين، ومن قام بألف آية كتب من المقنطرين).",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:08:01.523Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 234,
+    "createdAt": "2020-05-29T21:08:01.523Z"
   },
   {
     "id": "5ea36da0-6831-4100-a652-94d9a3ece117",
@@ -264,10 +264,10 @@
     "goalValue": 29,
     "motivationNote": "ورد في فضل صلاة الوتر حديث خَارِجَةَ بْنِ حُذَافَةَ -رَضِيَ اللهُ عَنْهُ- قَالَ: قَالَ رَسُولُ اللهِ -صلّى الله عليه وسلّم-: (إنَّ اللهَ أمدَّكم بصلاةٍ هي خيرٌ لكم من حُمْرِ النَّعمِ. قلنا: وما هي يا رسولَ اللهِ؟ قال: الوترُ ما بين صلاةِ العشاءِ إلى طلوعِ الفجرِ).",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:08:30.299Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 241,
+    "createdAt": "2020-05-29T21:08:30.299Z"
   },
   {
     "id": "3d5f2e20-01b3-47bf-990f-f88909f64577",
@@ -279,10 +279,10 @@
     "goalValue": 3,
     "motivationNote": "just drink it",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 1,
-    "createdAt": "2025-05-29T21:09:42.743Z"
+    "currentStreak": 1,
+    "bestStreak": 1,
+    "currentCounter": 196,
+    "createdAt": "2020-05-29T21:09:42.743Z"
   },
   {
     "id": "3b143fc5-90d7-4b4c-9bb3-369a9e8cff68",
@@ -294,10 +294,10 @@
     "goalValue": 30,
     "motivationNote": "(الماهر بالقرآن مع السفرة الكرام البررة، والذي يقرأ القرآن ويتعتع فيه وهو عليه شاق له أجران) ",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:13:19.437Z"
+    "currentStreak": 1,
+    "bestStreak": 4,
+    "currentCounter": 29,
+    "createdAt": "2020-05-29T21:13:19.437Z"
   },
   {
     "id": "7ff23932-0008-44ab-96d9-4de307a7581e",
@@ -309,10 +309,10 @@
     "goalValue": 30,
     "motivationNote": "sleep well, stay well!",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:14:00.321Z"
+    "currentStreak": 1,
+    "bestStreak": 14,
+    "currentCounter": 215,
+    "createdAt": "2020-05-29T21:14:00.321Z"
   },
   {
     "id": "fd32253e-cb3c-4410-ba0c-ec051a8bddd8",
@@ -324,10 +324,10 @@
     "goalValue": 999,
     "motivationNote": "write down, or lose it",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:14:34.314Z"
+    "currentStreak": 1,
+    "bestStreak": 13,
+    "currentCounter": 214,
+    "createdAt": "2020-05-29T21:14:34.314Z"
   },
   {
     "id": "b2546b08-058b-4455-8dbb-4127debb0853",
@@ -339,10 +339,10 @@
     "goalValue": 30,
     "motivationNote": "الرياضة مهمة",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:15:09.045Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 145,
+    "createdAt": "2020-05-29T21:15:09.045Z"
   },
   {
     "id": "8803b064-61ee-4a64-bbf5-c069638491cd",
@@ -354,10 +354,10 @@
     "goalValue": 30,
     "motivationNote": "العائلة هي الأهم",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:15:46.940Z"
+    "currentStreak": 1,
+    "bestStreak": 11,
+    "currentCounter": 146,
+    "createdAt": "2020-05-29T21:15:46.940Z"
   },
   {
     "id": "0170db31-056a-43fc-b573-8ae045d5633b",
@@ -369,10 +369,10 @@
     "goalValue": 60,
     "motivationNote": "عَنْ أَبِي هُرَيْرَةَ - رَضِيَ اللَّهُ عَنْهُ-: أَنَّ رَسُولَ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ قَالَ: «وَمَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا، سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الجَنَّةِ» رَوَاهُ مُسْلِمٌ.",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:17:12.261Z"
+    "currentStreak": 1,
+    "bestStreak": 12,
+    "currentCounter": 100,
+    "createdAt": "2020-05-29T21:17:12.261Z"
   },
   {
     "id": "d44bdd02-4441-4f2a-a480-70c45873c901",
@@ -384,10 +384,10 @@
     "goalValue": 1,
     "motivationNote": " يصبح على كل سلامى من أحدكم صدقة، فكل تسبيحة صدقة، وكل تحميدة صدقة، وكل تهليلة صدقة، وكل تكبيرة صدقة، وأمر بالمعروف صدقة، ونهي عن المنكر صدقة، ويجزئ من ذلك ركعتان يركعهما من الضحى.",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:17:55.600Z"
+    "currentStreak": 1,
+    "bestStreak": 8,
+    "currentCounter": 135,
+    "createdAt": "2020-05-29T21:17:55.600Z"
   },
   {
     "id": "ce1d0242-db6f-40a3-86c0-f33538e95b58",
@@ -399,10 +399,10 @@
     "goalValue": 999,
     "motivationNote": "keep it clean",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:18:17.589Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 224,
+    "createdAt": "2020-05-29T21:18:17.589Z"
   },
   {
     "id": "45ab1553-33eb-4d4e-9f4f-65bc3ffa0f82",
@@ -414,10 +414,10 @@
     "goalValue": 999,
     "motivationNote": "keep it clean",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:18:50.046Z"
+    "currentStreak": 1,
+    "bestStreak": 13,
+    "currentCounter": 231,
+    "createdAt": "2020-05-29T21:18:50.046Z"
   },
   {
     "id": "903628a5-43fb-482a-8fdc-22784e820461",
@@ -429,10 +429,10 @@
     "goalValue": 60,
     "motivationNote": "جدد روحك",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-29T21:19:14.206Z"
+    "currentStreak": 1,
+    "bestStreak": 8,
+    "currentCounter": 133,
+    "createdAt": "2020-05-29T21:19:14.206Z"
   },
   {
     "id": "2d1912f8-6a2b-45d0-81c7-15bdd3847905",
@@ -446,8 +446,8 @@
     "isActive": true,
     "currentStreak": 1,
     "bestStreak": 1,
-    "currentCounter": 30,
-    "createdAt": "2025-05-29T21:20:01.767Z"
+    "currentCounter": 31,
+    "createdAt": "2020-05-29T21:20:01.767Z"
   },
   {
     "id": "3aa357f7-25fa-4b08-9f07-4826c78ed769",
@@ -459,10 +459,10 @@
     "goalValue": 60,
     "motivationNote": "خير من الدنيا وما فيها",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T08:45:34.434Z"
+    "currentStreak": 1,
+    "bestStreak": 14,
+    "currentCounter": 196,
+    "createdAt": "2020-05-30T08:45:34.434Z"
   },
   {
     "id": "4e194a47-c9ca-4265-a7d1-1ffac7ec1639",
@@ -474,10 +474,10 @@
     "goalValue": 60,
     "motivationNote": "السنه : حب - حصانة - ضمانة",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T08:46:24.286Z"
+    "currentStreak": 1,
+    "bestStreak": 10,
+    "currentCounter": 197,
+    "createdAt": "2020-05-30T08:46:24.286Z"
   },
   {
     "id": "d9228d84-90bf-47a5-9f90-f01c06584bad",
@@ -489,10 +489,10 @@
     "goalValue": 60,
     "motivationNote": "السنة : محبة - حصانة - ضمانة",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T08:47:05.028Z"
+    "currentStreak": 1,
+    "bestStreak": 9,
+    "currentCounter": 185,
+    "createdAt": "2020-05-30T08:47:05.028Z"
   },
   {
     "id": "5f5990d3-75c1-40fb-b0aa-7c10c0ea2b3d",
@@ -504,10 +504,10 @@
     "goalValue": 60,
     "motivationNote": "السنة : محبة - حصانة - ضمانة",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T08:47:43.290Z"
+    "currentStreak": 1,
+    "bestStreak": 13,
+    "currentCounter": 206,
+    "createdAt": "2020-05-30T08:47:43.290Z"
   },
   {
     "id": "76030cda-14b5-4b12-b158-56382de58fa8",
@@ -519,10 +519,10 @@
     "goalValue": 60,
     "motivationNote": "أذكار الصباح",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T09:13:21.769Z"
+    "currentStreak": 1,
+    "bestStreak": 17,
+    "currentCounter": 233,
+    "createdAt": "2020-05-30T09:13:21.769Z"
   },
   {
     "id": "6bf07090-2928-4674-ad54-4cdd7a321a2f",
@@ -534,9 +534,9 @@
     "goalValue": 1,
     "motivationNote": "أذكار المساء",
     "isActive": true,
-    "currentStreak": 0,
-    "bestStreak": 0,
-    "currentCounter": 0,
-    "createdAt": "2025-05-30T09:13:37.498Z"
+    "currentStreak": 1,
+    "bestStreak": 6,
+    "currentCounter": 145,
+    "createdAt": "2020-05-30T09:13:37.498Z"
   }
 ]

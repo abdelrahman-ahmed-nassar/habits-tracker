@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { Briefcase, MessageSquare, Zap, FileText } from "lucide-react";
+import {
+  Briefcase,
+  MessageSquare,
+  Zap,
+  FileText,
+  Database,
+  RotateCcw,
+} from "lucide-react";
 import { toast } from "react-toastify";
+import axios from "axios";
 import PageContainer from "../components/layout/PageContainer";
 import HabitsManager from "../components/settings/HabitsManager";
 import MoodsManager from "../components/settings/MoodsManager";
@@ -11,6 +19,8 @@ type SettingsTab = "habits" | "moods" | "productivity" | "templates";
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>("habits"); // These states are for future use with asynchronous data loading
+  const [isCreatingBackup, setIsCreatingBackup] = useState(false);
+  const [isClearingCache, setIsClearingCache] = useState(false);
   const isLoading = false;
   const error = null;
 
@@ -18,6 +28,44 @@ const Settings: React.FC = () => {
     // Clear any existing toasts when switching tabs to prevent stale messages
     toast.dismiss();
     setActiveTab(newTab);
+  };
+
+  const handleCreateBackup = async () => {
+    try {
+      setIsCreatingBackup(true);
+      const response = await axios.post("http://localhost:5002/api/backup");
+      if (response.data.success) {
+        toast.success("Backup created successfully!");
+      } else {
+        toast.error("Failed to create backup");
+      }
+    } catch (error) {
+      console.error("Error creating backup:", error);
+      toast.error("Failed to create backup. Check console for details.");
+    } finally {
+      setIsCreatingBackup(false);
+    }
+  };
+
+  const handleClearCache = async () => {
+    try {
+      setIsClearingCache(true);
+      const response = await axios.post(
+        "http://localhost:5002/api/analytics/clear-cache"
+      );
+      if (response.data.success) {
+        toast.success("Analytics cache cleared successfully!");
+      } else {
+        toast.error("Failed to clear analytics cache");
+      }
+    } catch (error) {
+      console.error("Error clearing analytics cache:", error);
+      toast.error(
+        "Failed to clear analytics cache. Check console for details."
+      );
+    } finally {
+      setIsClearingCache(false);
+    }
   };
 
   const renderTabContent = () => {
@@ -44,7 +92,9 @@ const Settings: React.FC = () => {
         </p>
 
         <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <nav className="flex space-x-8">            <button
+          <nav className="flex space-x-8">
+            {" "}
+            <button
               onClick={() => handleTabChange("habits")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "habits"
@@ -56,7 +106,8 @@ const Settings: React.FC = () => {
                 <Briefcase className="w-4 h-4 mr-2" />
                 <span>Habits</span>
               </div>
-            </button>            <button
+            </button>{" "}
+            <button
               onClick={() => handleTabChange("moods")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "moods"
@@ -68,7 +119,8 @@ const Settings: React.FC = () => {
                 <MessageSquare className="w-4 h-4 mr-2" />
                 <span>Moods</span>
               </div>
-            </button>            <button
+            </button>{" "}
+            <button
               onClick={() => handleTabChange("productivity")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "productivity"
@@ -80,7 +132,8 @@ const Settings: React.FC = () => {
                 <Zap className="w-4 h-4 mr-2" />
                 <span>Productivity Levels</span>
               </div>
-            </button>            <button
+            </button>{" "}
+            <button
               onClick={() => handleTabChange("templates")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === "templates"
@@ -97,6 +150,29 @@ const Settings: React.FC = () => {
         </div>
 
         {renderTabContent()}
+
+        <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+          <h2 className="text-xl font-semibold mb-4">System Actions</h2>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={handleCreateBackup}
+              disabled={isCreatingBackup}
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Database className="w-4 h-4 mr-2" />
+              {isCreatingBackup ? "Creating Backup..." : "Create Backup"}
+            </button>
+
+            <button
+              onClick={handleClearCache}
+              disabled={isClearingCache}
+              className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              {isClearingCache ? "Clearing Cache..." : "Clear Analytics Cache"}
+            </button>
+          </div>
+        </div>
       </div>
     </PageContainer>
   );

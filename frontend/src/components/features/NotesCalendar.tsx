@@ -61,14 +61,6 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
       return;
     }
 
-    console.log("Calendar data structure:", {
-      year: calendarData.year,
-      month: calendarData.month,
-      totalNotes: calendarData.totalNotes,
-      calendarDataKeys: calendarData.calendarData
-        ? Object.keys(calendarData.calendarData)
-        : "undefined",
-    });
   };
 
   // Call debug function once
