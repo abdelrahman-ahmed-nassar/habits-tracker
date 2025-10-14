@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Router } from "express";
 import {
   createBackupController,
   restoreFromBackupController,
 } from "../controllers/backupController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Create a backup
 router.post("/", createBackupController);

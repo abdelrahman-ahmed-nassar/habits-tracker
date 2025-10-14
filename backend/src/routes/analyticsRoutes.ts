@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import * as analyticsController from "../controllers/analyticsController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/analytics/overview - Overall statistics and trends
 router.get("/overview", analyticsController.getOverallAnalytics);

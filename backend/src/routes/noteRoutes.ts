@@ -1,8 +1,8 @@
-import express from "express";
+import express, { Router } from "express";
 import * as noteController from "../controllers/noteController";
 import * as notesAnalyticsController from "../controllers/notesAnalyticsController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/notes - Get all notes
 router.get("/", noteController.getAllNotes);

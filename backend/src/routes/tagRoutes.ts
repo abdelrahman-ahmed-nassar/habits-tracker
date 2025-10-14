@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import * as tagController from "../controllers/tagController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/tags - Get all tags
 router.get("/", tagController.getAllTags);

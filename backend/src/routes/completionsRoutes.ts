@@ -1,9 +1,9 @@
-import express from "express";
+import express, { Router } from "express";
 import * as completionController from "../controllers/completionController";
 import { toggleHabitCompletion } from "../controllers/toggleController";
 import { AppError } from "../middleware/errorHandler";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/completions/date/:date - Get all completions for a specific date
 router.get("/date/:date", async (req, res, next) => {

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -59,7 +60,8 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} 🚀`);
+  console.log(`http://localhost:${PORT}`);
 });
 
 export default app;

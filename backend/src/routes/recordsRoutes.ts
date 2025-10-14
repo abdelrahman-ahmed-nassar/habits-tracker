@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import * as recordsController from "../controllers/recordsController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/records/daily/:date - Get all completions for specific date
 router.get("/daily/:date", recordsController.getDailyRecords);

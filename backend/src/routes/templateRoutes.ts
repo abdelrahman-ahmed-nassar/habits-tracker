@@ -7,7 +7,7 @@ import {
   deleteTemplate,
 } from "../controllers/templateController";
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * @route   GET /api/templates

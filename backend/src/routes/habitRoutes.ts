@@ -1,8 +1,8 @@
-import express from "express";
+import express, { Router } from "express";
 import * as habitController from "../controllers/habitController";
 import * as completionController from "../controllers/completionController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/habits - Get all habits
 router.get("/", habitController.getAllHabits);

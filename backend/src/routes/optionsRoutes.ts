@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import * as optionsController from "../controllers/optionsController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Mood routes
 router.get("/moods", optionsController.getMoods);

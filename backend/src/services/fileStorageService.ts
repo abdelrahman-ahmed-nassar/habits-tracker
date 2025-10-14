@@ -12,7 +12,11 @@ const existsAsync = promisify(fs.exists);
 const fileLocks = new Map<string, Promise<void>>();
 
 // Base directory for data storage
-const dataDir = path.join(__dirname, "../../data");
+// Dynamically determine the path based on whether we're running from compiled JS or TS
+const isCompiledCode = __dirname.includes("dist");
+const dataDir = isCompiledCode
+  ? path.join(__dirname, "../../../../data") // For compiled: dist/backend/src/services -> backend/data
+  : path.join(__dirname, "../../data"); // For ts-node: src/services -> backend/data
 const backupDir = path.join(dataDir, "backups");
 
 /**
@@ -85,7 +89,9 @@ export const readData = async <T>(fileName: string): Promise<T> => {
     const filePath = path.join(dataDir, fileName);
 
     // Ensure file exists before reading
-    if (!(await existsAsync(filePath))) {
+    const fileExists = await existsAsync(filePath);
+
+    if (!fileExists) {
       throw new Error(`File does not exist: ${fileName}`);
     }
 

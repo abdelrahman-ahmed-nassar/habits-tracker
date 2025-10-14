@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import * as settingsController from "../controllers/settingsController";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/settings - Get current settings
 router.get("/", settingsController.getSettings);
