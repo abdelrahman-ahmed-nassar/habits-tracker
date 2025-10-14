@@ -83,22 +83,103 @@ interface WeeklyAnalyticsData {
 }
 
 const transformAnalyticsData = (
-  apiResponse: any
+  apiResponse: WeeklyRecordsApiResponse
 ): WeeklyAnalyticsData | null => {
-  if (!apiResponse?.dailyStats?.length) return null;
-  return {
-    startDate: apiResponse.startDate,
-    endDate: apiResponse.endDate,
-    dailyStats: apiResponse.dailyStats,
-    weeklyStats: {
-      overallSuccessRate: apiResponse.weeklyStats?.overallSuccessRate || 0,
-      totalCompletions: apiResponse.weeklyStats?.totalCompletions || 0,
-      mostProductiveDay: apiResponse.weeklyStats?.mostProductiveDay || null,
-      leastProductiveDay: apiResponse.weeklyStats?.leastProductiveDay || null,
-      mostProductiveHabit: apiResponse.weeklyStats?.mostProductiveHabit || null,
-    },
-    habitStats: apiResponse.habitStats || [],
-  };
+  if (!apiResponse || !apiResponse.startDate || !apiResponse.endDate) {
+    console.error("Missing required data in API response");
+    return null;
+  }
+
+  // Ensure dailyStats exists
+  if (!apiResponse.dailyStats || !Array.isArray(apiResponse.dailyStats)) {
+    console.error("Missing dailyStats array in API response");
+    return null;
+  }
+
+  try {
+    const start = new Date(apiResponse.startDate);
+
+    // Find the maximum total habits across all days to use as default
+    const maxTotalHabits = Math.max(
+      ...(apiResponse.dailyStats || []).map((stat) => stat?.totalHabits || 0),
+      0
+    );
+
+    // Ensure we have daily stats array with exactly 7 days
+    const dailyStats = Array.from({ length: 7 }, (_, i) => {
+      const date = format(addDays(start, i), "yyyy-MM-dd");
+      const existingStat = (apiResponse.dailyStats || []).find(
+        (stat) => stat?.date === date
+      );
+      const dayOfWeek = addDays(start, i).getDay();
+      const dayName = format(addDays(start, i), "EEEE");
+
+      if (existingStat) {
+        const totalHabits = existingStat.totalHabits || maxTotalHabits;
+        const completedHabits = existingStat.completedHabits || 0;
+        // Calculate completion rate as a percentage based on actual habits
+        const completionRate =
+          totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+
+        return {
+          ...existingStat,
+          date,
+          dayOfWeek,
+          dayName,
+          totalHabits,
+          completedHabits,
+          completionRate,
+        };
+      }
+
+      // Create a placeholder with the same total habits as other days
+      return {
+        date,
+        dayOfWeek,
+        dayName,
+        totalHabits: maxTotalHabits,
+        completedHabits: 0,
+        completionRate: 0,
+      };
+    });
+
+    // Calculate most and least productive days from dailyStats
+    const validDays = dailyStats.filter((day) => day.totalHabits > 0);
+    const sortedByCompletion = [...validDays].sort(
+      (a, b) => b.completionRate - a.completionRate
+    );
+    const mostProductiveDay = sortedByCompletion[0] || dailyStats[0];
+    const leastProductiveDay =
+      sortedByCompletion[sortedByCompletion.length - 1] || dailyStats[0];
+
+    // Calculate overall success rate from valid days only
+    const overallSuccessRate =
+      validDays.length > 0
+        ? validDays.reduce((sum, day) => sum + day.completionRate, 0) /
+          validDays.length
+        : 0;
+
+    return {
+      startDate: apiResponse.startDate,
+      endDate: apiResponse.endDate,
+      dailyStats,
+      weeklyStats: {
+        overallSuccessRate,
+        totalCompletions: dailyStats.reduce(
+          (sum, day) => sum + day.completedHabits,
+          0
+        ),
+        mostProductiveDay,
+        leastProductiveDay,
+        mostProductiveHabit:
+          apiResponse.weeklyStats?.mostProductiveHabit || null,
+      },
+      habitStats: apiResponse.habitStats || [],
+    };
+  } catch (error) {
+    console.error("Error transforming analytics data:", error);
+    return null;
+  }
 };
 
 interface Record {
@@ -688,24 +769,97 @@ const Weekly: React.FC = () => {
         const analytics = await analyticsService.getWeeklyAnalytics(
           formattedDate
         );
-        const transformedData = transformAnalyticsData(analytics);
 
-        if (!transformedData) {
-          console.error("Invalid analytics data structure:", analytics);
-          toast.error("Received invalid analytics data format");
+        // Check if analytics is undefined or null
+        if (!analytics) {
+          console.error("Analytics response is undefined or null");
           setWeeklyAnalyticsData(null);
           setLoading(false);
           return;
         }
 
+        // Ensure we have all 7 days in analytics
+        const startDate = currentWeekStart;
+        const allDays = Array.from({ length: 7 }, (_, i) => {
+          const date = format(addDays(startDate, i), "yyyy-MM-dd");
+          return date;
+        });
+
+        // Create complete daily stats with null checks
+        const dailyStats = analytics?.dailyStats || [];
+        const completeDailyStats = allDays.map((date) => {
+          const existingStat = dailyStats.find((stat) => stat?.date === date);
+          if (existingStat) return existingStat;
+
+          return {
+            date,
+            dayOfWeek: new Date(date).getDay(),
+            dayName: format(new Date(date), "EEEE"),
+            totalHabits: dailyStats[0]?.totalHabits || 0,
+            completedHabits: 0,
+            completionRate: 0,
+          };
+        });
+
+        // Create a complete analytics object with required fields
+        const completeAnalytics: WeeklyRecordsApiResponse = {
+          ...analytics, // Spread first to use as base
+          startDate:
+            analytics.startDate || format(currentWeekStart, "yyyy-MM-dd"),
+          endDate:
+            analytics.endDate ||
+            format(addDays(currentWeekStart, 6), "yyyy-MM-dd"),
+          weeklyStats: analytics.weeklyStats || {
+            overallSuccessRate: 0,
+            totalCompletions: 0,
+            mostProductiveDay: {
+              date: format(currentWeekStart, "yyyy-MM-dd"),
+              dayOfWeek: 0,
+              dayName: "",
+              totalHabits: 0,
+              completedHabits: 0,
+              completionRate: 0,
+            },
+            leastProductiveDay: {
+              date: format(currentWeekStart, "yyyy-MM-dd"),
+              dayOfWeek: 0,
+              dayName: "",
+              totalHabits: 0,
+              completedHabits: 0,
+              completionRate: 0,
+            },
+            mostProductiveHabit: {
+              habitId: "",
+              habitName: "",
+              activeDaysCount: 0,
+              completedDaysCount: 0,
+              successRate: 0,
+              completedDates: [],
+            },
+          },
+          habitStats: analytics.habitStats || [],
+          dailyStats: completeDailyStats,
+        };
+
+        // Try to transform the analytics data with error handling
+        let transformedData = null;
         try {
-          // Save the transformed analytics data for use with the WeeklyAnalytics component
-          setWeeklyAnalyticsData(transformedData);
+          transformedData = transformAnalyticsData(completeAnalytics);
         } catch (error) {
-          console.error("Error processing analytics data:", error);
-          toast.error("Could not process analytics data");
-          setWeeklyAnalyticsData(null);
+          console.error("Error transforming analytics data:", error);
         }
+
+        if (!transformedData) {
+          console.error("Invalid analytics data structure:", completeAnalytics);
+          toast.error("Received invalid analytics data format");
+          setWeeklyAnalyticsData(null);
+          // Continue with other parts of the UI instead of returning
+        } else {
+          // Only set the analytics data if transformation was successful
+          setWeeklyAnalyticsData(transformedData);
+        }
+
+        // No need for additional error handling here, already handled above
 
         // Use the analytics data directly from the API structure
         let bestDay = null;
@@ -854,7 +1008,7 @@ const Weekly: React.FC = () => {
   };
 
   const goToCurrentWeek = () => {
-    const today = startOfWeek(new Date());
+    const today = startOfWeek(new Date(), { weekStartsOn: 6 });
     setCurrentWeekStart(today);
     navigate(`/weekly`);
   };
@@ -1020,12 +1174,43 @@ const Weekly: React.FC = () => {
     )
       return [];
 
-    // Sort days by date to ensure chronological order
-    return [...weeklyRecords.records].sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return dateA.getTime() - dateB.getTime();
+    // Create array of all days in the week starting from Saturday (weekStartsOn: 6)
+    const allDays = Array.from({ length: 7 }, (_, i) => {
+      const date = addDays(currentWeekStart, i);
+      return format(date, "yyyy-MM-dd");
     });
+
+    // Map existing records by date for quick lookup
+    const recordsByDate = Object.fromEntries(
+      weeklyRecords.records.map((day) => [day.date, day])
+    );
+
+    // Get template for empty days using the first day's records
+    const templateRecords = weeklyRecords.records[0]?.records || [];
+
+    // Create records for all 7 days
+    const fullWeekRecords = allDays.map((date) => {
+      // Use existing record if available, otherwise create a new one
+      return (
+        recordsByDate[date] || {
+          date,
+          records: templateRecords.map((r) => ({
+            ...r,
+            date,
+            completed: false,
+            completedAt: "",
+            value: 0,
+          })),
+          stats: {
+            totalHabits: templateRecords.length,
+            completedHabits: 0,
+            completionRate: 0,
+          },
+        }
+      );
+    });
+
+    return fullWeekRecords;
   };
 
   if (loading) {

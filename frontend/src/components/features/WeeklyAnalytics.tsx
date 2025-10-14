@@ -1,5 +1,5 @@
 import React from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, addDays } from "date-fns";
 import {
   BarChart2,
   Calendar,
@@ -65,10 +65,31 @@ interface WeeklyAnalyticsProps {
 }
 
 const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
-  // Sort habit stats by success rate (descending)
-  const sortedHabitStats = [...analytics.habitStats].sort(
+  // Ensure habitStats exists and is an array before sorting
+  const sortedHabitStats = [...(analytics.habitStats || [])].sort(
     (a, b) => b.successRate - a.successRate
   );
+
+  // Ensure dailyStats exists and is an array before sorting
+  const sortedDailyStats = [...(analytics.dailyStats || [])].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+  // Ensure we have all 7 days and the startDate is valid
+  const startDate = analytics.startDate ? parseISO(analytics.startDate) : new Date();
+  const allDailyStats = Array.from({ length: 7 }, (_, i) => {
+    const date = format(addDays(startDate, i), "yyyy-MM-dd");
+    const existingStat = sortedDailyStats.find((stat) => stat && stat.date === date);
+    return (
+      existingStat || {
+        date,
+        dayOfWeek: i,
+        dayName: format(addDays(startDate, i), "EEEE"),
+        totalHabits: (analytics.dailyStats && analytics.dailyStats[0]?.totalHabits) || 0,
+        completedHabits: 0,
+        completionRate: 0,
+      }
+    );
+  });
 
   // Get top 5 performing habits
   const topHabits = sortedHabitStats.slice(0, 5);
@@ -80,8 +101,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Overall Success Rate */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">        {/* Overall Success Rate */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
             Overall Success Rate
@@ -89,7 +109,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
           <div className="flex items-center">
             <BarChart2 className="w-5 h-5 text-blue-500 mr-2" />
             <span className="text-2xl font-bold">
-              {analytics.weeklyStats.overallSuccessRate.toFixed(1)}%
+              {analytics.weeklyStats?.overallSuccessRate?.toFixed(1) || "0"}%
             </span>
           </div>
         </div>
@@ -102,7 +122,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
           <div className="flex items-center">
             <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
             <span className="text-2xl font-bold">
-              {analytics.weeklyStats.totalCompletions}
+              {analytics.weeklyStats?.totalCompletions || 0}
             </span>
           </div>
         </div>
@@ -116,17 +136,15 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
             <div className="flex items-center">
               <Calendar className="w-5 h-5 text-purple-500 mr-2" />
               <span className="text-xl font-bold">
-                {analytics.weeklyStats.mostProductiveDay.dayName}
+                {analytics.weeklyStats?.mostProductiveDay?.dayName || "N/A"}
               </span>
             </div>
             <div className="text-sm text-green-600 dark:text-green-400 mt-1 font-medium">
-              {analytics.weeklyStats.mostProductiveDay.completionRate}%
+              {analytics.weeklyStats?.mostProductiveDay?.completionRate || 0}%
               completion
             </div>
           </div>
-        </div>
-
-        {/* Best Performing Habit */}
+        </div>        {/* Best Performing Habit */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
             Best Habit
@@ -136,15 +154,15 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               <Award className="w-5 h-5 text-yellow-500 mr-2" />
               <span
                 className="text-lg font-bold truncate"
-                title={analytics.weeklyStats.mostProductiveHabit.habitName}
+                title={analytics.weeklyStats?.mostProductiveHabit?.habitName || "None"}
               >
-                {analytics.weeklyStats.mostProductiveHabit.habitName}
+                {analytics.weeklyStats?.mostProductiveHabit?.habitName || "None"}
               </span>
             </div>
             <div className="text-sm text-green-600 dark:text-green-400 mt-1 font-medium">
-              {(
-                analytics.weeklyStats.mostProductiveHabit.successRate * 100
-              ).toFixed(0)}
+              {analytics.weeklyStats?.mostProductiveHabit?.successRate
+                ? (analytics.weeklyStats.mostProductiveHabit.successRate * 100).toFixed(0)
+                : "0"}
               % success rate
             </div>
           </div>
@@ -157,7 +175,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
           Daily Completion Rates
         </h3>
         <div className="h-64 flex items-end justify-around gap-1">
-          {analytics.dailyStats.map((day) => {
+          {allDailyStats.map((day) => {
             // Determine color based on completion rate
             let barColor = "bg-blue-500";
             if (day.completionRate >= 80) barColor = "bg-green-500";
@@ -284,9 +302,8 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
           Weekly Insights
         </h3>
 
-        <div className="space-y-4">
-          {/* Most productive day insight */}
-          {analytics.weeklyStats.mostProductiveDay && (
+        <div className="space-y-4">          {/* Most productive day insight */}
+          {analytics.weeklyStats?.mostProductiveDay && (
             <div className="flex items-start space-x-3">
               <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2 flex-shrink-0">
                 <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
@@ -294,21 +311,21 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               <div>
                 <p className="font-medium">
                   Your most productive day was{" "}
-                  {analytics.weeklyStats.mostProductiveDay.dayName}
+                  {analytics.weeklyStats?.mostProductiveDay?.dayName || "Unknown"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   You completed{" "}
-                  {analytics.weeklyStats.mostProductiveDay.completedHabits} out
-                  of {analytics.weeklyStats.mostProductiveDay.totalHabits}{" "}
+                  {analytics.weeklyStats?.mostProductiveDay?.completedHabits || 0} out
+                  of {analytics.weeklyStats?.mostProductiveDay?.totalHabits || 0}{" "}
                   habits (
-                  {analytics.weeklyStats.mostProductiveDay.completionRate}%).
+                  {analytics.weeklyStats?.mostProductiveDay?.completionRate || 0}%).
                 </p>
               </div>
             </div>
           )}
 
           {/* Least productive day insight */}
-          {analytics.weeklyStats.leastProductiveDay && (
+          {analytics.weeklyStats?.leastProductiveDay && (
             <div className="flex items-start space-x-3">
               <div className="bg-red-100 dark:bg-red-900/30 rounded-full p-2 flex-shrink-0">
                 <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
@@ -316,39 +333,38 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               <div>
                 <p className="font-medium">
                   Your least productive day was{" "}
-                  {analytics.weeklyStats.leastProductiveDay.dayName}
+                  {analytics.weeklyStats?.leastProductiveDay?.dayName || "Unknown"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   You completed only{" "}
-                  {analytics.weeklyStats.leastProductiveDay.completedHabits} out
-                  of {analytics.weeklyStats.leastProductiveDay.totalHabits}{" "}
+                  {analytics.weeklyStats?.leastProductiveDay?.completedHabits || 0} out
+                  of {analytics.weeklyStats?.leastProductiveDay?.totalHabits || 0}{" "}
                   habits (
-                  {analytics.weeklyStats.leastProductiveDay.completionRate}%).
+                  {analytics.weeklyStats?.leastProductiveDay?.completionRate || 0}%).
                 </p>
               </div>
             </div>
-          )}
-
-          {/* Best habit insight */}
-          {analytics.weeklyStats.mostProductiveHabit && (
+          )}          {/* Best habit insight */}
+          {analytics.weeklyStats?.mostProductiveHabit && (
             <div className="flex items-start space-x-3">
               <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2 flex-shrink-0">
                 <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <p className="font-medium">
-                  "{analytics.weeklyStats.mostProductiveHabit.habitName}" was
+                  "{analytics.weeklyStats?.mostProductiveHabit?.habitName || 'Unknown'}" was
                   your most consistent habit
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   You completed it on{" "}
-                  {analytics.weeklyStats.mostProductiveHabit.completedDaysCount}{" "}
+                  {analytics.weeklyStats?.mostProductiveHabit?.completedDaysCount || 0}{" "}
                   out of{" "}
-                  {analytics.weeklyStats.mostProductiveHabit.activeDaysCount}{" "}
+                  {analytics.weeklyStats?.mostProductiveHabit?.activeDaysCount || 0}{" "}
                   active days (
-                  {(
-                    analytics.weeklyStats.mostProductiveHabit.successRate * 100
-                  ).toFixed(0)}
+                  {analytics.weeklyStats?.mostProductiveHabit?.successRate 
+                    ? (analytics.weeklyStats.mostProductiveHabit.successRate * 100).toFixed(0)
+                    : '0'
+                  }
                   %).
                 </p>
               </div>
@@ -364,9 +380,9 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               <p className="font-medium">Overall Performance</p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 This week, you completed{" "}
-                {analytics.weeklyStats.totalCompletions} habits with an overall
+                {analytics.weeklyStats?.totalCompletions || 0} habits with an overall
                 success rate of{" "}
-                {analytics.weeklyStats.overallSuccessRate.toFixed(1)}%.
+                {analytics.weeklyStats?.overallSuccessRate?.toFixed(1) || '0'}%.
               </p>
             </div>
           </div>

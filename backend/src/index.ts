@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -16,7 +16,7 @@ import templateRoutes from "./routes/templateRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 5002;
 
 // Middleware

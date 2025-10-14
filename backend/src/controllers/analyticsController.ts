@@ -10,6 +10,7 @@ import {
   getDayName,
   getMonthName,
 } from "../utils/analyticsUtils";
+import { format } from "date-fns";
 import { isValidDateFormat } from "../utils/validation";
 import {
   getDatesBetween,
@@ -482,13 +483,15 @@ export const getWeeklyAnalytics = asyncHandler(
     const cacheKey = `analytics:weekly:${startDate}`;
 
     const data = await analyticsCache.getOrSet(cacheKey, async () => {
-      // Calculate end date (start date + 6 days)
-      const start = parseDate(startDate);
+      // Calculate end date (start date + 6 days to get a full week)
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0); // Reset time components
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999); // Set to end of day
       const endDate = end.toISOString().split("T")[0];
 
-      // Get date range
+      // Get date range - should be exactly 7 days
       const dateRange = getDatesBetween(startDate, endDate);
 
       // Get habits and completions
@@ -496,128 +499,65 @@ export const getWeeklyAnalytics = asyncHandler(
       const activeHabits = habits.filter((h) => h.isActive);
       const allCompletions = await dataService.getCompletions();
 
-      // Filter completions within date range
-      const weeklyCompletions = allCompletions.filter(
-        (c) =>
-          c.date >= startDate &&
-          c.date <= endDate &&
-          activeHabits.some((h) => h.id === c.habitId)
-      );
-
       // Calculate daily completion rates
       const dailyStats = await Promise.all(
         dateRange.map(async (date) => {
-          // Only count habits created before or on this date
-          const relevantHabits = activeHabits.filter(
-            (h) =>
-              h.createdAt.split("T")[0] <= date &&
-              (h.repetition === "daily" ||
-                (h.repetition === "weekly" &&
-                  h.specificDays?.includes(parseDate(date).getDay())) ||
-                (h.repetition === "monthly" &&
-                  h.specificDays?.includes(parseDate(date).getDate())))
+          // Only count habits that should be done on this date
+          const relevantHabits = activeHabits.filter((h) => {
+            const habitDate = new Date(h.createdAt);
+            const currentDate = new Date(date);
+
+            // Only include habits created on or before this date
+            if (habitDate > currentDate) return false;
+
+            // Check repetition pattern
+            const dayOfWeek = currentDate.getDay();
+            const dayOfMonth = currentDate.getDate();
+
+            return (
+              h.repetition === "daily" ||
+              (h.repetition === "weekly" &&
+                h.specificDays?.includes(dayOfWeek)) ||
+              (h.repetition === "monthly" &&
+                h.specificDays?.includes(dayOfMonth))
+            );
+          });
+
+          // Get completions for this specific date
+          const dayCompletions = allCompletions.filter(
+            (c) =>
+              c.date === date && relevantHabits.some((h) => h.id === c.habitId)
           );
 
-          const dayCompletions = weeklyCompletions.filter(
-            (c) => c.date === date
-          );
+          // Count unique completed habits
           const completedHabitIds = new Set(
             dayCompletions.filter((c) => c.completed).map((c) => c.habitId)
           );
 
-          // Calculate completion rate for this date
+          const totalHabits = relevantHabits.length;
+          const completedHabits = completedHabitIds.size;
           const completionRate =
-            relevantHabits.length > 0
-              ? (relevantHabits.filter((h) => completedHabitIds.has(h.id))
-                  .length /
-                  relevantHabits.length) *
-                100
-              : 0;
+            totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
           return {
             date,
-            dayOfWeek: parseDate(date).getDay(),
-            dayName: getDayName(parseDate(date).getDay()),
-            totalHabits: relevantHabits.length,
-            completedHabits: completedHabitIds.size,
-            completionRate: Number(completionRate.toFixed(2)), // Round to 2 decimal places after percentage calculation
+            dayOfWeek: new Date(date).getDay(),
+            dayName: getDayName(new Date(date).getDay()),
+            totalHabits,
+            completedHabits,
+            completionRate: Number(completionRate.toFixed(2)),
           };
         })
       );
-
-      // Calculate per-habit stats
-      const habitStats = await Promise.all(
-        activeHabits.map(async (habit) => {
-          const habitCompletions = weeklyCompletions.filter(
-            (c) => c.habitId === habit.id
-          );
-
-          // Calculate active days for this habit in the week
-          const activeDays = dateRange.filter(
-            (date) =>
-              habit.createdAt.split("T")[0] <= date &&
-              (habit.repetition === "daily" ||
-                (habit.repetition === "weekly" &&
-                  habit.specificDays?.includes(parseDate(date).getDay())) ||
-                (habit.repetition === "monthly" &&
-                  habit.specificDays?.includes(parseDate(date).getDate())))
-          );
-
-          const completedDays = habitCompletions
-            .filter((c) => c.completed)
-            .map((c) => c.date);
-
-          return {
-            habitId: habit.id,
-            habitName: habit.name,
-            activeDaysCount: activeDays.length,
-            completedDaysCount: completedDays.length,
-            successRate:
-              activeDays.length > 0
-                ? completedDays.length / activeDays.length
-                : 0,
-            completedDates: completedDays,
-          };
-        })
-      );
-
-      // Calculate overall weekly stats
-      const weeklySuccessRate =
-        dailyStats.reduce((sum, day) => sum + (day.completionRate || 0), 0) /
-        dailyStats.length;
-
-      const mostProductiveDay = [...dailyStats].sort(
-        (a, b) => b.completionRate - a.completionRate
-      )[0];
-
-      const leastProductiveDay = [...dailyStats].sort(
-        (a, b) => a.completionRate - b.completionRate
-      )[0];
-
-      const mostProductiveHabit =
-        [...habitStats]
-          .filter((h) => h.activeDaysCount > 0)
-          .sort((a, b) => b.successRate - a.successRate)[0] || null;
 
       return {
         startDate,
         endDate,
         dailyStats,
-        weeklyStats: {
-          overallSuccessRate: weeklySuccessRate,
-          totalCompletions: weeklyCompletions.filter((c) => c.completed).length,
-          mostProductiveDay,
-          leastProductiveDay,
-          mostProductiveHabit,
-        },
-        habitStats: habitStats.sort((a, b) => b.successRate - a.successRate),
       };
     });
 
-    res.status(200).json({
-      success: true,
-      data,
-    });
+    res.json(data);
   }
 );
 
