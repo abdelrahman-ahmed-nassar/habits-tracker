@@ -12,11 +12,22 @@ const existsAsync = promisify(fs.exists);
 const fileLocks = new Map<string, Promise<void>>();
 
 // Base directory for data storage
-// Dynamically determine the path based on whether we're running from pkg executable or not
+// Dynamically determine the path based on the execution environment
 const isPkgExecutable = (process as any).pkg !== undefined;
-const dataDir = isPkgExecutable
-  ? path.join(path.dirname(process.execPath), "data") // For pkg executable: next to .exe file
-  : path.join(__dirname, "../../data"); // For development: src/services -> backend/data
+const isCompiledCode = __dirname.includes("dist");
+
+let dataDir: string;
+if (isPkgExecutable) {
+  // For pkg executable: next to .exe file
+  dataDir = path.join(path.dirname(process.execPath), "data");
+} else if (isCompiledCode) {
+  // For compiled JS running from dist: dist/backend/src/services -> backend/data
+  dataDir = path.join(__dirname, "../../../../data");
+} else {
+  // For ts-node dev mode: src/services -> backend/data
+  dataDir = path.join(__dirname, "../../data");
+}
+
 const backupDir = path.join(dataDir, "backups");
 
 console.log(`Data directory: ${dataDir}`);
