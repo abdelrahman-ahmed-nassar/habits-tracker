@@ -8,6 +8,7 @@ node_modules/
 
 
 backend/data/*
+backend/executable/*
 
 .env
 **/.env

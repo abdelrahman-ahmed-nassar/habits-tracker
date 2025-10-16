@@ -19,6 +19,6 @@
     "composite": true,
     "declaration": true
   },
-  "include": ["src/**/*", "../shared/**/*"],
+  "include": ["src/**/*", "../shared/**/*", "build"],
   "exclude": ["node_modules", "dist"]
 }

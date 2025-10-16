@@ -6,12 +6,13 @@
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
+    "build:all": "build-all.bat",
     "start:backend": "cd backend && npm run dev",
     "start:frontend": "cd frontend && npm run dev"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/habits-tracker.git"
+    "url": "git+https://github.com/abdelrahman-ahmed-nassar/habits-tracker.git"
   },
   "keywords": [
     "habits",
@@ -21,7 +22,7 @@
     "react",
     "typescript"
   ],
-  "author": "Your Name",
+  "author": "Abdelrahman Nassar",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0",

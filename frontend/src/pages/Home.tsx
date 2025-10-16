@@ -973,10 +973,10 @@ const Home: React.FC = () => {
             Best Streak
           </h3>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {dashboardData?.longestStreakHabit.bestStreak} days
+            {dashboardData?.longestStreakHabit?.bestStreak || 0} days
           </p>
           <p className="text-xs text-gray-400 text-center mt-1">
-            {dashboardData?.longestStreakHabit.habitName}
+            {dashboardData?.longestStreakHabit?.habitName || "N/A"}
           </p>
         </div>
       </div>
