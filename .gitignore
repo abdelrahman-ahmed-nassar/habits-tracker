@@ -8,3 +8,7 @@ node_modules/
 
 
 backend/data/*
+
+.env
+**/.env
+backend/.env
