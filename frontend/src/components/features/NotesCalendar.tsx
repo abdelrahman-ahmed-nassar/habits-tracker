@@ -54,18 +54,20 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
 
   const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
 
-  // Debug function for calendar data
-  const debugCalendarData = () => {
-    if (!calendarData) {
-      console.log("Calendar data is null or undefined");
-      return;
-    }
-  };
-
-  // Call debug function once
+  
+  // Debug calendar data whenever it changes
   React.useEffect(() => {
+    const debugCalendarData = () => {
+      if (!calendarData) {
+        console.log("Calendar data is null or undefined");
+        return;
+      }
+    };
+    // Call debug function once
     debugCalendarData();
   }, [calendarData]);
+
+
 
   const handleDayClick = (date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
@@ -244,7 +246,7 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
                         className="text-blue-600 dark:text-blue-400"
                       >
                         <Plus className="w-4 h-4 mr-1" />
-                        إضافة ملاحظة
+                        يوم جديد
                       </Button>
                     </div>
                   )}
@@ -265,13 +267,13 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               <span className="text-gray-600 dark:text-gray-400">
-                يحتوي على ملاحظة
+                يحتوي على تدوين يوميات
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded"></div>
               <span className="text-gray-600 dark:text-gray-400">
-                يوم الملاحظة
+                يوم التدوين
               </span>
             </div>
             <div className="flex items-center space-x-2">

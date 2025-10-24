@@ -110,8 +110,8 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
 
   const periodOptions = [
     { value: "7days", label: "آخر 7 أيام" },
-    { value: "30days", label: "آخر 30 يوم" },
-    { value: "90days", label: "آخر 90 يوم" },
+    { value: "30days", label: "آخر 30 يوماً" },
+    { value: "90days", label: "آخر 90 يوماً" },
     { value: "365days", label: "آخر سنة" },
   ];
 
@@ -173,11 +173,13 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
 
         {/* Period Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-600">الفترة:</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            الفترة:
+          </span>
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {periodOptions.map((option) => (
               <option key={option.value} value={option.value}>

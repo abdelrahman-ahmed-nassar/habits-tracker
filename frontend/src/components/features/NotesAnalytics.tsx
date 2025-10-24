@@ -748,7 +748,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              السلسلة {localAnalytics ? "الحالية" : "الأطول"} 
+              السلسلة {localAnalytics ? "الحالية" : "الأطول"}
             </div>
           </div>
         </Card>
@@ -956,7 +956,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                     (sum, trend) => sum + trend.count,
                     0
                   ) || 0}{" "}
-                  ملاحظة مع بيانات المزاج
+                  يوميات مع بيانات المزاج
                 </div>
               </div>
             )}
@@ -971,7 +971,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   height={300}
                 />
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  بناءً على {notes.filter((n) => n.mood).length} ملاحظة مع
+                  بناءً على {notes.filter((n) => n.mood).length} يوميات مع
                   بيانات المزاج (آخر 30 يوم)
                 </div>
               </div>
@@ -1048,7 +1048,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                           analyticsData.monthlyProductivityScores
                         ).reduce((sum, data) => sum + data.count, 0)
                       : 0}{" "}
-                    ملاحظة مع بيانات الإنتاجية
+                    يوميات مع بيانات الإنتاجية
                   </div>
                 </div>
               )}
@@ -1065,7 +1065,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   />
                   <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
                     بناءً على {notes.filter((n) => n.productivityLevel).length}{" "}
-                    ملاحظة مع بيانات الإنتاجية (آخر 30 يوم)
+                    يوميات مع بيانات الإنتاجية (آخر 30 يوم)
                   </div>
                 </div>
               )}
@@ -1130,7 +1130,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    لقد كتبت <strong>{analyticsData.totalNotes}</strong> ملاحظة
+                    لقد كتبت <strong>{analyticsData.totalNotes}</strong> يوميات
                     بمتوسط طول <strong>{analyticsData.avgContentLength}</strong>{" "}
                     حرفًا.
                   </p>
@@ -1151,7 +1151,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                     <p className="text-sm text-gray-700 dark:text-gray-300">
                       تتبع مزاجك في{" "}
                       <strong>{analyticsData.completionRate.mood}%</strong> من
-                      ملاحظاتك.
+                      يومياتك.
                     </p>
                   </div>
                 )}{" "}
@@ -1163,7 +1163,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                       <strong>
                         {analyticsData.completionRate.productivity}%
                       </strong>{" "}
-                      من ملاحظاتك.
+                      من يومياتك.
                     </p>
                   </div>
                 )}

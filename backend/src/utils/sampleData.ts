@@ -189,7 +189,7 @@ export const generateSampleNotes = (days: number = 10): DailyNote[] => {
       notes.push({
         id: uuidv4(),
         date: dateStr,
-        content: `ملاحظة عينة لتاريخ ${dateStr}. اليوم كان ${
+        content: `تدوينة عينة لتاريخ ${dateStr}. اليوم كان ${
           Math.random() > 0.5 ? "مُنتج" : "صعب"
         }.`,
         createdAt: now,

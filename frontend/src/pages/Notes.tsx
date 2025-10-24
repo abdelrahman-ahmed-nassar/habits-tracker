@@ -141,11 +141,11 @@ const Notes: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            اليوميات والمذكرات
+            اليوميات
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {viewMode === "calendar" && "عرض ملاحظاتك على تقويم شهري"}
-            {viewMode === "list" && "تصفح جميع ملاحظاتك بترتيب زمني"}
+            {viewMode === "calendar" && "عرض يومياتك على تقويم شهري"}
+            {viewMode === "list" && "تصفح جميع يومياتك بترتيب زمني"}
             {viewMode === "analytics" && "تحليل أنماط الكتابة والرؤى الخاصة بك"}
           </p>
         </div>

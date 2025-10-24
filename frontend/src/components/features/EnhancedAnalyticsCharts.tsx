@@ -110,7 +110,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
     },
     yaxis: {
       title: {
-        text: "Success Rate (%)",
+        text: "معدل النجاح (%)",
       },
       max: 100,
       labels: {
@@ -134,7 +134,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
 
   const dayOfWeekSeries = [
     {
-      name: "Success Rate",
+      name: "معدل النجاح",
       data: analytics.dayOfWeekStats.map((day) => day.successRate * 100),
     },
   ];
@@ -156,7 +156,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
     yaxis: [
       {
         title: {
-          text: "Success Rate (%)",
+          text: "معدل النجاح (%)",
           style: {
             color: "#3b82f6",
           },
@@ -171,7 +171,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       {
         opposite: true,
         title: {
-          text: "Completions",
+          text: "الإنجازات",
           style: {
             color: "#10b981",
           },
@@ -197,12 +197,12 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
 
   const monthlyTrendsSeries = [
     {
-      name: "Success Rate (%)",
+      name: "معدل النجاح (%)",
       type: "line" as const,
       data: analytics.monthlyTrends.map((trend) => trend.successRate * 100),
     },
     {
-      name: "Total Completions",
+      name: "إجمالي الإنجازات",
       type: "column" as const,
       yAxisIndex: 1,
       data: analytics.monthlyTrends.map((trend) => trend.completions),
@@ -225,7 +225,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
     },
     xaxis: {
       title: {
-        text: "Streak Length (Days)",
+        text: "طول السلسلة (أيام)",
       },
     },
     yaxis: {
@@ -254,7 +254,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
 
   const streakSeries = [
     {
-      name: "Streak Length",
+      name: "طول السلسلة",
       data: analytics.topStreaks.map((streak) => streak.length),
     },
   ];
@@ -287,7 +287,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       },
     },
     colors: ["#06b6d4"],
-    labels: ["Goal Progress"],
+    labels: ["تقدم الهدف"],
   };
 
   const counterSeries = analytics.counterStats
@@ -300,21 +300,21 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="w-5 h-5 text-blue-500" />
-          <h3 className="text-lg font-semibold">Weekly Performance Pattern</h3>
+          <h3 className="text-lg font-semibold">نمط الأداء الأسبوعي</h3>
         </div>
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Your success rate across different days of the week
+            معدل نجاحك عبر أيام الأسبوع المختلفة
           </p>
           {analytics.bestDay && analytics.worstDay && (
             <div className="flex gap-4 mt-2 text-sm">
               <div className="flex items-center gap-1 text-green-600">
                 <TrendingUp className="w-4 h-4" />
-                Best: {analytics.bestDay.dayName}
+                الأفضل: {analytics.bestDay.dayName}
               </div>
               <div className="flex items-center gap-1 text-red-600">
                 <TrendingDown className="w-4 h-4" />
-                Worst: {analytics.worstDay.dayName}
+                الأسوأ: {analytics.worstDay.dayName}
               </div>
             </div>
           )}
@@ -331,10 +331,10 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <BarChart3 className="w-5 h-5 text-blue-500" />
-          <h3 className="text-lg font-semibold">Monthly Trends</h3>
+          <h3 className="text-lg font-semibold">الاتجاهات الشهرية</h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Track your habit consistency and completion count over the months
+          تتبع ثبات عادتك وعدد الإنجازات على مدار الأشهر
         </p>
         <ReactApexChart
           options={monthlyTrendsOptions}
@@ -347,9 +347,9 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Streaks */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Top Streaks</h3>
+          <h3 className="text-lg font-semibold mb-4">أفضل السلاسل</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Your longest consecutive completion periods
+            أطول فترات الإنجاز المتتالية
           </p>
           {analytics.topStreaks.length > 0 ? (
             <ReactApexChart
@@ -360,7 +360,7 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
             />
           ) : (
             <div className="text-center py-8 text-gray-500">
-              No streaks recorded yet
+              لم يتم تسجيل سلاسل بعد
             </div>
           )}
         </Card>
@@ -368,9 +368,9 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
         {/* Counter Progress (if applicable) */}
         {analytics.counterStats && (
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Goal Progress</h3>
+            <h3 className="text-lg font-semibold mb-4">تقدم الهدف</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Progress towards your counter goal
+              التقدم نحو هدف العداد الخاص بك
             </p>
             <ReactApexChart
               options={counterProgressOptions}
@@ -383,8 +383,8 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
                 {analytics.counterStats.totalValue} /{" "}
                 {analytics.counterStats.goalValue}
               </div>
-              <div className="text-sm text-gray-600">
-                {(analytics.counterStats.progress * 100).toFixed(1)}% Complete
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {(analytics.counterStats.progress * 100).toFixed(1)}% مكتمل
               </div>
             </div>
           </Card>
@@ -393,36 +393,46 @@ const EnhancedAnalyticsCharts: React.FC<EnhancedAnalyticsChartsProps> = ({
         {/* Summary Stats (if no counter stats) */}
         {!analytics.counterStats && (
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Summary Statistics</h3>
+            <h3 className="text-lg font-semibold mb-4">إحصائيات ملخصة</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Days Tracked:</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  إجمالي الأيام المتعقبة:
+                </span>
                 <span className="font-semibold">
                   {analytics.basicStats.totalDays}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Days Completed:</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  الأيام المكتملة:
+                </span>
                 <span className="font-semibold text-green-600">
                   {analytics.basicStats.completedDays}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Overall Success Rate:</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  معدل النجاح الإجمالي:
+                </span>
                 <span className="font-semibold text-blue-600">
                   {(analytics.basicStats.successRate * 100).toFixed(1)}%
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Current Streak:</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  السلسلة الحالية:
+                </span>
                 <span className="font-semibold text-orange-600">
-                  {analytics.basicStats.currentStreak} days
+                  {analytics.basicStats.currentStreak} يوم
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Best Streak:</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  أفضل سلسلة:
+                </span>
                 <span className="font-semibold text-purple-600">
-                  {analytics.basicStats.bestStreak} days
+                  {analytics.basicStats.bestStreak} يوم
                 </span>
               </div>
             </div>

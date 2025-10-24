@@ -368,10 +368,10 @@ const Yearly: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Yearly View
+            العرض السنوي
           </h1>
           <Button onClick={goToCurrentYear} variant="secondary" size="sm">
-            Current Year
+            السنة الحالية
           </Button>
         </div>
 
@@ -636,7 +636,7 @@ const Yearly: React.FC = () => {
 
           {/* Quarter Analytics */}
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-            Quarterly Breakdown
+            تحليل الأرباع السنوية
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {yearlyData.quarters.map((quarter) => (

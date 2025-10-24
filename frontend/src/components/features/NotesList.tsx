@@ -284,7 +284,7 @@ const NotesList: React.FC<NotesListProps> = ({
       {/* Notes Count */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          عرض {filteredAndSortedNotes.length} من {notes.length} ملاحظة
+          عرض {filteredAndSortedNotes.length} من {notes.length} تدوين يوميات
         </div>
         {(searchTerm || filterMood || filterProductivity) && (
           <Button
@@ -314,7 +314,7 @@ const NotesList: React.FC<NotesListProps> = ({
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 {notes.length === 0
-                  ? "ابدأ الكتابة لرؤية ملاحظاتك هنا"
+                  ? "ابدأ الكتابة لرؤية يومياتك هنا"
                   : "جرب تعديل معايير البحث أو الفلتر"}
               </p>
             </div>

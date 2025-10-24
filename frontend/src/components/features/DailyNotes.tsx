@@ -134,7 +134,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
   const handleSave = async () => {
     if (!content.trim()) {
-      toast.warning("الرجاء إدخال محتوى للملاحظة");
+      toast.warning("الرجاء إدخال محتوى للتدوينة");
       return;
     }
 
@@ -148,7 +148,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(updatedNote);
-        toast.success("تم تحديث الملاحظة بنجاح");
+        toast.success("تم تحديث التدوينة بنجاح");
       } else {
         // Create new note
         const newNote = await NotesService.createNote({
@@ -158,13 +158,13 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(newNote);
-        toast.success("تم إنشاء الملاحظة بنجاح");
+        toast.success("تم إنشاء التدوينة بنجاح");
       }
       setIsEditing(false);
       onNoteUpdate();
     } catch (error) {
       console.error("Error saving note:", error);
-      toast.error("فشل حفظ الملاحظة");
+      toast.error("فشل حفظ التدوينة");
     } finally {
       setLoading(false);
     }
@@ -173,7 +173,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const handleDelete = async () => {
     if (!note) return;
 
-    if (!confirm("هل أنت متأكد من حذف هذه الملاحظة؟")) return;
+    if (!confirm("هل أنت متأكد من حذف هذه التدوينة؟")) return;
 
     setLoading(true);
     try {
@@ -183,11 +183,11 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
       setMood("");
       setProductivityLevel("");
       setIsEditing(false);
-      toast.success("تم حذف الملاحظة بنجاح");
+      toast.success("تم حذف التدوينة بنجاح");
       onNoteUpdate();
     } catch (error) {
       console.error("Error deleting note:", error);
-      toast.error("فشل حذف الملاحظة");
+      toast.error("فشل حذف التدوينة");
     } finally {
       setLoading(false);
     }
@@ -224,7 +224,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
         <CardHeader
           title={
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">الملاحظة اليومية</h2>
+              <h2 className="text-xl font-semibold">التدوينه اليوميه</h2>
               <div className="flex items-center space-x-2">
                 {note && !isEditing && (
                   <>
@@ -254,7 +254,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                     className="mr-4"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    إضافة ملاحظة
+                    يوم جديد
                   </Button>
                 )}
               </div>
@@ -270,7 +270,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    محتوى الملاحظة
+                    محتوى التدوينة
                   </label>
                   <div className="relative">
                     <Button
@@ -382,7 +382,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   disabled={loading || !content.trim()}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? "جارٍ الحفظ..." : "حفظ الملاحظة"}
+                  {loading ? "جارٍ الحفظ..." : "حفظ التدوينة"}
                 </Button>
               </div>
             </div>
@@ -421,11 +421,11 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                لا توجد ملاحظة لهذا اليوم بعد.
+                لا توجد تدوينه لهذا اليوم بعد.
               </p>
               <Button onClick={handleCreate} variant="primary">
                 <Plus className="w-4 h-4 mr-2" />
-                إنشاء ملاحظة
+                يوم جديد
               </Button>
             </div>
           )}

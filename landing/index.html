@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <title>مداوم - تطبيق تتبع العادات | أدومها وإن قل</title>
+    <meta
+      name="description"
+      content="مداوم - تطبيق مجاني لتتبع عاداتك اليومية والمواظبة عليها. أحب الأعمال إلى الله أدومها وإن قل. تحليلات شاملة، واجهة محفزة، وبياناتك ملكك."
+    />
+    <meta
+      name="keywords"
+      content="تتبع العادات, عادات يومية, مداوم, إنتاجية, تطوير الذات, تحسين العادات, تتبع الأهداف, يوميات, عادات إسلامية"
+    />
+    <meta name="author" content="عبدالرحمن نصار" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mudawim.app/" />
+    <meta property="og:title" content="مداوم - تطبيق تتبع العادات" />
+    <meta
+      property="og:description"
+      content="تطبيق مجاني لتتبع عاداتك اليومية مع تحليلات شاملة وبياناتك ملكك"
+    />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://mudawim.app/" />
+    <meta property="twitter:title" content="مداوم - تطبيق تتبع العادات" />
+    <meta
+      property="twitter:description"
+      content="تطبيق مجاني لتتبع عاداتك اليومية مع تحليلات شاملة وبياناتك ملكك"
+    />
+    <meta property="twitter:image" content="/og-image.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-container">
+            <div class="logo">مداوم</div>
+          </div>
+
+          <nav>
+            <ul class="nav-links" id="navLinks">
+              <li><a href="#home">الرئيسية</a></li>
+              <li><a href="#features">المميزات</a></li>
+              <li><a href="#screenshots">اللقطات</a></li>
+              <li><a href="#download">التحميل</a></li>
+              <li><a href="#contact">تواصل</a></li>
+            </ul>
+          </nav>
+
+          <button
+            class="mobile-menu-btn"
+            id="mobileMenuBtn"
+            aria-label="القائمة"
+          >
+            <i data-lucide="menu"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="container">
+        <h1 class="fade-in-up">واظب على عاداتك مع مداوم</h1>
+        <p class="hadith">"أَحَبُّ الأعمالِ إلى اللهِ أدْومُها و إن قَلَّ"</p>
+        <p class="hadith-source">حديث شريف</p>
+        <p class="fade-in-up">
+          تطبيق مجاني ومفتوح المصدر لتتبع عاداتك اليومية والمواظبة عليها، مع
+          تحليلات شاملة وواجهة محفزة تساعدك على الاستمرار
+        </p>
+
+        <!-- Download Section -->
+        <div class="download-section fade-in-up" id="download">
+          <h2 class="download-title">حمّل التطبيق الآن</h2>
+          <div class="download-buttons">
+            <a
+              href="/downloads/modawim-windows.zip"
+              class="download-btn"
+              download
+            >
+              <i data-lucide="monitor"></i>
+              <span>Windows</span>
+            </a>
+            <a
+              href="/downloads/modawim-macos.zip"
+              class="download-btn"
+              download
+            >
+              <i data-lucide="laptop"></i>
+              <span>macOS</span>
+            </a>
+            <a
+              href="/downloads/modawim-linux.zip"
+              class="download-btn"
+              download
+            >
+              <i data-lucide="terminal"></i>
+              <span>Linux</span>
+            </a>
+          </div>
+
+          <div class="requirements">
+            <button class="requirements-toggle" id="requirementsToggle">
+              <span>طريقة التشغيل</span>
+              <i data-lucide="chevron-down" class="toggle-icon"></i>
+            </button>
+            <div class="requirements-content" id="requirementsContent">
+              <ul class="requirements-list">
+                <li>
+                  <strong>Node.js</strong> - قم بتثبيت Node.js من
+                  <a
+                    href="https://nodejs.org"
+                    target="_blank"
+                    style="
+                      color: var(--primary-600);
+                      text-decoration: underline;
+                      display: inline;
+                    "
+                    >nodejs.org</a
+                  >
+                </li>
+                <li>قم بفك ضغط الملف المحمّل في المكان الذي تريده</li>
+                <li>
+                  افتح الملف التنفيذي (<code>.exe</code> لـ Windows) وسيعمل
+                  التطبيق مباشرة
+                </li>
+                <li>التطبيق يعمل بشكل محلي على جهازك - بياناتك آمنة تماماً</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="container">
+        <h2 class="section-title">مميزات التطبيق</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>تتبع ذكي للعادات</h3>
+            <p>
+              واجهة محفزة وجميلة لتتبع عاداتك اليومية، مع إمكانية وضع نية وخطاب
+              تحفيزي لكل عادة يذكرك بهدفك ويحفزك على الاستمرار
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎖️</div>
+            <h3>أهداف قابلة للقياس</h3>
+            <p>
+              ضع أهدافاً واضحة لكل عادة - سواء سلسلة استمرار متواصلة أو عدد معين
+              من المرات، وتابع تقدمك بشكل مرئي وسهل
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>تصنيف وتنظيم</h3>
+            <p>
+              صنّف عاداتك إلى فئات (عبادات، صحة، عمل، تعلّم) وتتبع كل فئة على
+              حدة للحصول على رؤية شاملة لحياتك
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>عرض متعدد الأنماط</h3>
+            <p>
+              اطلع على عاداتك بطرق متعددة: يومي، أسبوعي، شهري، أو سنوي. مع أنماط
+              عرض متنوعة مثل التقويم، البطاقات، وكانبان
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>تحليلات شاملة</h3>
+            <p>
+              احصل على تحليلات متكاملة ومفصلة عن تقدمك مع رسوم بيانية واضحة
+              تساعدك على فهم نمط سلوكك وتحسين أدائك
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>يوميات وتتبع المزاج</h3>
+            <p>
+              دوّن يومياتك وتابع مستوى إنتاجيتك ومزاجك اليومي، مع تحليلات تربط
+              بين مزاجك وعاداتك لفهم أعمق
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>بياناتك ملكك</h3>
+            <p>
+              جميع بياناتك محفوظة محلياً على جهازك بصيغة JSON يمكنك الوصول إليها
+              والتحكم فيها بحرية كاملة - لا سحابة، لا خوادم خارجية
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🌙</div>
+            <h3>الوضع الليلي</h3>
+            <p>
+              واجهة مريحة للعين مع دعم الوضع الليلي، لتجربة استخدام مريحة في أي
+              وقت من النهار أو الليل
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>تصميم عربي أصيل</h3>
+            <p>
+              مصمم خصيصاً للمستخدم العربي بواجهة RTL كاملة وخط Cairo الجميل،
+              لتجربة استخدام طبيعية ومريحة
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots" id="screenshots">
+      <div class="container">
+        <h2 class="section-title">لقطات من التطبيق</h2>
+        <div class="screenshots-grid">
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-dashboard.png"
+              alt="لوحة التحكم الرئيسية"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">لوحة التحكم الرئيسية</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-daily.png"
+              alt="العرض اليومي"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">العرض اليومي</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-weekly.png"
+              alt="العرض الأسبوعي"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">العرض الأسبوعي</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-monthly.png"
+              alt="العرض الشهري"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">العرض الشهري</div>
+          </div>
+
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-yearly.png"
+              alt="العرض السنوي"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">العرض السنوي</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-motivation.png"
+              alt="رسائل تحفيزية"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">رسائل تحفيزية</div>
+          </div>
+
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-notes.png"
+              alt="كتابة اليوميات"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">كتابة اليوميات</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-journal-tracking.png"
+              alt="تتبع اليوميات"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">تتبع اليوميات</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-analytics-journal.png"
+              alt="تحليلات اليوميات"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">تحليلات اليوميات</div>
+          </div>
+          <div class="screenshot-card">
+            <img
+              src="images/screenshot-settings.png"
+              alt="تحكم كامل"
+              class="screenshot-img"
+              loading="lazy"
+            />
+            <div class="screenshot-title">تحكم كامل</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Section -->
+    <section class="why-section">
+      <div class="container">
+        <div class="why-content">
+          <h2 class="section-title">لماذا مداوم؟</h2>
+          <div class="why-card">
+            <h3>مجاني ومفتوح المصدر للأبد</h3>
+            <ul class="why-list">
+              <li>
+                <strong>خصوصية كاملة:</strong> بياناتك لا تغادر جهازك أبداً
+              </li>
+              <li>
+                <strong>لا اشتراكات:</strong> جميع المميزات متاحة مجاناً بدون
+                قيود
+              </li>
+              <li>
+                <strong>تحديثات مستمرة:</strong> نعمل باستمرار على تحسين التطبيق
+                وإضافة مميزات جديدة
+              </li>
+              <li>
+                <strong>مفتوح المصدر:</strong> الكود متاح على GitHub للجميع
+              </li>
+              <li>
+                <strong>مصمم بحب:</strong> صُنع خصيصاً للمستخدم العربي المسلم
+                الذي يسعى للمواظبة على عاداته
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h4>مداوم</h4>
+            <p>
+              تطبيق مجاني ومفتوح المصدر لتتبع العادات اليومية والمواظبة عليها
+            </p>
+            <p style="color: var(--primary-400); font-style: italic">
+              "أحب الأعمال إلى الله أدومها وإن قل"
+            </p>
+          </div>
+
+          <div class="footer-section">
+            <h4>روابط سريعة</h4>
+            <a href="#download">تحميل التطبيق</a>
+            <a
+              href="https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker"
+              target="_blank"
+              >المصدر على GitHub</a
+            >
+            <a href="#features">المميزات</a>
+          </div>
+
+          <div class="footer-section">
+            <h4>تواصل معنا</h4>
+            <p>عبدالرحمن نصار</p>
+            <a href="mailto:abdelrahman.ahmed.nassar@gmail.com"
+              >abdelrahman.ahmed.nassar@gmail.com</a
+            >
+            <div class="social-links">
+              <a
+                href="https://github.com/abdelrahman-ahmed-nassar"
+                target="_blank"
+                class="social-link"
+                title="GitHub"
+              >
+                <i data-lucide="github"></i>
+              </a>
+              <a
+                href="https://wa.me/201003685977"
+                target="_blank"
+                class="social-link"
+                title="WhatsApp"
+              >
+                <i data-lucide="message-circle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            © 2025 مداوم. جميع الحقوق محفوظة. | صُنع بـ ❤️ بواسطة عبدالرحمن أحمد
+            نصار
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+      lucide.createIcons();
+    </script>
+
+    <!-- Main Script -->
+    <script src="script.js"></script>
+  </body>
+</html>
