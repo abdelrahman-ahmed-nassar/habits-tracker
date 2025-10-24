@@ -1,117 +1,258 @@
-# Habits Tracker
+# مداوم - Habits Tracker
 
-A local application for tracking personal habits and analyzing your progress over time.
+تطبيق محلي لتتبع العادات الشخصية وتحليل تقدمك عبر الزمن، مستوحى من حديث الرسول ﷺ: "أحب الأعمال إلى الله أدومها وإن قل"
 
-## Project Structure
+A local desktop application for tracking personal habits and analyzing your progress over time, inspired by the Prophet's ﷺ hadith: "The most beloved deeds to Allah are those done consistently, even if small."
 
-The project is divided into three main parts:
+## 🌟 Features
 
-- Backend (Node.js with Express and TypeScript)
-- Frontend (React with TypeScript)
-- Shared types (TypeScript interfaces shared between frontend and backend)
+- ✅ Create, manage, and track daily habits
+- 📊 Comprehensive analytics (daily, weekly, monthly, yearly views)
+- 📝 Journal entries with mood and productivity tracking
+- 🎯 Motivation quotes and reminders
+- 🌙 Dark mode support
+- 🔒 Complete privacy - all data stored locally
+- 🎨 Beautiful Arabic-first UI with Cairo font
+- 💾 Automatic backups
 
-## Getting Started
+## 🚀 Quick Start for Users
+
+### Download
+
+Visit the landing page: **https://abdelrahman-ahmed-nassar.github.io/modawim-habits-tracker/**
+
+Download the appropriate version:
+
+- Windows (`.exe`)
+- macOS
+- Linux
+
+### Run
+
+1. Extract the ZIP file
+2. Run the executable:
+   - **Windows**: Double-click `habits-tracker-backend.exe`
+   - **macOS/Linux**: Run `./habits-tracker-backend` in terminal
+3. Open http://localhost:3000 in your browser
+
+That's it! Your data stays on your computer.
+
+## 🛠️ Development Setup
 
 ### Prerequisites
 
-- Node.js (v16+ recommended)
-- npm or yarn
+- Node.js (v18+)
+- pnpm (recommended) or npm
+- Git
 
 ### Installation
 
-1. Clone the repository
-2. Install backend dependencies:
-
 ```bash
-cd backend
-npm install
-```
+# Clone the repository
+git clone https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker.git
+cd modawim-habits-tracker
 
-3. Install frontend dependencies:
-
-```bash
+# Install dependencies
 cd frontend
-npm install
+pnpm install
+
+cd ../backend
+pnpm install
 ```
 
-### Running the Application
+### Running in Development
 
 #### Backend
 
 ```bash
 cd backend
-npm run dev
+pnpm run dev
 ```
 
-The server will run on port 5000 by default.
+Server runs on http://localhost:5000
 
 #### Frontend
 
 ```bash
 cd frontend
-npm start
+pnpm run dev
 ```
 
-The frontend development server will run on port 3000 by default.
+App runs on http://localhost:5173
 
-## Features
+## 📦 Building for Production
 
-- Create, read, update, and delete habits
-- Track habit completion over time
-- View analytics about habit consistency
-- Add daily notes alongside habit tracking
-- Local storage using JSON files (no database required)
+### Build Everything
 
-## API Endpoints
+```bash
+# From project root
+pnpm run build:all
+```
+
+This will:
+
+1. Build React frontend
+2. Build TypeScript backend
+3. Create executables for Windows, macOS, and Linux
+
+Output: `backend/executable/`
+
+## 🚀 Deployment
+
+### Deploy to GitHub Releases
+
+```bash
+# 1. Build executables
+pnpm run build:all
+
+# 2. Create GitHub Release
+deploy-release.bat
+
+# 3. Enter version (e.g., v1.0.0)
+```
+
+This uploads executables to GitHub Releases automatically.
+
+### Deploy Landing Page to GitHub Pages
+
+```bash
+# From project root
+cd landing
+
+# Deploy to gh-pages branch
+git add .
+git commit -m "Update landing page"
+git subtree push --prefix landing origin gh-pages
+```
+
+Or set up GitHub Actions for automatic deployment (see `.github/workflows/deploy.yml`)
+
+## 📁 Project Structure
+
+```
+modawim-habits-tracker/
+├── frontend/          # React app (Vite + TypeScript)
+├── backend/           # Express API (TypeScript)
+├── shared/            # Shared TypeScript types
+├── landing/           # Landing page (static HTML)
+├── build-all.bat      # Build script
+└── deploy-release.bat # GitHub Release deployment
+```
+
+## 🔌 API Endpoints
+
+### Habits
 
 - `GET /api/habits` - Get all habits
 - `POST /api/habits` - Create new habit
 - `PUT /api/habits/:id` - Update habit
 - `DELETE /api/habits/:id` - Delete habit
-- `GET /api/habits/:id/records` - Get habit completion records
-- `POST /api/habits/:id/complete` - Mark habit as complete for a date
-- `POST /api/habits/:id/archive` - Archive a habit (make it inactive)
-- `POST /api/habits/:id/restore` - Restore a habit (make it active)
-- `GET /api/analytics` - Get analytics data
-- `GET/POST /api/notes` - Handle daily notes
-- `POST /api/backup` - Create a backup of all data
+- `POST /api/habits/:id/archive` - Archive a habit
+- `POST /api/habits/:id/restore` - Restore a habit
 
-## Backup System
+### Completions
 
-The application includes a backup system that allows you to create backups of your data through the API. Backups are stored in the `data/backups` directory with timestamps in the filename.
+- `GET /api/habits/:id/records` - Get completion records
+- `POST /api/completions` - Mark habit complete
+- `DELETE /api/completions/:id` - Remove completion
 
-### Creating a Backup
+### Notes & Journal
 
-To create a backup, send a POST request to `/api/backup`. The response will include:
+- `GET /api/notes` - Get all notes
+- `POST /api/notes` - Create note
+- `PUT /api/notes/:id` - Update note
+- `DELETE /api/notes/:id` - Delete note
 
-- Success status
-- Timestamp of the backup
-- Number of habits, completions, and notes backed up
-- The path where the backup was saved
+### Analytics
 
-Example response:
+- `GET /api/analytics` - Get habit analytics
+- `GET /api/analytics/notes` - Get journal analytics
 
-```json
-{
-  "success": true,
-  "message": "Backup created successfully",
-  "data": {
-    "timestamp": "2024-03-14T12:00:00.000Z",
-    "habits": 5,
-    "completions": 120,
-    "notes": 30,
-    "backupPath": "data/backups/backup-2024-03-14.json"
-  }
-}
+### Settings & Backup
+
+- `GET /api/settings` - Get app settings
+- `PUT /api/settings` - Update settings
+- `POST /api/backup` - Create data backup
+
+See `backend/API-ROUTES.md` for complete documentation.
+
+## 💾 Data Storage
+
+All data is stored locally in JSON files:
+
+```
+backend/data/
+├── habits.json          # Habit definitions
+├── completions.json     # Completion records
+├── notes.json           # Journal entries
+├── moods.json           # Mood options
+├── productivity_levels.json
+├── tags.json
+├── settings.json
+└── backups/             # Automatic backups
 ```
 
-### Backup Settings
+### Backup System
 
-You can configure backup settings through the settings API:
+Automatic backups are created based on settings:
 
-- Enable/disable automatic backups
-- Set backup frequency (daily, weekly, monthly)
+- Daily, weekly, or monthly backups
+- Manual backup via API: `POST /api/backup`
+- Backups stored in `data/backups/`
 
-## License
+## 🌐 Landing Page
 
-MIT
+The landing page is hosted on GitHub Pages: https://abdelrahman-ahmed-nassar.github.io/modawim-habits-tracker/
+
+### Deploying Landing Page Updates
+
+**Option 1: Manual Push**
+
+```bash
+cd landing
+git add .
+git commit -m "Update landing page"
+git push
+git subtree push --prefix landing origin gh-pages
+```
+
+**Option 2: GitHub Actions (Automatic)**
+Push to main branch and GitHub Actions will auto-deploy to gh-pages.
+
+## 📚 Documentation
+
+- `PRODUCTION.md` - Production build guide
+- `DEPLOYMENT-GITHUB.md` - GitHub Releases deployment
+- `BUILD.md` - Build system details
+- `USER-GUIDE.md` - End user guide
+- `backend/API-ROUTES.md` - Complete API documentation
+- `landing/DEPLOYMENT.md` - Landing page deployment (Netlify/GitHub Pages)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+## 👨‍💻 Author
+
+**عبدالرحمن أحمد نصار** (Abdelrahman Ahmed Nassar)
+
+- Email: abdelrahman.ahmed.nassar@gmail.com
+- GitHub: [@abdelrahman-ahmed-nassar](https://github.com/abdelrahman-ahmed-nassar)
+- WhatsApp: +201003685977
+
+## 🙏 Acknowledgments
+
+Inspired by the hadith: "أحب الأعمال إلى الله أدومها وإن قل"
+"The most beloved deeds to Allah are those done consistently, even if small."
+
+---
+
+**مداوم - للمداومة على العادات الصالحة** 🌟

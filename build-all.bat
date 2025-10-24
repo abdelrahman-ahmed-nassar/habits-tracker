@@ -18,13 +18,20 @@ echo.
 
 REM Step 2: Rename dist to build
 echo [2/6] Renaming dist to build...
-if exist build rmdir /s /q build
+if exist build (
+    rmdir /s /q build
+    timeout /t 1 /nobreak >nul
+)
 if exist dist (
-    move dist build >nul
-    if %errorlevel% neq 0 (
-        echo ERROR: Failed to rename dist to build!
-        pause
-        exit /b %errorlevel%
+    ren dist build 2>nul
+    if not exist build (
+        echo   Rename failed, trying copy instead...
+        robocopy dist build /E /MOVE /NFL /NDL /NJH /NJS
+        if %errorlevel% geq 8 (
+            echo ERROR: Failed to rename/move dist to build!
+            pause
+            exit /b 1
+        )
     )
     echo ✓ Renamed dist to build
 ) else (
@@ -47,8 +54,13 @@ echo.
 
 REM Step 4: Copy new build to backend
 echo [4/6] Copying new build to backend...
-xcopy ..\frontend\build build\ /E /I /Y /Q
-if %errorlevel% neq 0 (
+if not exist ..\frontend\build (
+    echo ERROR: Frontend build folder not found!
+    pause
+    exit /b 1
+)
+robocopy ..\frontend\build build /E /NFL /NDL /NJH /NJS
+if %errorlevel% geq 8 (
     echo ERROR: Failed to copy build folder!
     pause
     exit /b %errorlevel%
@@ -79,16 +91,6 @@ if %errorlevel% neq 0 (
 echo ✓ Executables created successfully
 echo.
 
-REM Step 7: Copy data-initial to executable/data
-echo [7/7] Setting up initial data...
-if exist executable\data (
-    echo   Data folder already exists, skipping...
-) else (
-    xcopy data-initial executable\data\ /E /I /Y /Q
-    echo ✓ Initial data copied
-)
-echo.
-
 echo ================================
 echo  Build Complete! 
 echo ================================
@@ -99,7 +101,11 @@ echo   - habits-tracker-backend-linux
 echo   - habits-tracker-backend-macos
 echo.
 echo Next steps:
-echo 1. Test the executable
-echo 2. Distribute the 'executable' folder to users
+echo 1. Test the executable locally
+echo 2. Run: deploy-release.bat to create GitHub Release
+echo 3. Push landing page updates to deploy on Netlify
+echo.
+echo The landing page uses GitHub Releases for downloads.
+echo Run 'deploy-release.bat' to upload executables to GitHub.
 echo.
 pause
