@@ -447,8 +447,34 @@ const calculateCurrentStreak = (
 
   if (sortedCompletions.length === 0) return 0;
 
+  // Get today's date for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStr = today.toISOString().split("T")[0];
+
+  // Get the most recent completion date
+  const mostRecentDate = new Date(sortedCompletions[0][0]);
+  mostRecentDate.setHours(0, 0, 0, 0);
+
+  // Calculate days since most recent completion
+  const daysSinceLastCompletion = Math.floor(
+    (today.getTime() - mostRecentDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  // Check if the streak is still "current" based on repetition pattern
+  // A streak is only current if the last completion is recent enough
+  if (repetition === "daily") {
+    // For daily habits, we need completion from yesterday or today to have a current streak
+    if (daysSinceLastCompletion > 1) return 0;
+  } else if (repetition === "weekly") {
+    // For weekly habits, allow up to 7 days gap
+    if (daysSinceLastCompletion > 7) return 0;
+  } else if (repetition === "monthly") {
+    // For monthly habits, allow up to 31 days gap
+    if (daysSinceLastCompletion > 31) return 0;
+  }
+
   let streak = 0;
-  let currentDate = new Date(sortedCompletions[0][0]);
 
   // Go backwards from the most recent date
   for (let i = 0; i < sortedCompletions.length; i++) {
@@ -558,6 +584,23 @@ const calculateCounterStreak = (
 
   if (sortedCompletions.length === 0) return 0;
 
+  // Get today's date for comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Get the most recent completion date
+  const mostRecentDate = new Date(sortedCompletions[0].date);
+  mostRecentDate.setHours(0, 0, 0, 0);
+
+  // Calculate days since most recent completion
+  const daysSinceLastCompletion = Math.floor(
+    (today.getTime() - mostRecentDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  // For counter habits, we need completion from yesterday or today to have a current streak
+  // If the last completion is more than 1 day old, the streak is broken
+  if (daysSinceLastCompletion > 1) return 0;
+
   let streak = 0;
 
   // Go backwards from the most recent date
@@ -573,7 +616,6 @@ const calculateCounterStreak = (
       );
 
       if (dayDiff > 1) break;
-      break;
     }
 
     // Check if the goal was met

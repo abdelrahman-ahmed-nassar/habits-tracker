@@ -7,6 +7,7 @@ import {
   Flame,
   Calendar,
   Percent,
+  RefreshCw,
 } from "lucide-react";
 import { analyticsService } from "../services/analytics";
 import { habitsService } from "../services/habits";
@@ -333,6 +334,7 @@ const Analytics: React.FC = () => {
     habitId || null
   );
   const [viewMode, setViewMode] = useState<"habits" | "overall">("habits");
+  const [syncingAnalytics, setSyncingAnalytics] = useState(false);
 
   // Check if current route is /analytics/overview
   useEffect(() => {
@@ -376,6 +378,27 @@ const Analytics: React.FC = () => {
     setSelectedHabitId(null);
     navigate("/analytics");
   };
+
+  const syncAnalytics = async () => {
+    setSyncingAnalytics(true);
+    try {
+      // Sync analytics for all habits
+      await habitsService.syncAnalytics();
+
+      // Refresh the habits data to show updated analytics
+      const habitsData = await habitsService.getAllHabits();
+      const activeHabits = habitsData.filter((habit) => habit.isActive);
+      setHabits(activeHabits);
+
+      toast.success("تم تحديث الإحصائيات بنجاح");
+    } catch (error) {
+      console.error("Error syncing analytics:", error);
+      toast.error("فشل تحديث الإحصائيات");
+    } finally {
+      setSyncingAnalytics(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -414,7 +437,19 @@ const Analytics: React.FC = () => {
               day: "numeric",
             })}
           </span>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 space-x-reverse">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={syncAnalytics}
+              disabled={syncingAnalytics}
+              className="p-2"
+              title="تحديث الإحصائيات"
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${syncingAnalytics ? "animate-spin" : ""}`}
+              />
+            </Button>
             <Button variant="outline" onClick={() => setViewMode("overall")}>
               <BarChart2 className="w-4 h-4 mr-2" /> التحليلات الشاملة
             </Button>

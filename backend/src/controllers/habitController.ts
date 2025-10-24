@@ -257,3 +257,62 @@ export const getRandomHabit = asyncHandler(
     });
   }
 );
+
+/**
+ * Recalculate analytics for all habits or a specific habit
+ * @route POST /api/habits/sync-analytics
+ * @route POST /api/habits/:id/sync-analytics
+ */
+export const syncHabitAnalytics = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (id) {
+      // Sync analytics for a specific habit
+      const habit = await dataService.getHabitById(id);
+
+      if (!habit) {
+        throw new AppError(`Habit with ID ${id} not found`, 404);
+      }
+
+      // Recalculate streaks and counter for this habit
+      await dataService.updateHabitStreaks(id);
+
+      // Get the updated habit
+      const updatedHabit = await dataService.getHabitById(id);
+
+      res.status(200).json({
+        success: true,
+        data: updatedHabit,
+        message: "Habit analytics synced successfully",
+      });
+    } else {
+      // Sync analytics for all habits
+      const habits = await dataService.getHabits();
+      let syncedCount = 0;
+      let errorCount = 0;
+
+      // Recalculate streaks for all habits
+      for (const habit of habits) {
+        try {
+          await dataService.updateHabitStreaks(habit.id);
+          syncedCount++;
+        } catch (error) {
+          console.error(`Error syncing habit ${habit.id}:`, error);
+          errorCount++;
+        }
+      }
+
+      // Get updated habits
+      const updatedHabits = await dataService.getHabits();
+
+      res.status(200).json({
+        success: true,
+        data: updatedHabits,
+        message: `Analytics synced for ${syncedCount} habits${
+          errorCount > 0 ? `, ${errorCount} errors` : ""
+        }`,
+      });
+    }
+  }
+);

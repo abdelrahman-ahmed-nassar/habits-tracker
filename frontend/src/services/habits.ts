@@ -128,6 +128,20 @@ class HabitsService {
     const response = await axios.get(`${API_BASE_URL}/habits/random/pick`);
     return response.data.data;
   }
+
+  /**
+   * Sync analytics for all habits or a specific habit
+   * This recalculates streaks and counters based on actual completion data
+   * @param habitId - Optional habit ID to sync only that habit
+   */
+  async syncAnalytics(habitId?: string): Promise<Habit | Habit[]> {
+    const url = habitId
+      ? `${API_BASE_URL}/habits/${habitId}/sync-analytics`
+      : `${API_BASE_URL}/habits/sync-analytics`;
+
+    const response = await axios.post(url);
+    return response.data.data;
+  }
 }
 
 export const habitsService = new HabitsService();

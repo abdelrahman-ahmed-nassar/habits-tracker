@@ -7,6 +7,9 @@ const router: Router = express.Router();
 // GET /api/habits - Get all habits
 router.get("/", habitController.getAllHabits);
 
+// POST /api/habits/sync-analytics - Sync analytics for all habits
+router.post("/sync-analytics", habitController.syncHabitAnalytics);
+
 // GET /api/habits/random/pick - Get a random habit
 router.get("/random/pick", habitController.getRandomHabit);
 
@@ -36,6 +39,9 @@ router.post("/:id/archive", habitController.archiveHabit);
 
 // POST /api/habits/:id/restore - Restore a habit
 router.post("/:id/restore", habitController.restoreHabit);
+
+// POST /api/habits/:id/sync-analytics - Sync analytics for a specific habit
+router.post("/:id/sync-analytics", habitController.syncHabitAnalytics);
 
 // Export routes
 export default router;

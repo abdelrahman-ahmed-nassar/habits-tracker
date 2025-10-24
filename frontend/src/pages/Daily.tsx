@@ -10,6 +10,7 @@ import {
   List,
   CheckCircle2,
   Clock,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { RecordsService } from "../services/records";
@@ -83,6 +84,7 @@ const Daily: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("habits");
   const [activeHabitTab, setActiveHabitTab] = useState<string>("All");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [syncingAnalytics, setSyncingAnalytics] = useState(false);
 
   const formattedDate = format(currentDate, "yyyy-MM-dd");
 
@@ -246,6 +248,25 @@ const Daily: React.FC = () => {
     const newFormattedDate = format(newDate, "yyyy-MM-dd");
     navigate(`/daily/${newFormattedDate}`);
   };
+
+  const syncAnalytics = async () => {
+    setSyncingAnalytics(true);
+    try {
+      // Sync analytics for all habits
+      await habitsService.syncAnalytics();
+
+      // Refresh the daily data to show updated analytics
+      await fetchDailyData(false);
+
+      toast.success("تم تحديث الإحصائيات بنجاح");
+    } catch (error) {
+      console.error("Error syncing analytics:", error);
+      toast.error("فشل تحديث الإحصائيات");
+    } finally {
+      setSyncingAnalytics(false);
+    }
+  };
+
   const toggleHabitCompletion = async (habitId: string) => {
     if (!dailyRecords) return;
 
@@ -594,7 +615,7 @@ const Daily: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header with Date Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 space-x-reverse">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             المتابعة اليومية
           </h1>
@@ -605,6 +626,18 @@ const Daily: React.FC = () => {
             className="text-sm"
           >
             اليوم
+          </Button>
+          <Button
+            onClick={syncAnalytics}
+            variant="outline"
+            size="sm"
+            className="p-2"
+            disabled={syncingAnalytics}
+            title="تحديث الإحصائيات"
+          >
+            <RefreshCw
+              className={`w-4 h-4 ${syncingAnalytics ? "animate-spin" : ""}`}
+            />
           </Button>
         </div>
 
