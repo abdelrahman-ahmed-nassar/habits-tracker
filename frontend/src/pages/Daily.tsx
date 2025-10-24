@@ -19,6 +19,7 @@ import { completionsService } from "../services/completions";
 import HabitCard from "../components/features/HabitCard";
 import DailyNotes from "../components/features/DailyNotes";
 import Button from "../components/ui/Button";
+import { getArabicDayName, getArabicMonthName } from "../utils/dateUtils";
 import Progress from "../components/ui/Progress";
 import Badge from "../components/ui/Badge";
 import Card from "../components/ui/Card";
@@ -84,7 +85,18 @@ const Daily: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const formattedDate = format(currentDate, "yyyy-MM-dd");
-  const displayDate = format(currentDate, "EEEE, MMMM d, yyyy");
+
+  // Create Arabic display date
+  const dayNameEnglish = format(currentDate, "EEEE");
+  const monthNameEnglish = format(currentDate, "MMMM");
+  const dayNumber = format(currentDate, "d");
+  const year = format(currentDate, "yyyy");
+
+  const dayName = getArabicDayName(dayNameEnglish);
+  const monthName = getArabicMonthName(monthNameEnglish);
+
+  const displayDate = `${dayName}، ${dayNumber} ${monthName} ${year}`;
+
   const fetchDailyData = useCallback(
     async (showLoading = true) => {
       if (showLoading) {
@@ -517,7 +529,7 @@ const Daily: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Daily Tracker
+            المتابعة اليومية
           </h1>
           <Button
             onClick={goToToday}
@@ -525,11 +537,11 @@ const Daily: React.FC = () => {
             size="sm"
             className="text-sm"
           >
-            Today
+            اليوم
           </Button>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 space-x-reverse">
           <Button
             onClick={goToPreviousDay}
             variant="ghost"
@@ -560,7 +572,7 @@ const Daily: React.FC = () => {
         <Card className="mb-6">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Daily Progress</h2>
+              <h2 className="text-xl font-semibold">التقدم اليومي</h2>
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 transition-all duration-300">
                 {Math.round(dailyRecords.stats.completionRate)}%
               </div>
@@ -571,8 +583,8 @@ const Daily: React.FC = () => {
               variant="default"
             />
             <p className="text-sm text-gray-600 dark:text-gray-400 transition-all duration-300">
-              {dailyRecords.stats.completedHabits} of{" "}
-              {dailyRecords.stats.totalHabits} habits completed
+              {dailyRecords.stats.completedHabits} من{" "}
+              {dailyRecords.stats.totalHabits} عادة مكتملة
             </p>
           </div>
         </Card>
@@ -580,18 +592,18 @@ const Daily: React.FC = () => {
       {/* Modern Main Tabs */}
       <div className="mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-1 shadow-sm">
-          <nav className="flex space-x-1">
+          <nav className="flex space-x-1 space-x-reverse">
             {" "}
             <button
               onClick={() => setActiveTab("habits")}
-              className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center space-x-2 space-x-reverse px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                 activeTab === "habits"
                   ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
                   : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>Habits</span>
+              <span>العادات</span>
               {dailyRecords && (
                 <Badge
                   variant={activeTab === "habits" ? "default" : "primary"}
@@ -607,14 +619,14 @@ const Daily: React.FC = () => {
             </button>{" "}
             <button
               onClick={() => setActiveTab("notes")}
-              className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center space-x-2 space-x-reverse px-4 py-3 rounded-lg font-medium text-sm transition-all duration-200 ${
                 activeTab === "notes"
                   ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
                   : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
               }`}
             >
               <BookOpen className="w-4 h-4" />
-              <span>Notes</span>
+              <span>اليوميات</span>
               {dailyNote && (
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               )}
@@ -635,7 +647,7 @@ const Daily: React.FC = () => {
                     <button
                       key={tab.tag}
                       onClick={() => setActiveHabitTab(tab.tag)}
-                      className={`group relative inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border-2 transition-all duration-200 ${
+                      className={`group relative inline-flex items-center space-x-2 space-x-reverse px-4 py-2.5 rounded-xl border-2 transition-all duration-200 ${
                         activeHabitTab === tab.tag
                           ? "bg-gradient-to-r from-blue-500 to-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/25 transform scale-105"
                           : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md hover:scale-102"
@@ -678,32 +690,32 @@ const Daily: React.FC = () => {
                   ))}
                 </div>{" "}
                 {/* Enhanced View Mode Controls */}
-                <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 shadow-sm">
+                <div className="flex items-center space-x-3 space-x-reverse bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 shadow-sm">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-400 px-2">
-                    View:
+                    العرض:
                   </span>
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-1 flex">
                     <button
                       onClick={() => setViewMode("grid")}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                         viewMode === "grid"
                           ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-md border border-blue-200 dark:border-blue-700"
                           : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                       }`}
                     >
                       <Grid3X3 className="w-4 h-4" />
-                      <span>Grid</span>
+                      <span>شبكة</span>
                     </button>
                     <button
                       onClick={() => setViewMode("list")}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center space-x-2 space-x-reverse px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                         viewMode === "list"
                           ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-md border border-blue-200 dark:border-blue-700"
                           : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                       }`}
                     >
                       <List className="w-4 h-4" />
-                      <span>List</span>
+                      <span>قائمة</span>
                     </button>
                   </div>
                 </div>
@@ -717,17 +729,17 @@ const Daily: React.FC = () => {
               <div className="mb-6">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 space-x-reverse">
                       <div className="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-full">
                         <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
                         <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                          Complete All {activeHabitTab} Habits
+                          إكمال كل عادات {activeHabitTab}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {currentTabData.total - currentTabData.completed}{" "}
-                          habits remaining
+                          {currentTabData.total - currentTabData.completed} عادة
+                          متبقية
                         </p>
                       </div>
                     </div>
@@ -737,7 +749,7 @@ const Daily: React.FC = () => {
                       size="sm"
                       className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25 font-medium"
                     >
-                      Complete All
+                      إكمال الكل
                     </Button>
                   </div>
                 </div>
@@ -781,19 +793,19 @@ const Daily: React.FC = () => {
                   <Calendar className="w-8 h-8 text-gray-400 dark:text-gray-500" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  No habits for this day
+                  لا توجد عادات لهذا اليوم
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                   {activeHabitTab === "All"
-                    ? "You don't have any habits scheduled for this date."
-                    : `No ${activeHabitTab} habits found for this date.`}
+                    ? "ليس لديك أي عادات مجدولة لهذا التاريخ."
+                    : `لم يتم العثور على عادات ${activeHabitTab} لهذا التاريخ.`}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button onClick={goToToday} variant="primary" size="sm">
-                    Go to Today
+                    الذهاب إلى اليوم
                   </Button>
                   <Button variant="outline" size="sm">
-                    Manage Habits
+                    إدارة العادات
                   </Button>
                 </div>
               </div>
@@ -837,7 +849,7 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
     if (record.goalType === "counter") {
       return `${record.value}/${record.goalValue}`;
     }
-    return record.completed ? "Complete" : "Incomplete";
+    return record.completed ? "مكتمل" : "غير مكتمل";
   };
 
   return (
@@ -900,9 +912,7 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
           {record.goalType === "counter" && (
             <div className="mt-2 space-y-1">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Progress
-                </span>
+                <span className="text-gray-600 dark:text-gray-400">التقدم</span>
                 <span className="font-medium text-gray-700 dark:text-gray-300">
                   {getProgressDisplay()}
                 </span>
@@ -932,7 +942,7 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
         )}
         {!record.completed && record.goalType === "streak" && (
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            Goal: {record.goalValue} days
+            الهدف: {record.goalValue} أيام
           </div>
         )}
       </div>

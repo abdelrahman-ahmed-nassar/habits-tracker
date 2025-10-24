@@ -75,16 +75,21 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
   // Ensure we have all 7 days and the startDate is valid
-  const startDate = analytics.startDate ? parseISO(analytics.startDate) : new Date();
+  const startDate = analytics.startDate
+    ? parseISO(analytics.startDate)
+    : new Date();
   const allDailyStats = Array.from({ length: 7 }, (_, i) => {
     const date = format(addDays(startDate, i), "yyyy-MM-dd");
-    const existingStat = sortedDailyStats.find((stat) => stat && stat.date === date);
+    const existingStat = sortedDailyStats.find(
+      (stat) => stat && stat.date === date
+    );
     return (
       existingStat || {
         date,
         dayOfWeek: i,
         dayName: format(addDays(startDate, i), "EEEE"),
-        totalHabits: (analytics.dailyStats && analytics.dailyStats[0]?.totalHabits) || 0,
+        totalHabits:
+          (analytics.dailyStats && analytics.dailyStats[0]?.totalHabits) || 0,
         completedHabits: 0,
         completionRate: 0,
       }
@@ -101,10 +106,12 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">        {/* Overall Success Rate */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {" "}
+        {/* Overall Success Rate */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-            Overall Success Rate
+            معدل النجاح الكلي
           </h3>
           <div className="flex items-center">
             <BarChart2 className="w-5 h-5 text-blue-500 mr-2" />
@@ -113,11 +120,10 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
             </span>
           </div>
         </div>
-
         {/* Total Completions */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-            Total Completions
+            إجمالي الإنجازات
           </h3>
           <div className="flex items-center">
             <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
@@ -126,44 +132,51 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
             </span>
           </div>
         </div>
-
         {/* Most Productive Day */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-            Most Productive Day
+            أكثر الأيام إنتاجية
           </h3>
           <div className="flex flex-col">
             <div className="flex items-center">
               <Calendar className="w-5 h-5 text-purple-500 mr-2" />
               <span className="text-xl font-bold">
-                {analytics.weeklyStats?.mostProductiveDay?.dayName || "N/A"}
+                {analytics.weeklyStats?.mostProductiveDay?.dayName ||
+                  "غير متوفر"}
               </span>
             </div>
             <div className="text-sm text-green-600 dark:text-green-400 mt-1 font-medium">
               {analytics.weeklyStats?.mostProductiveDay?.completionRate || 0}%
-              completion
+              تم الإنجاز
             </div>
           </div>
-        </div>        {/* Best Performing Habit */}
+        </div>{" "}
+        {/* Best Performing Habit */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-            Best Habit
+            أفضل عادة
           </h3>
           <div className="flex flex-col">
             <div className="flex items-center">
               <Award className="w-5 h-5 text-yellow-500 mr-2" />
               <span
                 className="text-lg font-bold truncate"
-                title={analytics.weeklyStats?.mostProductiveHabit?.habitName || "None"}
+                title={
+                  analytics.weeklyStats?.mostProductiveHabit?.habitName ||
+                  "None"
+                }
               >
-                {analytics.weeklyStats?.mostProductiveHabit?.habitName || "None"}
+                {analytics.weeklyStats?.mostProductiveHabit?.habitName ||
+                  "لا يوجد"}
               </span>
             </div>
             <div className="text-sm text-green-600 dark:text-green-400 mt-1 font-medium">
               {analytics.weeklyStats?.mostProductiveHabit?.successRate
-                ? (analytics.weeklyStats.mostProductiveHabit.successRate * 100).toFixed(0)
+                ? (
+                    analytics.weeklyStats.mostProductiveHabit.successRate * 100
+                  ).toFixed(0)
                 : "0"}
-              % success rate
+              % معدل النجاح
             </div>
           </div>
         </div>
@@ -172,7 +185,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
       <Card className="p-6">
         <h3 className="font-semibold mb-4 flex items-center">
           <BarChart2 className="w-5 h-5 mr-2 text-blue-500" />
-          Daily Completion Rates
+          معدلات الإنجاز اليومية
         </h3>
         <div className="h-64 flex items-end justify-around gap-1">
           {allDailyStats.map((day) => {
@@ -190,7 +203,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
                     {Math.round(day.completionRate)}%
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {day.completedHabits}/{day.totalHabits}
+                    {day.completedHabits}/{day.totalHabits} تم الإنجاز
                   </div>
                 </div>
                 <div className="relative w-14 flex flex-col items-center justify-end h-48">
@@ -225,7 +238,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
         <Card className="p-6">
           <h3 className="font-semibold mb-4 flex items-center">
             <TrendingUp className="w-5 h-5 mr-2 text-green-500" />
-            Top Performing Habits
+            أفضل العادات أداءً
           </h3>
           <div className="space-y-3">
             {topHabits.map((habit) => (
@@ -238,8 +251,8 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
                     {habit.habitName}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {habit.completedDaysCount}/{habit.activeDaysCount} days
-                    completed
+                    {habit.completedDaysCount}/{habit.activeDaysCount} يوم تم
+                    الإنجاز
                   </div>
                 </div>
                 <Badge
@@ -252,7 +265,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
             ))}
             {topHabits.length === 0 && (
               <div className="text-center text-gray-500 italic py-2">
-                No habit data available
+                لا توجد بيانات للعادات
               </div>
             )}
           </div>
@@ -262,7 +275,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
         <Card className="p-6">
           <h3 className="font-semibold mb-4 flex items-center">
             <TrendingDown className="w-5 h-5 mr-2 text-red-500" />
-            Habits Needing Attention
+            عادات تحتاج إلى انتباه
           </h3>
           <div className="space-y-3">
             {bottomHabits.map((habit) => (
@@ -275,8 +288,8 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
                     {habit.habitName}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {habit.completedDaysCount}/{habit.activeDaysCount} days
-                    completed
+                    {habit.completedDaysCount}/{habit.activeDaysCount} يوم تم
+                    الإنجاز
                   </div>
                 </div>
                 <Badge
@@ -289,7 +302,7 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
             ))}
             {bottomHabits.length === 0 && (
               <div className="text-center text-gray-500 italic py-2">
-                No habit data available
+                لا توجد بيانات للعادات
               </div>
             )}
           </div>
@@ -299,10 +312,12 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
       <Card className="p-6">
         <h3 className="font-semibold mb-4 flex items-center">
           <Zap className="w-5 h-5 mr-2 text-purple-500" />
-          Weekly Insights
+          رؤى الأسبوع
         </h3>
 
-        <div className="space-y-4">          {/* Most productive day insight */}
+        <div className="space-y-4">
+          {" "}
+          {/* Most productive day insight */}
           {analytics.weeklyStats?.mostProductiveDay && (
             <div className="flex items-start space-x-3">
               <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2 flex-shrink-0">
@@ -310,20 +325,24 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               </div>
               <div>
                 <p className="font-medium">
-                  Your most productive day was{" "}
-                  {analytics.weeklyStats?.mostProductiveDay?.dayName || "Unknown"}
+                  أكثر أيامك إنتاجية كان يوم{" "}
+                  {analytics.weeklyStats?.mostProductiveDay?.dayName ||
+                    "غير معروف"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  You completed{" "}
-                  {analytics.weeklyStats?.mostProductiveDay?.completedHabits || 0} out
-                  of {analytics.weeklyStats?.mostProductiveDay?.totalHabits || 0}{" "}
-                  habits (
-                  {analytics.weeklyStats?.mostProductiveDay?.completionRate || 0}%).
+                  أنجزت{" "}
+                  {analytics.weeklyStats?.mostProductiveDay?.completedHabits ||
+                    0}{" "}
+                  من أصل{" "}
+                  {analytics.weeklyStats?.mostProductiveDay?.totalHabits || 0}{" "}
+                  عادة (
+                  {analytics.weeklyStats?.mostProductiveDay?.completionRate ||
+                    0}
+                  %).
                 </p>
               </div>
             </div>
           )}
-
           {/* Least productive day insight */}
           {analytics.weeklyStats?.leastProductiveDay && (
             <div className="flex items-start space-x-3">
@@ -332,19 +351,25 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               </div>
               <div>
                 <p className="font-medium">
-                  Your least productive day was{" "}
-                  {analytics.weeklyStats?.leastProductiveDay?.dayName || "Unknown"}
+                  أقل أيامك إنتاجية كان يوم{" "}
+                  {analytics.weeklyStats?.leastProductiveDay?.dayName ||
+                    "غير معروف"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  You completed only{" "}
-                  {analytics.weeklyStats?.leastProductiveDay?.completedHabits || 0} out
-                  of {analytics.weeklyStats?.leastProductiveDay?.totalHabits || 0}{" "}
-                  habits (
-                  {analytics.weeklyStats?.leastProductiveDay?.completionRate || 0}%).
+                  أنجزت فقط{" "}
+                  {analytics.weeklyStats?.leastProductiveDay?.completedHabits ||
+                    0}{" "}
+                  من أصل{" "}
+                  {analytics.weeklyStats?.leastProductiveDay?.totalHabits || 0}{" "}
+                  عادة (
+                  {analytics.weeklyStats?.leastProductiveDay?.completionRate ||
+                    0}
+                  %).
                 </p>
               </div>
             </div>
-          )}          {/* Best habit insight */}
+          )}{" "}
+          {/* Best habit insight */}
           {analytics.weeklyStats?.mostProductiveHabit && (
             <div className="flex items-start space-x-3">
               <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2 flex-shrink-0">
@@ -352,37 +377,41 @@ const WeeklyAnalytics: React.FC<WeeklyAnalyticsProps> = ({ analytics }) => {
               </div>
               <div>
                 <p className="font-medium">
-                  "{analytics.weeklyStats?.mostProductiveHabit?.habitName || 'Unknown'}" was
-                  your most consistent habit
+                  "
+                  {analytics.weeklyStats?.mostProductiveHabit?.habitName ||
+                    "غير معروف"}
+                  " كانت أكثر عاداتك انتظامًا
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  You completed it on{" "}
-                  {analytics.weeklyStats?.mostProductiveHabit?.completedDaysCount || 0}{" "}
-                  out of{" "}
-                  {analytics.weeklyStats?.mostProductiveHabit?.activeDaysCount || 0}{" "}
-                  active days (
-                  {analytics.weeklyStats?.mostProductiveHabit?.successRate 
-                    ? (analytics.weeklyStats.mostProductiveHabit.successRate * 100).toFixed(0)
-                    : '0'
-                  }
+                  أنجزتها في{" "}
+                  {analytics.weeklyStats?.mostProductiveHabit
+                    ?.completedDaysCount || 0}{" "}
+                  من أصل{" "}
+                  {analytics.weeklyStats?.mostProductiveHabit
+                    ?.activeDaysCount || 0}{" "}
+                  يوم نشط (
+                  {analytics.weeklyStats?.mostProductiveHabit?.successRate
+                    ? (
+                        analytics.weeklyStats.mostProductiveHabit.successRate *
+                        100
+                      ).toFixed(0)
+                    : "0"}
                   %).
                 </p>
               </div>
             </div>
           )}
-
           {/* Overall performance insight */}
           <div className="flex items-start space-x-3">
             <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full p-2 flex-shrink-0">
               <BarChart2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <p className="font-medium">Overall Performance</p>
+              <p className="font-medium">الأداء الكلي</p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                This week, you completed{" "}
-                {analytics.weeklyStats?.totalCompletions || 0} habits with an overall
-                success rate of{" "}
-                {analytics.weeklyStats?.overallSuccessRate?.toFixed(1) || '0'}%.
+                هذا الأسبوع أنجزت {analytics.weeklyStats?.totalCompletions || 0}{" "}
+                عادة بمعدل نجاح كلي{" "}
+                {analytics.weeklyStats?.overallSuccessRate?.toFixed(1) || "0"}%.
               </p>
             </div>
           </div>

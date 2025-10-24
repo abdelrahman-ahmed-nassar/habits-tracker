@@ -40,7 +40,7 @@ const TemplatesManager: React.FC = () => {
       setTemplates(data);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch templates");
+      setError("فشل تحميل القوالب");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -98,12 +98,12 @@ const TemplatesManager: React.FC = () => {
     e.preventDefault();
 
     if (!formData.name) {
-      toast.error("Template name is required");
+      toast.error("اسم القالب مطلوب");
       return;
     }
 
     if (!formData.template) {
-      toast.error("Template content is required");
+      toast.error("محتوى القالب مطلوب");
       return;
     }
 
@@ -112,19 +112,17 @@ const TemplatesManager: React.FC = () => {
 
       if (formMode === "create") {
         await TemplatesService.createTemplate(formData);
-        toast.success("Template created successfully");
+        toast.success("تم إنشاء القالب بنجاح");
       } else if (formMode === "edit" && currentTemplateId) {
         await TemplatesService.updateTemplate(currentTemplateId, formData);
-        toast.success("Template updated successfully");
+        toast.success("تم تحديث القالب بنجاح");
       }
 
       await fetchTemplates();
       setShowForm(false);
     } catch (err) {
       toast.error(
-        formMode === "create"
-          ? "Failed to create template"
-          : "Failed to update template"
+        formMode === "create" ? "فشل إنشاء القالب" : "فشل تحديث القالب"
       );
       console.error(err);
     } finally {
@@ -133,16 +131,16 @@ const TemplatesManager: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this template?")) {
+    if (!window.confirm("هل أنت متأكد من حذف هذا القالب؟")) {
       return;
     }
 
     try {
       await TemplatesService.deleteTemplate(id);
-      toast.success("Template deleted successfully");
+      toast.success("تم حذف القالب بنجاح");
       await fetchTemplates();
     } catch (err) {
-      toast.error("Failed to delete template");
+      toast.error("فشل حذف القالب");
       console.error(err);
     }
   };
@@ -164,7 +162,7 @@ const TemplatesManager: React.FC = () => {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center">Loading templates...</div>
+          <div className="text-center">جارٍ تحميل القوالب...</div>
         </CardContent>
       </Card>
     );
@@ -173,12 +171,12 @@ const TemplatesManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Templates Manager</h2>
+        <h2 className="text-xl font-bold">مدير القوالب</h2>
         <Button
           onClick={handleOpenCreateForm}
           leftIcon={<PlusCircle size={16} />}
         >
-          Create Template
+          إنشاء قالب
         </Button>
       </div>
       {error && (
@@ -190,7 +188,7 @@ const TemplatesManager: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-gray-500 dark:text-gray-400">
-              No templates found. Create your first template!
+              لم يتم العثور على قوالب. أنشئ القالب الأول الخاص بك!
             </div>
           </CardContent>
         </Card>
@@ -218,7 +216,7 @@ const TemplatesManager: React.FC = () => {
                     onClick={() => handleOpenEditForm(template)}
                   >
                     <Edit size={14} className="mr-1" />
-                    Edit
+                    تعديل
                   </Button>
                   <Button
                     variant="outline"
@@ -226,7 +224,7 @@ const TemplatesManager: React.FC = () => {
                     onClick={() => handleDelete(template.id)}
                   >
                     <Trash2 size={14} className="mr-1 text-red-500" />
-                    Delete
+                    حذف
                   </Button>
                 </div>
               </CardContent>
@@ -238,12 +236,12 @@ const TemplatesManager: React.FC = () => {
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={formMode === "create" ? "Create Template" : "Edit Template"}
+        title={formMode === "create" ? "إنشاء قالب" : "تعديل قالب"}
         size="full"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Template Name"
+            label="اسم القالب"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
@@ -252,10 +250,10 @@ const TemplatesManager: React.FC = () => {
           />
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Template Content
+              محتوى القالب
             </label>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-              Use variables like {"{{"}
+              استخدم متغيرات مثل {"{{"}
               <span className="font-semibold">date</span>
               {"}}"},{"{{"}
               <span className="font-semibold">title</span>
@@ -268,8 +266,7 @@ const TemplatesManager: React.FC = () => {
               {"}}"},{"{{"}
               <span className="font-semibold">year</span>
               {"}}"}
-              that will be replaced with actual values when the template is
-              used.
+              والتي سيتم استبدالها بالقيم الفعلية عند استخدام القالب.
             </p>
             <MarkdownEditor
               value={formData.template}
@@ -280,7 +277,7 @@ const TemplatesManager: React.FC = () => {
             />
           </div>
           <div className="mt-4">
-            <h4 className="font-medium text-sm mb-2">Preview</h4>
+            <h4 className="font-medium text-sm mb-2">معاينة</h4>
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="prose dark:prose-invert max-w-none prose-sm overflow-auto max-h-48">
                 {/* This would be better with a real markdown preview component */}
@@ -300,10 +297,10 @@ const TemplatesManager: React.FC = () => {
               }}
               disabled={isSubmitting}
             >
-              Cancel
+              إلغاء
             </Button>
             <Button type="submit" isLoading={isSubmitting}>
-              {formMode === "create" ? "Create Template" : "Update Template"}
+              {formMode === "create" ? "إنشاء قالب" : "تحديث قالب"}
             </Button>
           </div>
         </form>

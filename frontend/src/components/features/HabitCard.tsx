@@ -47,7 +47,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
     if (record.goalType === "counter") {
       return `${record.value}/${record.goalValue}`;
     }
-    return record.completed ? "Completed" : "Not completed";
+    return record.completed ? "مكتمل" : "غير مكتمل";
   };
 
   const progressValue = getProgressValue();
@@ -75,7 +75,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         {/* Goal Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Progress</span>
+            <span className="text-gray-600 dark:text-gray-400">التقدم</span>
             <span className="font-medium">{getProgressDisplay()}</span>
           </div>
           <Progress
@@ -92,7 +92,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
             </div>
             <div className="text-sm font-medium">{record.currentStreak}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              Current
+              الحالي
             </div>
           </div>
           <div className="space-y-1">
@@ -100,7 +100,9 @@ const HabitCard: React.FC<HabitCardProps> = ({
               <Target className="w-4 h-4 text-blue-500" />
             </div>
             <div className="text-sm font-medium">{record.bestStreak}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">Best</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              الأفضل
+            </div>
           </div>{" "}
           <div className="space-y-1">
             <div className="flex items-center justify-center">
@@ -108,38 +110,38 @@ const HabitCard: React.FC<HabitCardProps> = ({
             </div>
             <div className="text-sm font-medium">{record.currentCounter}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              Counter
+              العداد
             </div>
           </div>
         </div>
         {/* Goal Type Badge */}
         <div className="flex items-center justify-between">
           <Badge variant="info" size="sm">
-            {record.goalType === "streak" ? "Streak Goal" : "Counter Goal"}
+            {record.goalType === "streak" ? "هدف السلسلة" : "هدف العداد"}
           </Badge>
           <span className="text-sm text-gray-500 dark:text-gray-400">
-            Target: {record.goalValue}{" "}
-            {record.goalType === "streak" ? "days" : "times"}
+            الهدف: {record.goalValue}{" "}
+            {record.goalType === "streak" ? "أيام" : "مرات"}
           </span>{" "}
         </div>{" "}
         {/* Completion Controls */}
         {record.value >= record.goalValue && (
           <div className="text-center">
             <Badge variant="success" size="sm">
-              Goal Completed! 🎉
+              تم إكمال الهدف! 🎉
             </Badge>
           </div>
         )}
         {record.completed && record.completedAt && (
           <div className="text-xs text-center text-gray-500 dark:text-gray-400">
-            Completed at {new Date(record.completedAt).toLocaleTimeString()}
+            تم الإكمال في {new Date(record.completedAt).toLocaleTimeString()}
           </div>
         )}
         {record.goalType === "counter" ? (
           <div className="space-y-3">
             <div className="text-center">
               <span className="text-sm text-gray-600 dark:text-gray-400 mb-2 block">
-                Update Count
+                تحديث العدد
               </span>
               <CounterInput
                 value={record.value}
@@ -163,17 +165,17 @@ const HabitCard: React.FC<HabitCardProps> = ({
               {isUpdating ? (
                 <>
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  <span>Updating...</span>
+                  <span>جارٍ التحديث...</span>
                 </>
               ) : record.completed ? (
                 <>
                   <Check className="w-4 h-4" />
-                  <span>Completed</span>
+                  <span>مكتمل</span>
                 </>
               ) : (
                 <>
                   <div className="w-4 h-4 border-2 border-current rounded"></div>
-                  <span>Mark Complete</span>
+                  <span>وضع علامة مكتمل</span>
                 </>
               )}
             </div>

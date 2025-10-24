@@ -19,7 +19,7 @@ const ProductivityLevelsManager: React.FC = () => {
       setLevels(data);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch productivity levels");
+      setError("فشل تحميل مستويات الإنتاجية");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -40,23 +40,23 @@ const ProductivityLevelsManager: React.FC = () => {
     e.preventDefault();
 
     if (!newLevel.trim()) {
-      toast.error("Productivity level name is required");
+      toast.error("اسم مستوى الإنتاجية مطلوب");
       return;
     }
 
     if (levels.includes(newLevel)) {
-      toast.error("This productivity level already exists");
+      toast.error("مستوى الإنتاجية هذا موجود بالفعل");
       return;
     }
 
     try {
       setIsSubmitting(true);
       await OptionsService.addProductivityLevel(newLevel);
-      toast.success("Productivity level added successfully");
+      toast.success("تمت إضافة مستوى الإنتاجية بنجاح");
       await fetchLevels();
       setNewLevel("");
     } catch (err) {
-      toast.error("Failed to add productivity level");
+      toast.error("فشل إضافة مستوى الإنتاجية");
       console.error(err);
     } finally {
       setIsSubmitting(false);
@@ -64,20 +64,16 @@ const ProductivityLevelsManager: React.FC = () => {
   };
 
   const handleDeleteLevel = async (level: string) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete the productivity level "${level}"?`
-      )
-    ) {
+    if (!window.confirm(`هل أنت متأكد من حذف مستوى الإنتاجية "${level}"؟`)) {
       return;
     }
 
     try {
       await OptionsService.removeProductivityLevel(level);
-      toast.success("Productivity level deleted successfully");
+      toast.success("تم حذف مستوى الإنتاجية بنجاح");
       await fetchLevels();
     } catch (err) {
-      toast.error("Failed to delete productivity level");
+      toast.error("فشل حذف مستوى الإنتاجية");
       console.error(err);
     }
   };
@@ -86,7 +82,7 @@ const ProductivityLevelsManager: React.FC = () => {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center">Loading productivity levels...</div>
+          <div className="text-center">جارٍ تحميل مستويات الإنتاجية...</div>
         </CardContent>
       </Card>
     );
@@ -95,7 +91,7 @@ const ProductivityLevelsManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Productivity Levels Manager</h2>
+        <h2 className="text-xl font-bold">مدير مستويات الإنتاجية</h2>
       </div>
 
       {error && (
@@ -105,11 +101,11 @@ const ProductivityLevelsManager: React.FC = () => {
       )}
 
       <Card>
-        <CardHeader title="Add New Productivity Level" />
+        <CardHeader title="إضافة مستوى إنتاجية جديد" />
         <CardContent>
           <form onSubmit={handleAddLevel} className="flex space-x-2">
             <Input
-              placeholder="Enter productivity level (e.g., High, Medium, Low)"
+              placeholder="أدخل مستوى الإنتاجية (مثل: عالي، متوسط، منخفض)"
               value={newLevel}
               onChange={(e) => setNewLevel(e.target.value)}
               fullWidth
@@ -120,19 +116,19 @@ const ProductivityLevelsManager: React.FC = () => {
               leftIcon={<PlusCircle size={16} />}
               isLoading={isSubmitting}
             >
-              Add
+              إضافة
             </Button>
           </form>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader title="Existing Productivity Levels" />
+        <CardHeader title="مستويات الإنتاجية الموجودة" />
         <CardContent>
           {levels.length === 0 ? (
             <div className="flex items-center justify-center p-6 text-gray-500 dark:text-gray-400">
               <AlertCircle size={18} className="mr-2" />
-              No productivity levels have been added yet
+              لم يتم إضافة أي مستويات إنتاجية بعد
             </div>
           ) : (
             <ul className="space-y-2">

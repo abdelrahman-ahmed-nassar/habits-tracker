@@ -60,7 +60,6 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
       console.log("Calendar data is null or undefined");
       return;
     }
-
   };
 
   // Call debug function once
@@ -122,7 +121,15 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
         <div className="p-6">
           {/* Day Headers */}
           <div className="grid grid-cols-7 gap-1 mb-4">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            {[
+              "الأحد",
+              "الإثنين",
+              "الثلاثاء",
+              "الأربعاء",
+              "الخميس",
+              "الجمعة",
+              "السبت",
+            ].map((day) => (
               <div
                 key={day}
                 className="p-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400"
@@ -237,7 +244,7 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
                         className="text-blue-600 dark:text-blue-400"
                       >
                         <Plus className="w-4 h-4 mr-1" />
-                        Add Note
+                        إضافة ملاحظة
                       </Button>
                     </div>
                   )}
@@ -252,27 +259,31 @@ const NotesCalendar: React.FC<NotesCalendarProps> = ({
       <Card>
         <div className="p-4">
           <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-            Calendar Legend
+            دليل التقويم
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-gray-600 dark:text-gray-400">Has Note</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                يحتوي على ملاحظة
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded"></div>
-              <span className="text-gray-600 dark:text-gray-400">Note Day</span>
+              <span className="text-gray-600 dark:text-gray-400">
+                يوم الملاحظة
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <Smile className="w-4 h-4 text-yellow-500" />
               <span className="text-gray-600 dark:text-gray-400">
-                Mood Tracked
+                تم تتبع المزاج
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <Zap className="w-4 h-4 text-purple-500" />
               <span className="text-gray-600 dark:text-gray-400">
-                Productivity Tracked
+                تم تتبع الإنتاجية
               </span>
             </div>
           </div>

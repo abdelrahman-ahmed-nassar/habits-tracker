@@ -38,9 +38,9 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   if (!analytics) {
     return (
       <div className="text-center p-8">
-        <p>No analytics data available.</p>
+        <p>لا توجد بيانات تحليلات متاحة.</p>
         <Button onClick={onBack} className="mt-4">
-          Back to Habits
+          العودة للعادات
         </Button>
       </div>
     );
@@ -50,15 +50,17 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="space-y-6">
       <div className="flex items-center">
         <Button onClick={onBack} variant="ghost" size="sm">
-          Back
+          رجوع
         </Button>
-        <h2 className="text-2xl font-bold ml-2">Overall Analytics</h2>
+        <h2 className="text-2xl font-bold ml-2">تحليلات عامة</h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-500">Active Habits</h3>
+            <h3 className="text-sm font-medium text-gray-500">
+              العادات النشطة
+            </h3>
             <div className="mt-2 flex items-center">
               <Activity className="w-5 h-5 text-blue-500 mr-2" />
               <span className="text-2xl font-bold">
@@ -71,7 +73,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500">
-              Completed Today
+              تم الإنجاز اليوم
             </h3>
             <div className="mt-2 flex items-center">
               <Calendar className="w-5 h-5 text-green-500 mr-2" />
@@ -85,7 +87,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500">
-              30-Day Success Rate
+              معدل النجاح خلال 30 يوم
             </h3>{" "}
             <div className="mt-2 flex items-center">
               <ArrowUp className="w-5 h-5 text-purple-500 mr-2" />
@@ -98,9 +100,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         <Card>
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-500">
-              Longest Streak
-            </h3>
+            <h3 className="text-sm font-medium text-gray-500">أطول سلسلة</h3>
             <div className="mt-2 flex items-center">
               <Flame className="w-5 h-5 text-orange-500 mr-2" />
               <span className="text-2xl font-bold">
@@ -114,7 +114,7 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-4">
-          <h3 className="font-semibold mb-4">Most Consistent Habits</h3>
+          <h3 className="font-semibold mb-4">العادات الأكثر انتظامًا</h3>
           {analytics.mostConsistentHabits.length > 0 ? (
             <div className="space-y-3">
               {analytics.mostConsistentHabits.map((habit) => (
@@ -126,9 +126,9 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     <p className="font-medium">{habit.habitName}</p>
                     <div className="flex items-center text-sm text-gray-500">
                       <Flame className="w-4 h-4 mr-1 text-orange-500" />
-                      <span>Current: {habit.currentStreak}</span>
+                      <span>الحالية: {habit.currentStreak}</span>
                       <Award className="w-4 h-4 ml-2 mr-1 text-yellow-500" />
-                      <span>Best: {habit.bestStreak}</span>
+                      <span>الأفضل: {habit.bestStreak}</span>
                     </div>
                   </div>{" "}
                   <div className="flex items-center">
@@ -140,12 +140,12 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500">No data available</p>
+            <p className="text-center text-gray-500">لا توجد بيانات</p>
           )}
         </Card>
 
         <Card className="p-4">
-          <h3 className="font-semibold mb-4">Daily Performance</h3>
+          <h3 className="font-semibold mb-4">الأداء اليومي</h3>
           {analytics.dayOfWeekStats.length > 0 ? (
             <div className="space-y-2">
               {analytics.dayOfWeekStats
@@ -171,14 +171,14 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500">No data available</p>
+            <p className="text-center text-gray-500">لا توجد بيانات</p>
           )}
         </Card>
       </div>
 
       <Card className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Performance Insights</h3>
+          <h3 className="font-semibold">رؤى الأداء</h3>
         </div>
         <div className="space-y-4">
           {analytics.bestDayOfWeek && (
@@ -188,11 +188,11 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               </div>
               <div>
                 <p className="font-medium">
-                  Best Day: {analytics.bestDayOfWeek.dayName}
+                  أفضل يوم: {analytics.bestDayOfWeek.dayName}
                 </p>{" "}
                 <p className="text-sm text-gray-600">
-                  You complete {Math.round(analytics.bestDayOfWeek.successRate)}
-                  % of your habits on this day.
+                  تكمل {Math.round(analytics.bestDayOfWeek.successRate)}% من
+                  عاداتك في هذا اليوم.
                 </p>
               </div>
             </div>
@@ -205,19 +205,19 @@ const OverallAnalytics: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               onClick={async () => {
                 try {
                   await analyticsService.clearAnalyticsCache();
-                  toast.success("Analytics cache cleared successfully");
+                  toast.success("تم مسح ذاكرة التحليلات بنجاح");
                   // Refresh data
                   setLoading(true);
                   const data = await analyticsService.getOverallAnalytics();
                   setAnalytics(data);
                   setLoading(false);
                 } catch (error) {
-                  toast.error("Failed to clear analytics cache");
+                  toast.error("فشل مسح ذاكرة التحليلات");
                   console.error("Error clearing analytics cache:", error);
                 }
               }}
             >
-              Refresh Analytics
+              تحديث التحليلات
             </Button>
           </div>
         </div>

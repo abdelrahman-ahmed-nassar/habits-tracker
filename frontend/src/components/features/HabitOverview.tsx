@@ -17,7 +17,7 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({
   const habitsByTag: Record<string, Habit[]> = {};
 
   habits.forEach((habit) => {
-    const tag = habit.tag || "Untagged";
+    const tag = habit.tag || "غير مصنف";
     if (!habitsByTag[tag]) {
       habitsByTag[tag] = [];
     }
@@ -48,32 +48,32 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({
     <Card className="p-6">
       <h2 className="text-xl font-semibold mb-4 flex items-center">
         <BarChart2 className="w-5 h-5 mr-2 text-blue-500" />
-        Habits Overview
+        نظرة عامة على العادات
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Total Active Habits
+            إجمالي العادات النشطة
           </h3>
           <p className="text-2xl font-bold mt-1">{totalHabits}</p>
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Average Current Streak
+            متوسط السلسلة الحالية
           </h3>
           <p className="text-2xl font-bold mt-1">
-            {averageStreak.toFixed(1)} days
+            {averageStreak.toFixed(1)} أيام
           </p>
         </div>
 
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Highest Streak
+            أعلى سلسلة
           </h3>
           <p className="text-2xl font-bold mt-1">
-            {highestStreak} days
+            {highestStreak} أيام
             {habitWithHighestStreak && (
               <span className="block text-sm font-normal mt-1 text-gray-600 dark:text-gray-300">
                 {habitWithHighestStreak.name}
@@ -83,7 +83,7 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({
         </div>
       </div>
 
-      <h3 className="text-lg font-medium mb-3">Habits by Category</h3>
+      <h3 className="text-lg font-medium mb-3">العادات حسب الفئة</h3>
 
       <div className="space-y-6">
         {Object.entries(habitsByTag).map(([tag, habitsInTag]) => (
@@ -93,7 +93,7 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({
                 {tag}
               </Badge>
               <span className="text-sm text-gray-600 dark:text-gray-300">
-                {habitsInTag.length} habit{habitsInTag.length === 1 ? "" : "s"}
+                {habitsInTag.length} عادة
               </span>
             </div>
 
@@ -129,7 +129,7 @@ const HabitOverview: React.FC<HabitOverviewProps> = ({
                       {habit.repetition}
                     </span>
                     <span className="text-xs text-blue-600 dark:text-blue-400">
-                      View Analytics →
+                      عرض التحليلات ←
                     </span>
                   </div>
                 </div>

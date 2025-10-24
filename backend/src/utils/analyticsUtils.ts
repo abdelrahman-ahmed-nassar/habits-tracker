@@ -271,40 +271,40 @@ export const calculateStreakPeriods = (
 /**
  * Get day name from day of week number
  * @param dayOfWeek Day of week number (0-6)
- * @returns Day name
+ * @returns Day name in Arabic
  */
 export const getDayName = (dayOfWeek: number): string => {
   const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    "الأحد",
+    "الإثنين",
+    "الثلاثاء",
+    "الأربعاء",
+    "الخميس",
+    "الجمعة",
+    "السبت",
   ];
-  return days[dayOfWeek] || "Unknown";
+  return days[dayOfWeek] || "غير معروف";
 };
 
 /**
  * Get month name from month number
  * @param month Month number (1-12)
- * @returns Month name
+ * @returns Month name in Arabic
  */
 export const getMonthName = (month: number): string => {
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "يناير",
+    "فبراير",
+    "مارس",
+    "أبريل",
+    "مايو",
+    "يونيو",
+    "يوليو",
+    "أغسطس",
+    "سبتمبر",
+    "أكتوبر",
+    "نوفمبر",
+    "ديسمبر",
   ];
-  return months[month - 1] || "Unknown";
+  return months[month - 1] || "غير معروف";
 };

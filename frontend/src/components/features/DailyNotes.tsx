@@ -88,7 +88,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
       setTemplates(fetchedTemplates);
     } catch (error) {
       console.error("Error loading templates:", error);
-      toast.error("Failed to load note templates");
+      toast.error("فشل تحميل قوالب اليوميات");
     } finally {
       setIsLoadingTemplates(false);
     }
@@ -134,7 +134,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
 
   const handleSave = async () => {
     if (!content.trim()) {
-      toast.warning("Please enter some content for your note");
+      toast.warning("الرجاء إدخال محتوى للملاحظة");
       return;
     }
 
@@ -148,7 +148,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(updatedNote);
-        toast.success("Note updated successfully");
+        toast.success("تم تحديث الملاحظة بنجاح");
       } else {
         // Create new note
         const newNote = await NotesService.createNote({
@@ -158,13 +158,13 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
           productivityLevel: productivityLevel || undefined,
         });
         setNote(newNote);
-        toast.success("Note created successfully");
+        toast.success("تم إنشاء الملاحظة بنجاح");
       }
       setIsEditing(false);
       onNoteUpdate();
     } catch (error) {
       console.error("Error saving note:", error);
-      toast.error("Failed to save note");
+      toast.error("فشل حفظ الملاحظة");
     } finally {
       setLoading(false);
     }
@@ -173,7 +173,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
   const handleDelete = async () => {
     if (!note) return;
 
-    if (!confirm("Are you sure you want to delete this note?")) return;
+    if (!confirm("هل أنت متأكد من حذف هذه الملاحظة؟")) return;
 
     setLoading(true);
     try {
@@ -183,11 +183,11 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
       setMood("");
       setProductivityLevel("");
       setIsEditing(false);
-      toast.success("Note deleted successfully");
+      toast.success("تم حذف الملاحظة بنجاح");
       onNoteUpdate();
     } catch (error) {
       console.error("Error deleting note:", error);
-      toast.error("Failed to delete note");
+      toast.error("فشل حذف الملاحظة");
     } finally {
       setLoading(false);
     }
@@ -224,7 +224,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
         <CardHeader
           title={
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Daily Note</h2>
+              <h2 className="text-xl font-semibold">الملاحظة اليومية</h2>
               <div className="flex items-center space-x-2">
                 {note && !isEditing && (
                   <>
@@ -254,7 +254,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                     className="mr-4"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Note
+                    إضافة ملاحظة
                   </Button>
                 )}
               </div>
@@ -270,7 +270,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Note Content
+                    محتوى الملاحظة
                   </label>
                   <div className="relative">
                     <Button
@@ -282,19 +282,19 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                       className="flex items-center"
                     >
                       <FileText className="w-4 h-4 mr-2" />
-                      Use Template
+                      استخدام قالب
                     </Button>
 
                     {showTemplateSelector && (
                       <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-10 min-w-48">
                         <div className="p-2">
                           <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-2 py-1">
-                            Select Template
+                            اختر قالبًا
                           </div>
                           {isLoadingTemplates ? (
                             <div className="flex items-center justify-center p-4">
                               <span className="text-sm text-gray-600 dark:text-gray-400">
-                                Loading...
+                                جارٍ التحميل...
                               </span>
                             </div>
                           ) : templates.length > 0 ? (
@@ -309,7 +309,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                             ))
                           ) : (
                             <div className="text-sm text-gray-600 dark:text-gray-400 p-2">
-                              No templates available
+                              لا توجد قوالب متاحة
                             </div>
                           )}
                         </div>
@@ -320,7 +320,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                 <MarkdownEditor
                   value={content}
                   onChange={setContent}
-                  placeholder="What's on your mind today? Use markdown for rich formatting..."
+                  placeholder="ما الذي يدور في ذهنك اليوم؟ استخدم Markdown للتنسيق الغني..."
                   minHeight={300}
                   disabled={loading}
                   rtl={isRtl}
@@ -330,7 +330,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               {/* Mood Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Mood
+                  الحالة المزاجية
                 </label>
                 <select
                   value={mood}
@@ -338,7 +338,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   onChange={(e) => setMood(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
                 >
-                  <option value="">Select mood (optional)</option>
+                  <option value="">اختر الحالة المزاجية (اختياري)</option>
                   {availableMoods.map((moodOption) => (
                     <option key={moodOption} value={moodOption}>
                       {moodOption}
@@ -349,7 +349,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
               {/* Productivity Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Productivity Level
+                  مستوى الإنتاجية
                 </label>
                 <select
                   dir="ltr"
@@ -357,7 +357,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   onChange={(e) => setProductivityLevel(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100"
                 >
-                  <option value="">Select productivity level (optional)</option>
+                  <option value="">اختر مستوى الإنتاجية (اختياري)</option>
                   {availableProductivityLevels.map((level) => (
                     <option key={level} value={level}>
                       {level}
@@ -373,7 +373,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   size="sm"
                   disabled={loading}
                 >
-                  Cancel
+                  إلغاء
                 </Button>
                 <Button
                   onClick={handleSave}
@@ -382,7 +382,7 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                   disabled={loading || !content.trim()}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? "Saving..." : "Save Note"}
+                  {loading ? "جارٍ الحفظ..." : "حفظ الملاحظة"}
                 </Button>
               </div>
             </div>
@@ -400,30 +400,32 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
                 <div className="flex items-center space-x-4">
                   {note.mood && (
                     <div className="flex items-center space-x-1">
-                      <span>Mood:</span>
+                      <span>الحالة المزاجية:</span>
                       <span className="font-medium">{note.mood}</span>
                     </div>
                   )}
                   {note.productivityLevel && (
                     <div className="flex items-center space-x-1">
-                      <span>Productivity:</span>
+                      <span>الإنتاجية:</span>
                       <span className="font-medium">
                         {note.productivityLevel}
                       </span>
                     </div>
                   )}
                 </div>
-                <div>Updated: {new Date(note.updatedAt).toLocaleString()}</div>
+                <div>
+                  آخر تحديث: {new Date(note.updatedAt).toLocaleString()}
+                </div>
               </div>
             </div>
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                No note for this day yet.
+                لا توجد ملاحظة لهذا اليوم بعد.
               </p>
               <Button onClick={handleCreate} variant="primary">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Note
+                إنشاء ملاحظة
               </Button>
             </div>
           )}
@@ -431,36 +433,35 @@ const DailyNotes: React.FC<DailyNotesProps> = ({
       </Card>{" "}
       {/* Quick Tips */}
       <Card>
-        <CardHeader title="Daily Reflection Tips" />
+        <CardHeader title="نصائح التأمل اليومي" />
         <CardContent>
           <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3">
             <div>
               <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Content Ideas
+                أفكار للمحتوى
               </h4>
               <div className="space-y-1">
-                <p>• Reflect on your achievements and challenges from today</p>
-                <p>• Note any insights or learnings you gained</p>
-                <p>• Consider what you're grateful for</p>
-                <p>• Plan how tomorrow could be even better</p>
+                <p>• تأمل في إنجازاتك والتحديات التي واجهتها اليوم</p>
+                <p>• سجل أي رؤى أو دروس تعلمتها</p>
+                <p>• فكر فيما أنت ممتن له</p>
+                <p>• خطط لكيفية جعل الغد أفضل</p>
               </div>
             </div>
             <div>
               <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Formatting Tips
+                نصائح التنسيق
               </h4>
               <div className="space-y-1">
                 <p>
-                  • Use <strong>**bold**</strong> for important achievements
+                  • استخدم <strong>**غامق**</strong> للإنجازات المهمة
                 </p>
                 <p>
-                  • Create task lists with <code>- [ ]</code> for tomorrow's
-                  goals
+                  • أنشئ قوائم مهام بـ <code>- [ ]</code> لأهداف الغد
                 </p>
                 <p>
-                  • Add <em>*emphasis*</em> to key insights
+                  • أضف <em>*تأكيد*</em> للرؤى الرئيسية
                 </p>
-                <p>• Use templates for consistent daily structure</p>
+                <p>• استخدم القوالب للحصول على بنية يومية متسقة</p>
               </div>
             </div>
           </div>

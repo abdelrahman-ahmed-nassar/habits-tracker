@@ -118,7 +118,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       setProductivityCorrelation(correlation);
     } catch (error) {
       console.error("Error fetching analytics data:", error);
-      toast.error("Failed to load analytics data");
+      toast.error("فشل تحميل بيانات التحليلات");
     } finally {
       setLoading(false);
     }
@@ -154,7 +154,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         yaxis: {
           title: {
-            text: "Average Mood Score",
+            text: "متوسط درجة المزاج",
           },
           min: 0,
           max: 10,
@@ -175,7 +175,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       },
       series: [
         {
-          name: "Average Mood",
+          name: "متوسط المزاج",
           data: sortedTrends.map((trend) => trend.averageMood),
         },
       ],
@@ -252,7 +252,6 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       };
     });
 
-
     return {
       options: {
         chart: {
@@ -275,7 +274,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         yaxis: {
           title: {
-            text: "Mood Score",
+            text: "درجة المزاج",
           },
           min: 0,
           max: 10,
@@ -311,7 +310,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       },
       series: [
         {
-          name: "Daily Mood",
+          name: "المزاج اليومي",
           data: dailyMoodData.map((data) => data.moodValue),
         },
       ],
@@ -349,7 +348,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         yaxis: {
           title: {
-            text: "Average Productivity Score",
+            text: "متوسط درجة الإنتاجية",
           },
           min: 0,
           max: 6,
@@ -370,7 +369,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       },
       series: [
         {
-          name: "Average Productivity",
+          name: "متوسط الإنتاجية",
           data: productivityValues,
         },
       ],
@@ -395,7 +394,6 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       Object.keys(analyticsData.productivityValueMap).length > 0
     ) {
       productivityValueMap = analyticsData.productivityValueMap;
-
     } else {
       // Fallback mapping for actual productivity levels in your data
       productivityValueMap = {
@@ -417,15 +415,12 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         "عالي جداً": 6,
         "Very High": 6,
       };
-
     }
 
     // Sort notes by date and create daily data
     const sortedNotes = [...notesWithProductivity]
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-30); // Last 30 days
-
-
 
     const dailyProductivityData = sortedNotes.map((note) => {
       const productivityValue =
@@ -436,7 +431,6 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         productivityValue,
       };
     });
-
 
     return {
       options: {
@@ -460,7 +454,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         yaxis: {
           title: {
-            text: "Productivity Score",
+            text: "درجة الإنتاجية",
           },
           min: 0,
           max: 6,
@@ -496,7 +490,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       },
       series: [
         {
-          name: "Daily Productivity",
+          name: "الإنتاجية اليومية",
           data: dailyProductivityData.map((data) => data.productivityValue),
         },
       ],
@@ -537,7 +531,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         },
         yaxis: {
           title: {
-            text: "Productivity Impact",
+            text: "تأثير الإنتاجية",
           },
         },
         colors: ["#6366F1"], // Indigo color
@@ -554,7 +548,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       },
       series: [
         {
-          name: "Productivity Impact",
+          name: "تأثير الإنتاجية",
           data: sortedCorrelations.map((c) => c.productivityImpact || 0),
         },
       ],
@@ -571,7 +565,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         setMoodTrends(trends);
       } catch (error) {
         console.error("Error fetching filtered mood trends:", error);
-        toast.error("Failed to filter mood trends");
+        toast.error("فشل تصفية اتجاهات المزاج");
       }
     }
   };
@@ -689,7 +683,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast.success("Analytics data exported successfully");
+    toast.success("تم تصدير بيانات التحليلات بنجاح");
   };
 
   if (loading) {
@@ -716,10 +710,10 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Analytics & Insights
+            التحليلات والرؤى
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Discover patterns in your writing habits and emotional journey
+            اكتشف الأنماط في عادات الكتابة ورحلتك العاطفية
           </p>
         </div>
         <Button
@@ -728,7 +722,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
           className="flex items-center space-x-2"
         >
           <Download className="w-4 h-4" />
-          <span>Export Data</span>
+          <span>تصدير البيانات</span>
         </Button>
       </div>
       {/* Overview Stats */}
@@ -740,7 +734,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
               {localAnalytics?.totalNotes || analyticsData?.totalNotes || 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Total Notes
+              إجمالي اليوميات
             </div>
           </div>
         </Card>
@@ -754,7 +748,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              {localAnalytics ? "Current" : "Longest"} Streak
+              السلسلة {localAnalytics ? "الحالية" : "الأطول"} 
             </div>
           </div>
         </Card>
@@ -768,7 +762,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Avg. Length
+              متوسط طول اليوميات
             </div>
           </div>
         </Card>
@@ -783,7 +777,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
               %
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              With Mood
+              مع المزاج
             </div>
           </div>
         </Card>
@@ -795,7 +789,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Heart className="w-5 h-5 mr-2 text-red-500" />
-                Mood Distribution
+                توزيع المزاج
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Object.entries(analyticsData.moodDistribution)
@@ -822,7 +816,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Zap className="w-5 h-5 mr-2 text-yellow-500" />
-                Productivity Distribution
+                توزيع الإنتاجية
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {Object.entries(analyticsData.productivityDistribution)
@@ -841,7 +835,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                         {count}
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {level} Productivity
+                        {level} الإنتاجية
                       </div>
                     </div>
                   ))}
@@ -856,7 +850,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Calendar className="w-5 h-5 mr-2 text-blue-500" />
-                Monthly Writing Frequency
+                تكرار الكتابة الشهري
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {Object.entries(analyticsData.monthlyFrequency)
@@ -884,7 +878,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
                 <TrendingUp className="w-5 h-5 mr-2 text-green-500" />
-                Mood Trends Over Time
+                اتجاهات المزاج عبر الوقت
               </h3>
               <div className="flex items-center space-x-4">
                 {/* View Mode Toggle */}
@@ -897,7 +891,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    Monthly
+                    شهري
                   </button>
                   <button
                     onClick={() => setMoodTrendsViewMode("daily")}
@@ -907,7 +901,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    Daily
+                    يومي
                   </button>
                 </div>
 
@@ -926,7 +920,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                       className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
                     />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      to
+                      إلى
                     </span>
                     <input
                       type="date"
@@ -957,12 +951,12 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   height={300}
                 />
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  Based on{" "}
+                  بناءً على{" "}
                   {moodTrends?.trends.reduce(
                     (sum, trend) => sum + trend.count,
                     0
                   ) || 0}{" "}
-                  notes with mood data
+                  ملاحظة مع بيانات المزاج
                 </div>
               </div>
             )}
@@ -977,8 +971,8 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   height={300}
                 />
                 <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  Based on {notes.filter((n) => n.mood).length} notes with mood
-                  data (last 30 days)
+                  بناءً على {notes.filter((n) => n.mood).length} ملاحظة مع
+                  بيانات المزاج (آخر 30 يوم)
                 </div>
               </div>
             )}
@@ -986,14 +980,14 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             {/* Show message if no data available for selected view */}
             {moodTrendsViewMode === "monthly" && !moodTrendChartData && (
               <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
-                No monthly mood trend data available
+                لا توجد بيانات اتجاه مزاج شهري متاحة
               </div>
             )}
 
             {moodTrendsViewMode === "daily" && !dailyMoodTrendChartData && (
               <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
-                No daily mood data available. Start tracking your mood in notes
-                to see trends!
+                لا توجد بيانات مزاج يومية متاحة. ابدأ بتتبع مزاجك في اليوميات
+                لرؤية الاتجاهات!
               </div>
             )}
           </div>
@@ -1008,7 +1002,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
                 <LineChartIcon className="w-5 h-5 mr-2 text-indigo-500" />
-                Productivity Trends Over Time
+                اتجاهات الإنتاجية عبر الوقت
               </h3>
               <div className="flex items-center space-x-4">
                 {/* View Mode Toggle */}
@@ -1021,7 +1015,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    Monthly
+                    شهري
                   </button>
                   <button
                     onClick={() => setProductivityTrendsViewMode("daily")}
@@ -1031,7 +1025,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
-                    Daily
+                    يومي
                   </button>
                 </div>
               </div>
@@ -1048,13 +1042,13 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                     height={300}
                   />
                   <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                    Based on{" "}
+                    بناءً على{" "}
                     {analyticsData?.monthlyProductivityScores
                       ? Object.values(
                           analyticsData.monthlyProductivityScores
                         ).reduce((sum, data) => sum + data.count, 0)
                       : 0}{" "}
-                    notes with productivity data
+                    ملاحظة مع بيانات الإنتاجية
                   </div>
                 </div>
               )}
@@ -1070,8 +1064,8 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                     height={300}
                   />
                   <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                    Based on {notes.filter((n) => n.productivityLevel).length}{" "}
-                    notes with productivity data (last 30 days)
+                    بناءً على {notes.filter((n) => n.productivityLevel).length}{" "}
+                    ملاحظة مع بيانات الإنتاجية (آخر 30 يوم)
                   </div>
                 </div>
               )}
@@ -1080,15 +1074,15 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             {productivityTrendsViewMode === "monthly" &&
               !productivityTrendChartData && (
                 <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
-                  No monthly productivity trend data available
+                  لا توجد بيانات اتجاه إنتاجية شهري متاحة
                 </div>
               )}
 
             {productivityTrendsViewMode === "daily" &&
               !dailyProductivityTrendChartData && (
                 <div className="mt-4 text-center py-8 text-gray-500 dark:text-gray-400">
-                  No daily productivity data available. Start tracking your
-                  productivity in notes to see trends!
+                  لا توجد بيانات إنتاجية يومية متاحة. ابدأ بتتبع إنتاجيتك في
+                  اليوميات لرؤية الاتجاهات!
                 </div>
               )}
           </div>
@@ -1102,7 +1096,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
             <div className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <Activity className="w-5 h-5 mr-2 text-indigo-500" />
-                Productivity & Habit Correlation
+                العلاقة بين الإنتاجية والعادات
               </h3>
 
               {/* Bar Chart for Productivity Correlation */}
@@ -1118,7 +1112,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
               )}
 
               <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                Shows how habit completion affects your productivity levels
+                يوضح كيف يؤثر إكمال العادات على مستويات إنتاجيتك
               </div>
             </div>
           </Card>
@@ -1128,7 +1122,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
         <div className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
             <Award className="w-5 h-5 mr-2 text-purple-500" />
-            Key Insights
+            الرؤى الرئيسية
           </h3>
           <div className="space-y-3">
             {analyticsData && (
@@ -1136,19 +1130,18 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    You've written <strong>{analyticsData.totalNotes}</strong>{" "}
-                    notes with an average length of{" "}
-                    <strong>{analyticsData.avgContentLength}</strong>{" "}
-                    characters.
+                    لقد كتبت <strong>{analyticsData.totalNotes}</strong> ملاحظة
+                    بمتوسط طول <strong>{analyticsData.avgContentLength}</strong>{" "}
+                    حرفًا.
                   </p>
                 </div>
                 {analyticsData.longestStreak > 0 && (
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      Your longest writing streak was{" "}
-                      <strong>{analyticsData.longestStreak}</strong> consecutive
-                      days.
+                      أطول سلسلة كتابة لديك كانت{" "}
+                      <strong>{analyticsData.longestStreak}</strong> أيام
+                      متتالية.
                     </p>
                   </div>
                 )}
@@ -1156,9 +1149,9 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      You track your mood in{" "}
-                      <strong>{analyticsData.completionRate.mood}%</strong> of
-                      your notes.
+                      تتبع مزاجك في{" "}
+                      <strong>{analyticsData.completionRate.mood}%</strong> من
+                      ملاحظاتك.
                     </p>
                   </div>
                 )}{" "}
@@ -1166,11 +1159,11 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      You track productivity in{" "}
+                      تتبع الإنتاجية في{" "}
                       <strong>
                         {analyticsData.completionRate.productivity}%
                       </strong>{" "}
-                      of your notes.
+                      من ملاحظاتك.
                     </p>
                   </div>
                 )}
@@ -1178,7 +1171,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      Your average mood score is{" "}
+                      متوسط درجة مزاجك هو{" "}
                       <strong>
                         {analyticsData.avgMoodValue.toFixed(1)}/10
                       </strong>
@@ -1190,7 +1183,7 @@ const NotesAnalytics: React.FC<NotesAnalyticsProps> = ({ notes }) => {
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2"></div>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
-                      Your average productivity score is{" "}
+                      متوسط درجة إنتاجيتك هو{" "}
                       <strong>
                         {analyticsData.avgProductivityValue.toFixed(1)}
                       </strong>

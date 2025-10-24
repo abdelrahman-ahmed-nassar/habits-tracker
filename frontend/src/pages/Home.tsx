@@ -171,12 +171,10 @@ const Home: React.FC = () => {
     const completionRate =
       (dashboardData.completedToday / dashboardData.totalHabits) * 100;
 
-    if (completionRate === 100)
-      return "Perfect day! Keep up the amazing work! 🎉";
-    if (completionRate >= 75)
-      return "Great progress! You're doing fantastic! 💪";
-    if (completionRate >= 50) return "Good job! Keep pushing forward! 🌟";
-    return "Every small step counts! You've got this! 💫";
+    if (completionRate === 100) return "يوم مثالي! استمر في العمل الرائع! 🎉";
+    if (completionRate >= 75) return "تقدم رائع! أنت تقوم بعمل رائع! 💪";
+    if (completionRate >= 50) return "عمل جيد! استمر في التقدم! 🌟";
+    return "أحب الأعمال إلي الله ... أدومها وإن قل🍂";
   };
 
   const getCompletionPercentage = () => {
@@ -189,10 +187,10 @@ const Home: React.FC = () => {
   const getQuarterStartDates = () => {
     const currentYear = new Date().getFullYear();
     return [
-      { startDate: `${currentYear}-01-01`, title: "Q1 Analytics" },
-      { startDate: `${currentYear}-04-01`, title: "Q2 Analytics" },
-      { startDate: `${currentYear}-07-01`, title: "Q3 Analytics" },
-      { startDate: `${currentYear}-10-01`, title: "Q4 Analytics" },
+      { startDate: `${currentYear}-01-01`, title: "تحليلات الربع الأول" },
+      { startDate: `${currentYear}-04-01`, title: "تحليلات الربع الثاني" },
+      { startDate: `${currentYear}-07-01`, title: "تحليلات الربع الثالث" },
+      { startDate: `${currentYear}-10-01`, title: "تحليلات الربع الرابع" },
     ];
   };
 
@@ -257,7 +255,7 @@ const Home: React.FC = () => {
             const dayData = weeklyData.dailyStats[dataPointIndex];
             return `${Math.round(val)}% (${dayData.completedHabits}/${
               dayData.totalHabits
-            } habits)`;
+            } عادات)`;
           },
         },
         x: {
@@ -283,7 +281,7 @@ const Home: React.FC = () => {
 
     const series = [
       {
-        name: "Daily Completion Rate",
+        name: "معدل الإكمال اليومي",
         data: weeklyData.dailyStats.map((day) =>
           Math.round(day.completionRate)
         ),
@@ -293,11 +291,11 @@ const Home: React.FC = () => {
     return (
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">
-          This Week's Daily Performance
+          الأداء اليومي لهذا الأسبوع
         </h3>
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Track your daily completion rates for the current week (Overall:{" "}
+            تتبع معدلات الإنجاز اليومية للأسبوع الحالي (الإجمالي:{" "}
             {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%)
           </p>
         </div>
@@ -342,7 +340,7 @@ const Home: React.FC = () => {
       },
       yaxis: {
         title: {
-          text: "Success Rate (%)",
+          text: "معدل النجاح (%)",
         },
       },
       fill: {
@@ -359,7 +357,7 @@ const Home: React.FC = () => {
 
     const series = [
       {
-        name: "Success Rate",
+        name: "معدل النجاح",
         data: dashboardData.dayOfWeekStats.map((stat) =>
           Math.round(stat.successRate * 100)
         ),
@@ -369,7 +367,7 @@ const Home: React.FC = () => {
     return (
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">
-          Weekly Success Rate by Day
+          معدل النجاح الأسبوعي حسب اليوم
         </h3>
         <ReactApexChart
           options={options}
@@ -403,7 +401,7 @@ const Home: React.FC = () => {
             },
             total: {
               show: true,
-              label: "Total",
+              label: "الإجمالي",
               formatter: function (w: { globals: { seriesTotals: number[] } }) {
                 const avg =
                   w.globals.seriesTotals.reduce(
@@ -427,7 +425,7 @@ const Home: React.FC = () => {
 
     return (
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Habit Success Rates</h3>
+        <h3 className="text-lg font-semibold mb-4">معدلات نجاح العادات</h3>
         <ReactApexChart
           options={options}
           series={series}
@@ -544,7 +542,7 @@ const Home: React.FC = () => {
 
     const series = [
       {
-        name: "Current Month Completion",
+        name: "إكمال الشهر الحالي",
         data: monthlyData.dailyCompletionCounts.map((day) =>
           Math.min(100, Math.round((day.completionRate || 0) * 100))
         ),
@@ -555,8 +553,7 @@ const Home: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">
-            Current Month Completion Trend ({monthlyData.monthName}{" "}
-            {monthlyData.year})
+            إحصائيات شهر ({monthlyData.monthName} {monthlyData.year})
           </h3>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             Avg:{" "}
@@ -565,8 +562,8 @@ const Home: React.FC = () => {
         </div>
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Track your daily habit completion rates throughout the current month
-            to identify patterns and maintain consistency.
+            تتبع معدلات إكمال عاداتك اليومية خلال الشهر الحالي لتحديد الأنماط
+            والحفاظ على الاستمرارية.
           </p>
         </div>
         <ReactApexChart
@@ -581,7 +578,7 @@ const Home: React.FC = () => {
               {monthlyData.monthlyStats.totalCompletions}
             </span>
             <span className="text-gray-500 dark:text-gray-400">
-              Total Completions
+              إجمالي الإكمالات
             </span>
           </div>
           <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -589,7 +586,7 @@ const Home: React.FC = () => {
               {monthlyData.dailyCompletionCounts.length}
             </span>
             <span className="text-gray-500 dark:text-gray-400">
-              Days Tracked
+              الأيام المتتبعة
             </span>
           </div>
           <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -598,7 +595,7 @@ const Home: React.FC = () => {
               %
             </span>
             <span className="text-gray-500 dark:text-gray-400">
-              Monthly Average
+              المتوسط الشهري
             </span>
           </div>
         </div>
@@ -667,7 +664,7 @@ const Home: React.FC = () => {
             const habit = topHabits[dataPointIndex];
             return `${Math.round(val)}% (${habit.completedDaysCount}/${
               habit.activeDaysCount
-            } days)`;
+            } أيام)`;
           },
         },
         x: {
@@ -685,7 +682,7 @@ const Home: React.FC = () => {
 
     const series = [
       {
-        name: "Success Rate",
+        name: "معدل النجاح",
         data: topHabits.map((habit) => ({
           x:
             habit.habitName.length > 25
@@ -698,12 +695,10 @@ const Home: React.FC = () => {
 
     return (
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">
-          Weekly Habits Performance
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">أداء العادات الأسبوعي</h3>
         <div className="mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Top performing habits this week by success rate
+            أفضل العادات أداءً هذا الأسبوع حسب معدل النجاح
           </p>
         </div>
         <ReactApexChart
@@ -722,7 +717,9 @@ const Home: React.FC = () => {
 
     return (
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Most Consistent Habits</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          العادات الأكثر استمراريةً
+        </h3>
         <div className="space-y-4">
           {dashboardData.mostConsistentHabits
             .slice(0, 5)
@@ -740,7 +737,7 @@ const Home: React.FC = () => {
                       {habit.habitName}
                     </h4>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {Math.round(habit.successRate * 100)}% success rate
+                      {Math.round(habit.successRate * 100)}% معدل النجاح
                     </p>
                   </div>
                 </div>
@@ -751,7 +748,7 @@ const Home: React.FC = () => {
                         {habit.currentStreak}
                       </span>
                       <span className="text-gray-500 dark:text-gray-400">
-                        Current
+                        الحالي
                       </span>
                     </div>
                     <div className="text-center">
@@ -759,7 +756,7 @@ const Home: React.FC = () => {
                         {habit.bestStreak}
                       </span>
                       <span className="text-gray-500 dark:text-gray-400">
-                        Best
+                        الأفضل
                       </span>
                     </div>
                     {habit.currentCounter > 0 && (
@@ -768,7 +765,7 @@ const Home: React.FC = () => {
                           {habit.currentCounter}
                         </span>
                         <span className="text-gray-500 dark:text-gray-400">
-                          Counter
+                          العداد
                         </span>
                       </div>
                     )}
@@ -787,7 +784,7 @@ const Home: React.FC = () => {
     return (
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          📝 Notes Analytics Overview
+          📝 نظرة عامة على تحليلات اليوميات
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="text-center">
@@ -795,7 +792,7 @@ const Home: React.FC = () => {
               {notesAnalytics.totalNotes || 0}
             </div>
             <div className="text-gray-600 dark:text-gray-300 text-sm">
-              Total Notes
+              إجمالي اليوميات
             </div>
           </div>
           <div className="text-center">
@@ -805,7 +802,7 @@ const Home: React.FC = () => {
                 : 0}
             </div>
             <div className="text-gray-600 dark:text-gray-300 text-sm">
-              Mood Types
+              أنواع المزاج
             </div>
           </div>
           <div className="text-center">
@@ -815,7 +812,7 @@ const Home: React.FC = () => {
                 : 0}
             </div>
             <div className="text-gray-600 dark:text-gray-300 text-sm">
-              Productivity Levels
+              مستويات الإنتاجية
             </div>
           </div>
           <div className="text-center">
@@ -823,7 +820,7 @@ const Home: React.FC = () => {
               {Math.round((notesAnalytics.totalNotes || 0) / 30)}
             </div>
             <div className="text-gray-600 dark:text-gray-300 text-sm">
-              Notes/Month Avg
+              متوسط اليوميات/الشهر
             </div>
           </div>
         </div>
@@ -831,7 +828,7 @@ const Home: React.FC = () => {
         {notesAnalytics.insights && notesAnalytics.insights.length > 0 && (
           <div className="mb-4">
             <h4 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">
-              📊 Key Insights
+              📊 رؤى مهمة
             </h4>
             <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
               {notesAnalytics.insights.slice(0, 3).map((insight, index) => (
@@ -846,8 +843,18 @@ const Home: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-6 w-1/3"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-32 bg-gray-200 dark:bg-gray-700 rounded"
+              ></div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -855,7 +862,7 @@ const Home: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
-        Dashboard{" "}
+        لوحة التحكم{" "}
         <span role="img" aria-label="chart">
           📊
         </span>
@@ -873,7 +880,7 @@ const Home: React.FC = () => {
       {weeklyData && monthlyData && (
         <div className="mb-8 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-lg p-6 border border-indigo-200 dark:border-indigo-700">
           <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-            📈 Analytics Overview
+            📈 نظرة عامة على التحليلات
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div className="text-center">
@@ -881,10 +888,10 @@ const Home: React.FC = () => {
                 {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                Weekly Success
+                النجاح الأسبوعي
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {weeklyData.weeklyStats.totalCompletions} completions
+                {weeklyData.weeklyStats.totalCompletions} إنجازات
               </div>
             </div>
             <div className="text-center">
@@ -895,10 +902,10 @@ const Home: React.FC = () => {
                 %
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                Monthly Average
+                المتوسط الشهري
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {monthlyData.monthlyStats.totalCompletions} total
+                {monthlyData.monthlyStats.totalCompletions} إجمالي
               </div>
             </div>
             <div className="text-center">
@@ -906,21 +913,17 @@ const Home: React.FC = () => {
                 {Math.round((dashboardData?.last30DaysSuccessRate || 0) * 100)}%
               </div>
               <div className="text-gray-600 dark:text-gray-300">
-                30-Day Trend
+                اتجاه 30 يوم
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                Overall performance
-              </div>
+              <div className="text-xs text-gray-500 mt-1">الأداء الكلي</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 {dashboardData?.longestStreakHabit.bestStreak || 0}
               </div>
-              <div className="text-gray-600 dark:text-gray-300">
-                Best Streak
-              </div>
+              <div className="text-gray-600 dark:text-gray-300">أفضل سلسلة</div>
               <div className="text-xs text-gray-500 mt-1">
-                {dashboardData?.longestStreakHabit.habitName || "N/A"}
+                {dashboardData?.longestStreakHabit.habitName || "غ/م"}
               </div>
             </div>
           </div>
@@ -934,7 +937,7 @@ const Home: React.FC = () => {
             📋
           </span>
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Total Habits
+            إجمالي العادات
           </h3>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {dashboardData?.totalHabits}
@@ -945,7 +948,7 @@ const Home: React.FC = () => {
             ✅
           </span>
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Completed Today
+            مكتمل اليوم
           </h3>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {dashboardData?.completedToday}
@@ -959,7 +962,7 @@ const Home: React.FC = () => {
             ⭐
           </span>
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Success Rate (30 Days)
+            معدل النجاح (30 يوم)
           </h3>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {Math.round((dashboardData?.last30DaysSuccessRate || 0) * 100)}%
@@ -970,10 +973,10 @@ const Home: React.FC = () => {
             🔥
           </span>
           <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Best Streak
+            أفضل سلسلة
           </h3>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {dashboardData?.longestStreakHabit?.bestStreak || 0} days
+            {dashboardData?.longestStreakHabit?.bestStreak || 0} أيام
           </p>
           <p className="text-xs text-gray-400 text-center mt-1">
             {dashboardData?.longestStreakHabit?.habitName || "N/A"}
@@ -987,11 +990,11 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg shadow text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium opacity-90">This Week</h3>
+                <h3 className="text-sm font-medium opacity-90">هذا الأسبوع</h3>
                 <p className="text-2xl font-bold">
                   {Math.round(weeklyData.weeklyStats.overallSuccessRate)}%
                 </p>
-                <p className="text-xs opacity-80">Overall Success</p>
+                <p className="text-xs opacity-80">النجاح الإجمالي</p>
               </div>
               <span className="text-3xl opacity-80">📊</span>
             </div>
@@ -999,11 +1002,11 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-lg shadow text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium opacity-90">Completions</h3>
+                <h3 className="text-sm font-medium opacity-90">المُكتملة</h3>
                 <p className="text-2xl font-bold">
                   {weeklyData.weeklyStats.totalCompletions}
                 </p>
-                <p className="text-xs opacity-80">This Week</p>
+                <p className="text-xs opacity-80">هذا الأسبوع</p>
               </div>
               <span className="text-3xl opacity-80">✅</span>
             </div>
@@ -1011,14 +1014,14 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-lg shadow text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium opacity-90">Best Day</h3>
+                <h3 className="text-sm font-medium opacity-90">أفضل يوم</h3>
                 <p className="text-xl font-bold">
                   {weeklyData.weeklyStats.mostProductiveDay?.dayName || "N/A"}
                 </p>
                 <p className="text-xs opacity-80">
                   {weeklyData.weeklyStats.mostProductiveDay?.completionRate ||
                     0}
-                  % completion
+                  % إكمال
                 </p>
               </div>
               <span className="text-3xl opacity-80">🌟</span>
@@ -1027,7 +1030,7 @@ const Home: React.FC = () => {
           <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 rounded-lg shadow text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium opacity-90">Top Habit</h3>
+                <h3 className="text-sm font-medium opacity-90">أفضل عادة</h3>
                 <p className="text-sm font-bold">
                   {weeklyData.weeklyStats.mostProductiveHabit?.habitName?.substring(
                     0,
@@ -1043,7 +1046,7 @@ const Home: React.FC = () => {
                     (weeklyData.weeklyStats.mostProductiveHabit?.successRate ||
                       0) * 100
                   )}
-                  % success
+                  % نجاح
                 </p>
               </div>
               <span className="text-3xl opacity-80">🏆</span>
@@ -1056,7 +1059,7 @@ const Home: React.FC = () => {
       {weeklyData && (
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            Current Week Analytics
+            تحليلات الأسبوع الحالي
           </h2>
           <WeeklyAnalytics analytics={weeklyData} />
         </div>
@@ -1076,7 +1079,7 @@ const Home: React.FC = () => {
       {(notesAnalytics || notes.length > 0) && (
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            📝 Notes & Mood Analytics
+            📝 تحليلات اليوميات والمزاج
           </h2>
           <div className="grid grid-cols-1 gap-6">
             {notesAnalytics && renderNotesAnalyticsOverview()}

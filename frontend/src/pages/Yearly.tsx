@@ -99,28 +99,28 @@ const Yearly: React.FC = () => {
         startDate: `${year}-01-01`,
         endDate: `${year}-03-31`,
         completionRate: 0,
-        title: "Q1 Analytics",
+        title: "تحليل الربع الأول",
       },
       {
         quarter: 2,
         startDate: `${year}-04-01`,
         endDate: `${year}-06-30`,
         completionRate: 0,
-        title: "Q2 Analytics",
+        title: "تحليل الربع الثاني",
       },
       {
         quarter: 3,
         startDate: `${year}-07-01`,
         endDate: `${year}-09-30`,
         completionRate: 0,
-        title: "Q3 Analytics",
+        title: "تحليل الربع الثالث",
       },
       {
         quarter: 4,
         startDate: `${year}-10-01`,
         endDate: `${year}-12-31`,
         completionRate: 0,
-        title: "Q4 Analytics",
+        title: "تحليل الربع الرابع",
       },
     ];
   }, []);
@@ -383,7 +383,7 @@ const Yearly: React.FC = () => {
             size="sm"
             leftIcon={<Download className="w-4 h-4" />}
           >
-            Export
+            تصدير
           </Button>
 
           {/* Navigation */}
@@ -423,7 +423,7 @@ const Yearly: React.FC = () => {
             <Card className="shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Yearly Progress</h3>
+                  <h3 className="text-lg font-semibold">التقدم السنوي</h3>
                   <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
                     <BarChart2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
@@ -441,7 +441,7 @@ const Yearly: React.FC = () => {
                     className="h-2"
                   />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {yearlyData.yearlyStats.totalCompletions} completions
+                    {yearlyData.yearlyStats.totalCompletions} إكمالات
                   </p>
                 </div>
               </CardContent>
@@ -452,7 +452,7 @@ const Yearly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Best Month</h3>
+                    <h3 className="text-lg font-semibold">أفضل شهر</h3>
                     <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                       <Award className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
@@ -465,7 +465,7 @@ const Yearly: React.FC = () => {
                       {Math.round(
                         yearlyData.yearlyStats.bestMonth.completionRate * 100
                       )}
-                      % completion
+                      % إكمال
                     </div>
                   </div>
                 </CardContent>
@@ -477,7 +477,7 @@ const Yearly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Needs Improvement</h3>
+                    <h3 className="text-lg font-semibold">يحتاج تحسين</h3>
                     <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
                       <TrendingUp className="w-5 h-5 text-red-600 dark:text-red-400" />
                     </div>
@@ -490,7 +490,7 @@ const Yearly: React.FC = () => {
                       {Math.round(
                         yearlyData.yearlyStats.worstMonth.completionRate * 100
                       )}
-                      % completion
+                      % إكمال
                     </div>
                   </div>
                 </CardContent>
@@ -502,7 +502,7 @@ const Yearly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Top Habit</h3>
+                    <h3 className="text-lg font-semibold">أفضل عادة</h3>
                     <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
                       <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
@@ -515,7 +515,7 @@ const Yearly: React.FC = () => {
                       {Math.round(
                         yearlyData.yearlyStats.bestHabit.completionRate * 100
                       )}
-                      % success rate
+                      % معدل النجاح
                     </p>
                   </div>
                 </CardContent>
@@ -526,7 +526,7 @@ const Yearly: React.FC = () => {
           {/* Monthly Performance Chart */}
           <Card className="mb-8 shadow-sm">
             <CardHeader className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-xl font-semibold">Monthly Performance</h3>
+              <h3 className="text-xl font-semibold">الأداء الشهري</h3>
             </CardHeader>
             <CardContent className="p-6">
               <div className="h-[400px]">

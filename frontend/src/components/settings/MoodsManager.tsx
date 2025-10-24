@@ -19,7 +19,7 @@ const MoodsManager: React.FC = () => {
       setMoods(data);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch moods");
+      setError("فشل تحميل الحالات المزاجية");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -40,23 +40,23 @@ const MoodsManager: React.FC = () => {
     e.preventDefault();
 
     if (!newMood.trim()) {
-      toast.error("Mood name is required");
+      toast.error("اسم الحالة المزاجية مطلوب");
       return;
     }
 
     if (moods.includes(newMood)) {
-      toast.error("This mood already exists");
+      toast.error("هذه الحالة المزاجية موجودة بالفعل");
       return;
     }
 
     try {
       setIsSubmitting(true);
       await OptionsService.addMood(newMood);
-      toast.success("Mood added successfully");
+      toast.success("تمت إضافة الحالة المزاجية بنجاح");
       await fetchMoods();
       setNewMood("");
     } catch (err) {
-      toast.error("Failed to add mood");
+      toast.error("فشل إضافة الحالة المزاجية");
       console.error(err);
     } finally {
       setIsSubmitting(false);
@@ -64,18 +64,16 @@ const MoodsManager: React.FC = () => {
   };
 
   const handleDeleteMood = async (mood: string) => {
-    if (
-      !window.confirm(`Are you sure you want to delete the mood "${mood}"?`)
-    ) {
+    if (!window.confirm(`هل أنت متأكد من حذف الحالة المزاجية "${mood}"؟`)) {
       return;
     }
 
     try {
       await OptionsService.removeMood(mood);
-      toast.success("Mood deleted successfully");
+      toast.success("تم حذف الحالة المزاجية بنجاح");
       await fetchMoods();
     } catch (err) {
-      toast.error("Failed to delete mood");
+      toast.error("فشل حذف الحالة المزاجية");
       console.error(err);
     }
   };
@@ -84,7 +82,7 @@ const MoodsManager: React.FC = () => {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center">Loading moods...</div>
+          <div className="text-center">جارٍ تحميل الحالات المزاجية...</div>
         </CardContent>
       </Card>
     );
@@ -93,7 +91,7 @@ const MoodsManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Moods Manager</h2>
+        <h2 className="text-xl font-bold">مدير الحالات المزاجية</h2>
       </div>
 
       {error && (
@@ -103,11 +101,11 @@ const MoodsManager: React.FC = () => {
       )}
 
       <Card>
-        <CardHeader title="Add New Mood" />
+        <CardHeader title="إضافة حالة مزاجية جديدة" />
         <CardContent>
           <form onSubmit={handleAddMood} className="flex space-x-2">
             <Input
-              placeholder="Enter mood name"
+              placeholder="أدخل اسم الحالة المزاجية"
               value={newMood}
               onChange={(e) => setNewMood(e.target.value)}
               fullWidth
@@ -118,19 +116,19 @@ const MoodsManager: React.FC = () => {
               leftIcon={<PlusCircle size={16} />}
               isLoading={isSubmitting}
             >
-              Add
+              إضافة
             </Button>
           </form>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader title="Existing Moods" />
+        <CardHeader title="الحالات المزاجية الموجودة" />
         <CardContent>
           {moods.length === 0 ? (
             <div className="flex items-center justify-center p-6 text-gray-500 dark:text-gray-400">
               <AlertCircle size={18} className="mr-2" />
-              No moods have been added yet
+              لم يتم إضافة أي حالات مزاجية بعد
             </div>
           ) : (
             <ul className="space-y-2">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
@@ -31,8 +31,46 @@ const Notes: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [notes, setNotes] = useState<DailyNote[]>([]);
   const [loading, setLoading] = useState(true);
-  const [calendarData, setCalendarData] = useState<any>(null);
+  const [calendarData, setCalendarData] = useState<{
+    year: number;
+    month: number;
+    totalNotes: number;
+    calendarData: Record<
+      string,
+      {
+        hasNote: boolean;
+        mood?: string;
+        productivityLevel?: string;
+        contentLength: number;
+      }
+    >;
+  } | null>(null);
   const [selectedNote, setSelectedNote] = useState<DailyNote | null>(null);
+
+  const fetchAllNotes = async () => {
+    try {
+      setLoading(true);
+      const allNotes = await NotesService.getAllNotes();
+      setNotes(allNotes);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+      toast.error("Failed to load notes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCalendarData = useCallback(async () => {
+    try {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const data = await NotesService.getNotesCalendar(year, month);
+      setCalendarData(data);
+    } catch (error) {
+      console.error("Error fetching calendar data:", error);
+      toast.error("فشل تحميل بيانات التقويم");
+    }
+  }, [currentDate]);
 
   // Update URL when view mode changes
   useEffect(() => {
@@ -49,32 +87,7 @@ const Notes: React.FC = () => {
     if (viewMode === "calendar") {
       fetchCalendarData();
     }
-  }, [currentDate, viewMode]);
-
-  const fetchAllNotes = async () => {
-    try {
-      setLoading(true);
-      const allNotes = await NotesService.getAllNotes();
-      setNotes(allNotes);
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-      toast.error("Failed to load notes");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCalendarData = async () => {
-    try {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      const data = await NotesService.getNotesCalendar(year, month);
-      setCalendarData(data);
-    } catch (error) {
-      console.error("Error fetching calendar data:", error);
-      toast.error("Failed to load calendar data");
-    }
-  };
+  }, [currentDate, viewMode, fetchCalendarData]);
 
   const handleDateNavigation = (direction: "prev" | "next") => {
     setCurrentDate((prev) => {
@@ -128,14 +141,12 @@ const Notes: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Notes & Journal
+            اليوميات والمذكرات
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {viewMode === "calendar" && "View your notes on a monthly calendar"}
-            {viewMode === "list" &&
-              "Browse all your notes in chronological order"}
-            {viewMode === "analytics" &&
-              "Analyze your writing patterns and insights"}
+            {viewMode === "calendar" && "عرض ملاحظاتك على تقويم شهري"}
+            {viewMode === "list" && "تصفح جميع ملاحظاتك بترتيب زمني"}
+            {viewMode === "analytics" && "تحليل أنماط الكتابة والرؤى الخاصة بك"}
           </p>
         </div>
 
@@ -145,14 +156,20 @@ const Notes: React.FC = () => {
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={`flex items-center space-x-2 space-x-reverse px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 viewMode === mode
                   ? "bg-blue-500 text-white shadow-sm"
                   : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
               {getViewModeIcon(mode)}
-              <span className="capitalize">{mode}</span>
+              <span className="capitalize">
+                {mode === "calendar"
+                  ? "تقويم"
+                  : mode === "list"
+                  ? "قائمة"
+                  : "تحليلات"}
+              </span>
             </button>
           ))}
         </div>
@@ -163,12 +180,12 @@ const Notes: React.FC = () => {
         <Card>
           <div className="p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 space-x-reverse">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   {format(currentDate, "MMMM yyyy")}
                 </h2>
                 <Badge variant="default" size="sm">
-                  {calendarData?.totalNotes || 0} notes this month
+                  {calendarData?.totalNotes || 0} تدوين يوميات هذا الشهر
                 </Badge>
               </div>
 
@@ -185,7 +202,7 @@ const Notes: React.FC = () => {
                   size="sm"
                   onClick={() => setCurrentDate(new Date())}
                 >
-                  Today
+                  اليوم
                 </Button>
                 <Button
                   variant="ghost"

@@ -193,7 +193,7 @@ const NotesList: React.FC<NotesListProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search notes by content, mood, or productivity..."
+              placeholder="ابحث في اليوميات حسب المحتوى أو المزاج أو الإنتاجية..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -205,16 +205,16 @@ const NotesList: React.FC<NotesListProps> = ({
             {/* Sort Controls */}
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Sort by:
+                ترتيب حسب:
               </span>
               <div className="flex space-x-1">
                 {[
-                  { key: "date" as SortBy, label: "Date", icon: Calendar },
-                  { key: "length" as SortBy, label: "Length", icon: FileText },
-                  { key: "mood" as SortBy, label: "Mood", icon: Heart },
+                  { key: "date" as SortBy, label: "التاريخ", icon: Calendar },
+                  { key: "length" as SortBy, label: "الطول", icon: FileText },
+                  { key: "mood" as SortBy, label: "المزاج", icon: Heart },
                   {
                     key: "productivity" as SortBy,
-                    label: "Productivity",
+                    label: "الإنتاجية",
                     icon: Zap,
                   },
                 ].map(({ key, label, icon: Icon }) => (
@@ -249,7 +249,7 @@ const NotesList: React.FC<NotesListProps> = ({
                     onChange={(e) => setFilterMood(e.target.value)}
                     className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
                   >
-                    <option value="">All Moods</option>
+                    <option value="">جميع الحالات المزاجية</option>
                     {uniqueMoods.map((mood) => (
                       <option key={mood} value={mood}>
                         {getMoodEmoji(mood)} {mood}
@@ -267,7 +267,7 @@ const NotesList: React.FC<NotesListProps> = ({
                     onChange={(e) => setFilterProductivity(e.target.value)}
                     className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
                   >
-                    <option value="">All Productivity</option>
+                    <option value="">جميع مستويات الإنتاجية</option>
                     {uniqueProductivityLevels.map((level) => (
                       <option key={level} value={level}>
                         {level}
@@ -284,7 +284,7 @@ const NotesList: React.FC<NotesListProps> = ({
       {/* Notes Count */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          Showing {filteredAndSortedNotes.length} of {notes.length} notes
+          عرض {filteredAndSortedNotes.length} من {notes.length} ملاحظة
         </div>
         {(searchTerm || filterMood || filterProductivity) && (
           <Button
@@ -296,7 +296,7 @@ const NotesList: React.FC<NotesListProps> = ({
               setFilterProductivity("");
             }}
           >
-            Clear Filters
+            مسح الفلاتر
           </Button>
         )}
       </div>
@@ -309,13 +309,13 @@ const NotesList: React.FC<NotesListProps> = ({
               <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 {notes.length === 0
-                  ? "No notes yet"
-                  : "No notes match your filters"}
+                  ? "لا توجد ملاحظات بعد"
+                  : "لا توجد ملاحظات تطابق الفلاتر"}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 {notes.length === 0
-                  ? "Start journaling to see your notes here"
-                  : "Try adjusting your search or filter criteria"}
+                  ? "ابدأ الكتابة لرؤية ملاحظاتك هنا"
+                  : "جرب تعديل معايير البحث أو الفلتر"}
               </p>
             </div>
           </Card>
@@ -356,7 +356,7 @@ const NotesList: React.FC<NotesListProps> = ({
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {note.content.length} chars
+                      {note.content.length} حرف
                     </div>
                     <Button
                       variant="ghost"
@@ -376,7 +376,7 @@ const NotesList: React.FC<NotesListProps> = ({
                 {note.content.length > 150 && (
                   <div className="mt-2 flex items-center text-blue-600 dark:text-blue-400 text-sm">
                     <Eye className="w-3 h-3 mr-1" />
-                    Click to read more
+                    انقر للقراءة المزيد
                   </div>
                 )}
               </div>

@@ -29,6 +29,7 @@ import Badge from "../components/ui/Badge";
 import Progress from "../components/ui/Progress";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { getArabicMonthName, getArabicDayName } from "../utils/dateUtils";
 
 // Updated interface to match backend response structure
 interface MonthlyAnalytics {
@@ -202,7 +203,7 @@ const Monthly: React.FC = () => {
     a.click();
     window.URL.revokeObjectURL(url);
     toast.success("Monthly data exported successfully!");
-  };  // Initialize data
+  }; // Initialize data
   useEffect(() => {
     fetchMonthlyData(currentDate);
   }, [fetchMonthlyData, currentDate]);
@@ -268,10 +269,10 @@ const Monthly: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Monthly View
+            العرض الشهري
           </h1>
           <Button onClick={goToCurrentMonth} variant="secondary" size="sm">
-            Current Month
+            الشهر الحالي
           </Button>
         </div>
 
@@ -283,7 +284,7 @@ const Monthly: React.FC = () => {
             size="sm"
             leftIcon={<Download className="w-4 h-4" />}
           >
-            Export
+            تصدير
           </Button>
 
           {/* Navigation */}
@@ -299,7 +300,8 @@ const Monthly: React.FC = () => {
 
             <div className="text-center min-w-[140px]">
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                {format(currentDate, "MMMM yyyy")}
+                {getArabicMonthName(format(currentDate, "MMMM"))}{" "}
+                {format(currentDate, "yyyy")}
               </p>
             </div>
 
@@ -323,7 +325,7 @@ const Monthly: React.FC = () => {
             <Card className="shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Monthly Progress</h3>
+                  <h3 className="text-lg font-semibold">التقدم الشهري</h3>
                   <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
                     <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
@@ -341,7 +343,7 @@ const Monthly: React.FC = () => {
                     className="h-2"
                   />
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {monthlyData.monthlyStats.totalCompletions} completions
+                    {monthlyData.monthlyStats.totalCompletions} إكمالات
                   </p>
                 </div>
               </CardContent>
@@ -352,7 +354,7 @@ const Monthly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Best Day</h3>
+                    <h3 className="text-lg font-semibold">أفضل يوم</h3>
                     <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                       <Award className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
@@ -368,13 +370,13 @@ const Monthly: React.FC = () => {
                       {Math.round(
                         monthlyData.monthlyStats.bestDay.completionRate * 100
                       )}
-                      % completion
+                      % إكمال
                     </div>
                     <Link
                       to={`/daily/${monthlyData.monthlyStats.bestDay.date}`}
                       className="text-blue-500 hover:text-blue-600 text-sm flex items-center"
                     >
-                      View Details →
+                      عرض التفاصيل ←
                     </Link>
                   </div>
                 </CardContent>
@@ -386,7 +388,7 @@ const Monthly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Top Habit</h3>
+                    <h3 className="text-lg font-semibold">أفضل عادة</h3>
                     <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
                       <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
@@ -396,7 +398,7 @@ const Monthly: React.FC = () => {
                       {monthlyData.monthlyStats.mostProductiveHabit}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Most consistent this month
+                      الأكثر استمراريةً هذا الشهر
                     </p>
                   </div>
                 </CardContent>
@@ -408,7 +410,7 @@ const Monthly: React.FC = () => {
               <Card className="shadow-sm hover:shadow-md transition-all">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Longest Streak</h3>
+                    <h3 className="text-lg font-semibold">أطول سلسلة</h3>
                     <div className="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
                       <Flame className="w-5 h-5 text-orange-600 dark:text-orange-400" />
                     </div>
@@ -418,7 +420,7 @@ const Monthly: React.FC = () => {
                       {monthlyData.monthlyStats.bestStreakHabit}
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Strongest streak this month
+                      أقوى سلسلة هذا الشهر
                     </p>
                   </div>
                 </CardContent>
@@ -428,21 +430,27 @@ const Monthly: React.FC = () => {
           {/* Daily Cards Grid */}
           <Card className="shadow-sm hover:shadow-md transition-all mb-8">
             <CardHeader>
-              <h3 className="text-lg font-semibold">Daily Progress</h3>
+              <h3 className="text-lg font-semibold">التقدم اليومي</h3>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
               {/* Day Headers */}
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-                  (day) => (
-                    <div
-                      key={day}
-                      className="text-center text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400 py-1 md:py-2"
-                    >
-                      {day}
-                    </div>
-                  )
-                )}
+                {[
+                  "الأحد",
+                  "الإثنين",
+                  "الثلاثاء",
+                  "الأربعاء",
+                  "الخميس",
+                  "الجمعة",
+                  "السبت",
+                ].map((day) => (
+                  <div
+                    key={day}
+                    className="text-center text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400 py-1 md:py-2"
+                  >
+                    {day}
+                  </div>
+                ))}
               </div>
 
               {/* Calendar Grid with Cards */}
@@ -707,8 +715,8 @@ const Monthly: React.FC = () => {
             <CardContent className="p-6">
               <div className="mb-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Track your daily habit completion rates throughout the month
-                  to identify patterns and maintain consistency.
+                  تتبع معدلات إتمام عاداتك اليومية طوال الشهر لاكتشاف الأنماط
+                  والحفاظ على الاستمرارية.
                 </p>
               </div>
               <div className="h-80">
@@ -745,7 +753,12 @@ const Monthly: React.FC = () => {
                       },
                       xaxis: {
                         categories: monthlyData.dailyCompletionCounts.map(
-                          (day) => format(new Date(day.date), "MMM dd")
+                          (day) => {
+                            const date = new Date(day.date);
+                            const monthAbbr = format(date, "MMM");
+                            const dayNum = format(date, "dd");
+                            return `${getArabicMonthName(monthAbbr)} ${dayNum}`;
+                          }
                         ),
                         labels: {
                           rotate: -45,
@@ -758,7 +771,7 @@ const Monthly: React.FC = () => {
                       },
                       yaxis: {
                         title: {
-                          text: "Completion Rate (%)",
+                          text: "معدل الإنجاز (%)",
                           style: {
                             fontSize: "14px",
                             fontWeight: "bold",
@@ -789,12 +802,13 @@ const Monthly: React.FC = () => {
                           ) {
                             const dayData =
                               monthlyData.dailyCompletionCounts[dataPointIndex];
-                            return `${format(
-                              new Date(dayData.date),
-                              "EEEE, MMM dd"
-                            )} - ${dayData.count}/${
-                              dayData.totalHabits
-                            } habits completed`;
+                            const date = new Date(dayData.date);
+                            const dayNameEng = format(date, "EEEE");
+                            const monthAbbr = format(date, "MMM");
+                            const dayNum = format(date, "dd");
+                            const dayName = getArabicDayName(dayNameEng);
+                            const monthName = getArabicMonthName(monthAbbr);
+                            return `${dayName}، ${monthName} ${dayNum} - ${dayData.count}/${dayData.totalHabits} عادات مكتملة`;
                           },
                         },
                       },

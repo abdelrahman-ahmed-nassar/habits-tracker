@@ -18,9 +18,9 @@ export const generateSampleHabits = (): Habit[] => {
   return [
     {
       id: uuidv4(),
-      name: "Daily Exercise",
-      description: "At least 30 minutes of physical activity",
-      tag: "health",
+      name: "تمرين يومي",
+      description: "على الأقل 30 دقيقة من النشاط البدني",
+      tag: "صحة",
       repetition: "daily",
       goalType: "streak",
       goalValue: 1,
@@ -28,14 +28,14 @@ export const generateSampleHabits = (): Habit[] => {
       bestStreak: 5,
       currentCounter: 0,
       createdAt: getDateDaysAgo(30),
-      motivationNote: "Exercise improves mood and energy levels",
+      motivationNote: "التمرين يحسن المزاج ومستويات الطاقة",
       isActive: true,
     },
     {
       id: uuidv4(),
-      name: "Read a book",
-      description: "Read at least 30 pages",
-      tag: "learning",
+      name: "قراءة كتاب",
+      description: "قراءة 30 صفحة على الأقل",
+      tag: "تعلم",
       repetition: "daily",
       goalType: "counter",
       goalValue: 30,
@@ -47,9 +47,9 @@ export const generateSampleHabits = (): Habit[] => {
     },
     {
       id: uuidv4(),
-      name: "Weekly Review",
-      description: "Review goals and plan for next week",
-      tag: "productivity",
+      name: "مراجعة أسبوعية",
+      description: "مراجعة الأهداف والتخطيط للأسبوع القادم",
+      tag: "إنتاجية",
       repetition: "weekly",
       specificDays: [0], // Sunday
       goalType: "streak",
@@ -58,14 +58,14 @@ export const generateSampleHabits = (): Habit[] => {
       bestStreak: 4,
       currentCounter: 0,
       createdAt: getDateDaysAgo(60),
-      motivationNote: "Planning ahead leads to better results",
+      motivationNote: "التخطيط المسبق يؤدي إلى نتائج أفضل",
       isActive: true,
     },
     {
       id: uuidv4(),
-      name: "Drink Water",
-      description: "Drink at least 2 liters of water",
-      tag: "health",
+      name: "شرب الماء",
+      description: "شرب 2 لتر من الماء على الأقل",
+      tag: "صحة",
       repetition: "daily",
       goalType: "counter",
       goalValue: 8, // 8 glasses
@@ -77,9 +77,9 @@ export const generateSampleHabits = (): Habit[] => {
     },
     {
       id: uuidv4(),
-      name: "Monthly Budget Review",
-      description: "Review expenses and update budget",
-      tag: "finance",
+      name: "مراجعة الميزانية الشهرية",
+      description: "مراجعة المصروفات وتحديث الميزانية",
+      tag: "مالية",
       repetition: "monthly",
       specificDays: [1], // 1st day of month
       goalType: "streak",
@@ -189,8 +189,8 @@ export const generateSampleNotes = (days: number = 10): DailyNote[] => {
       notes.push({
         id: uuidv4(),
         date: dateStr,
-        content: `Sample note for ${dateStr}. Today was ${
-          Math.random() > 0.5 ? "productive" : "challenging"
+        content: `ملاحظة عينة لتاريخ ${dateStr}. اليوم كان ${
+          Math.random() > 0.5 ? "مُنتج" : "صعب"
         }.`,
         createdAt: now,
         updatedAt: now,
@@ -209,7 +209,7 @@ export const generateDefaultSettings = (): Settings => {
   return {
     userId: uuidv4(),
     theme: "system",
-    language: "en",
+    language: "ar",
     notifications: {
       enabled: true,
       reminderTime: "09:00",

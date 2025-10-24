@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <>
+    <div dir="rtl" className="rtl">
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -41,14 +41,14 @@ function App() {
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
-        rtl={false}
+        rtl={true}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="light"
         toastClassName="rounded-lg"
       />
-    </>
+    </div>
   );
 }
 

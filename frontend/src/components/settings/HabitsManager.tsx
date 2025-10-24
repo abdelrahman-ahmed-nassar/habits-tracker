@@ -58,7 +58,7 @@ const HabitsManager: React.FC = () => {
       setHabits(data);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch habits");
+      setError("فشل تحميل العادات");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -142,7 +142,7 @@ const HabitsManager: React.FC = () => {
     e.preventDefault();
 
     if (!formData.name) {
-      toast.error("Habit name is required");
+      toast.error("اسم العادة مطلوب");
       return;
     }
 
@@ -157,19 +157,17 @@ const HabitsManager: React.FC = () => {
 
       if (formMode === "create") {
         await habitsService.createHabit(habitData);
-        toast.success("Habit created successfully");
+        toast.success("تم إنشاء العادة بنجاح");
       } else if (formMode === "edit" && currentHabitId) {
         await habitsService.updateHabit(currentHabitId, habitData);
-        toast.success("Habit updated successfully");
+        toast.success("تم تحديث العادة بنجاح");
       }
 
       await fetchHabits();
       setShowForm(false);
     } catch (err) {
       toast.error(
-        formMode === "create"
-          ? "Failed to create habit"
-          : "Failed to update habit"
+        formMode === "create" ? "فشل إنشاء العادة" : "فشل تحديث العادة"
       );
       console.error(err);
     } finally {
@@ -180,7 +178,7 @@ const HabitsManager: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this habit? This will also delete all associated completion records."
+        "هل أنت متأكد من حذف هذه العادة؟ سيؤدي هذا أيضًا إلى حذف جميع سجلات الإنجاز المرتبطة بها."
       )
     ) {
       return;
@@ -188,10 +186,10 @@ const HabitsManager: React.FC = () => {
 
     try {
       await habitsService.deleteHabit(id);
-      toast.success("Habit deleted successfully");
+      toast.success("تم حذف العادة بنجاح");
       await fetchHabits();
     } catch (err) {
-      toast.error("Failed to delete habit");
+      toast.error("فشل حذف العادة");
       console.error(err);
     }
   };
@@ -213,12 +211,10 @@ const HabitsManager: React.FC = () => {
       };
 
       await habitsService.updateHabit(habit.id, updateRequest);
-      toast.success(
-        `Habit ${!habit.isActive ? "activated" : "deactivated"} successfully`
-      );
+      toast.success(`تم ${!habit.isActive ? "تفعيل" : "إيقاف"} العادة بنجاح`);
       await fetchHabits();
     } catch (err) {
-      toast.error("Failed to update habit status");
+      toast.error("فشل تحديث حالة العادة");
       console.error(err);
     } finally {
       setIsSubmitting(false);
@@ -233,20 +229,20 @@ const HabitsManager: React.FC = () => {
     const days =
       formData.repetition === "weekly"
         ? [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
+            "الأحد",
+            "الإثنين",
+            "الثلاثاء",
+            "الأربعاء",
+            "الخميس",
+            "الجمعة",
+            "السبت",
           ]
         : Array.from({ length: 31 }, (_, i) => `${i + 1}`);
 
     return (
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          {formData.repetition === "weekly" ? "Days of week" : "Days of month"}
+          {formData.repetition === "weekly" ? "أيام الأسبوع" : "أيام الشهر"}
         </label>
         <div className="flex flex-wrap gap-2">
           {days.map((day, index) => (
@@ -276,7 +272,7 @@ const HabitsManager: React.FC = () => {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center">Loading habits...</div>
+          <div className="text-center">جارٍ تحميل العادات...</div>
         </CardContent>
       </Card>
     );
@@ -312,24 +308,28 @@ const HabitsManager: React.FC = () => {
         </div>
         <div className="flex flex-wrap gap-2 mb-2">
           <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs">
-            {habit.repetition}
+            {habit.repetition === "daily"
+              ? "يومي"
+              : habit.repetition === "weekly"
+              ? "أسبوعي"
+              : "شهري"}
           </span>
           <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs">
             {habit.tag}
           </span>
           <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 rounded-full text-xs">
-            Goal: {habit.goalValue}{" "}
-            {habit.goalType === "streak" ? "days" : "times"}
+            الهدف: {habit.goalValue}{" "}
+            {habit.goalType === "streak" ? "أيام" : "مرات"}
           </span>
           {habit.isActive === false && (
             <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs">
-              Inactive
+              غير نشط
             </span>
           )}
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          <div>Current Streak: {habit.currentStreak}</div>
-          <div>Best Streak: {habit.bestStreak}</div>
+          <div>السلسلة الحالية: {habit.currentStreak}</div>
+          <div>أفضل سلسلة: {habit.bestStreak}</div>
         </div>
         <div className="mt-3 flex items-center">
           <button
@@ -340,12 +340,12 @@ const HabitsManager: React.FC = () => {
             {habit.isActive !== false ? (
               <>
                 <ToggleRight className="h-5 w-5 text-green-600 mr-1" />
-                <span>Active</span>
+                <span>نشط</span>
               </>
             ) : (
               <>
                 <ToggleLeft className="h-5 w-5 text-gray-400 mr-1" />
-                <span>Inactive</span>
+                <span>غير نشط</span>
               </>
             )}
           </button>
@@ -357,12 +357,12 @@ const HabitsManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Habits Manager</h2>
+        <h2 className="text-xl font-bold">مدير العادات</h2>
         <Button
           onClick={handleOpenCreateForm}
           leftIcon={<PlusCircle size={16} />}
         >
-          Create Habit
+          إنشاء عادة
         </Button>
       </div>
 
@@ -376,7 +376,7 @@ const HabitsManager: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-gray-500 dark:text-gray-400">
-              No habits found. Create your first habit!
+              لم يتم العثور على عادات. أنشئ عادتك الأولى!
             </div>
           </CardContent>
         </Card>
@@ -384,7 +384,7 @@ const HabitsManager: React.FC = () => {
         <div className="space-y-8">
           {/* Active Habits Section */}
           <div>
-            <h3 className="text-lg font-medium mb-3">Active Habits</h3>
+            <h3 className="text-lg font-medium mb-3">العادات النشطة</h3>
             {activeHabits.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {activeHabits.map((habit) => renderHabitCard(habit))}
@@ -393,7 +393,7 @@ const HabitsManager: React.FC = () => {
               <Card>
                 <CardContent className="p-4">
                   <div className="text-center text-gray-500 dark:text-gray-400">
-                    No active habits found.
+                    لم يتم العثور على عادات نشطة.
                   </div>
                 </CardContent>
               </Card>
@@ -402,7 +402,7 @@ const HabitsManager: React.FC = () => {
 
           {/* Inactive Habits Section */}
           <div>
-            <h3 className="text-lg font-medium mb-3">Inactive Habits</h3>
+            <h3 className="text-lg font-medium mb-3">العادات غير النشطة</h3>
             {inactiveHabits.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {inactiveHabits.map((habit) => renderHabitCard(habit))}
@@ -411,7 +411,7 @@ const HabitsManager: React.FC = () => {
               <Card>
                 <CardContent className="p-4">
                   <div className="text-center text-gray-500 dark:text-gray-400">
-                    No inactive habits found.
+                    لم يتم العثور على عادات غير نشطة.
                   </div>
                 </CardContent>
               </Card>
@@ -424,13 +424,13 @@ const HabitsManager: React.FC = () => {
       <Modal
         isOpen={showForm}
         onClose={handleCloseForm}
-        title={formMode === "create" ? "Create Habit" : "Edit Habit"}
+        title={formMode === "create" ? "إنشاء عادة" : "تعديل عادة"}
         size="full"
         fullHeight={true}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Name"
+            label="الاسم"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
@@ -438,14 +438,14 @@ const HabitsManager: React.FC = () => {
             fullWidth
           />
           <Input
-            label="Description"
+            label="الوصف"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             fullWidth
           />
           <Input
-            label="Tag"
+            label="الوسم"
             name="tag"
             value={formData.tag}
             onChange={handleInputChange}
@@ -453,31 +453,31 @@ const HabitsManager: React.FC = () => {
             fullWidth
           />
           <Select
-            label="Repetition"
+            label="التكرار"
             name="repetition"
             value={formData.repetition}
             onChange={handleInputChange}
             options={[
-              { value: "daily", label: "Daily" },
-              { value: "weekly", label: "Weekly" },
-              { value: "monthly", label: "Monthly" },
+              { value: "daily", label: "يومي" },
+              { value: "weekly", label: "أسبوعي" },
+              { value: "monthly", label: "شهري" },
             ]}
             fullWidth
           />
           {renderDaySelector()}
           <Select
-            label="Goal Type"
+            label="نوع الهدف"
             name="goalType"
             value={formData.goalType}
             onChange={handleInputChange}
             options={[
-              { value: "streak", label: "Streak" },
-              { value: "counter", label: "Counter" },
+              { value: "streak", label: "سلسلة" },
+              { value: "counter", label: "عداد" },
             ]}
             fullWidth
           />
           <Input
-            label="Goal Value"
+            label="قيمة الهدف"
             name="goalValue"
             type="number"
             min="1"
@@ -487,7 +487,7 @@ const HabitsManager: React.FC = () => {
             fullWidth
           />
           <Input
-            label="Motivation Note"
+            label="ملاحظة تحفيزية"
             name="motivationNote"
             value={formData.motivationNote || ""}
             onChange={handleInputChange}
@@ -496,7 +496,7 @@ const HabitsManager: React.FC = () => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Status
+              الحالة
             </label>
             <div className="flex items-center">
               <button
@@ -509,12 +509,12 @@ const HabitsManager: React.FC = () => {
                 {formData.isActive ? (
                   <>
                     <ToggleRight className="h-6 w-6 text-green-600 mr-2" />
-                    <span>Active</span>
+                    <span>نشط</span>
                   </>
                 ) : (
                   <>
                     <ToggleLeft className="h-6 w-6 text-gray-400 mr-2" />
-                    <span>Inactive</span>
+                    <span>غير نشط</span>
                   </>
                 )}
               </button>
@@ -531,10 +531,10 @@ const HabitsManager: React.FC = () => {
               }}
               disabled={isSubmitting}
             >
-              Cancel
+              إلغاء
             </Button>
             <Button type="submit" isLoading={isSubmitting}>
-              {formMode === "create" ? "Create Habit" : "Update Habit"}
+              {formMode === "create" ? "إنشاء عادة" : "تحديث عادة"}
             </Button>
           </div>
         </form>

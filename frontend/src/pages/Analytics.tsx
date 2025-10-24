@@ -40,24 +40,24 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onClick }) => {
           {habit.tag && <Badge variant="primary">{habit.tag}</Badge>}
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-          {habit.description || "No description"}
+          {habit.description || "لا يوجد وصف"}
         </p>
         <div className="mt-4">
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center">
               <Flame className="w-4 h-4 mr-1 text-orange-500" />
-              Current streak: {habit.currentStreak || 0}
+              السلسلة الحالية: {habit.currentStreak || 0}
             </span>
             <span className="flex items-center">
               <Award className="w-4 h-4 mr-1 text-yellow-500" />
-              Best streak: {habit.bestStreak || 0}
+              أفضل سلسلة: {habit.bestStreak || 0}
             </span>
           </div>
           <div className="mt-2">
             {habit.goalType === "streak" ? (
               <div className="mt-2">
                 <div className="flex justify-between text-xs mb-1">
-                  <span>Streak Goal</span>
+                  <span>هدف السلسلة</span>
                   <span>
                     {habit.currentStreak || 0}/{habit.goalValue}
                   </span>
@@ -70,7 +70,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onClick }) => {
             ) : (
               <div className="mt-2">
                 <div className="flex justify-between text-xs mb-1">
-                  <span>Counter Goal</span>
+                  <span>هدف العداد</span>
                   <span>
                     {habit.currentCounter || 0}/{habit.goalValue}
                   </span>
@@ -86,7 +86,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onClick }) => {
         <div className="mt-4 text-xs text-right text-blue-600 dark:text-blue-400">
           <span className="flex items-center justify-end">
             <BarChart2 className="w-3 h-3 mr-1" />
-            View Analytics
+            عرض التحليلات
           </span>
         </div>
       </div>
@@ -108,10 +108,10 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
   const [selectedPeriod, setSelectedPeriod] = useState<string>("30days");
 
   const periodOptions = [
-    { value: "7days", label: "Last 7 Days" },
-    { value: "30days", label: "Last 30 Days" },
-    { value: "90days", label: "Last 90 Days" },
-    { value: "365days", label: "Last Year" },
+    { value: "7days", label: "آخر 7 أيام" },
+    { value: "30days", label: "آخر 30 يوم" },
+    { value: "90days", label: "آخر 90 يوم" },
+    { value: "365days", label: "آخر سنة" },
   ];
 
   useEffect(() => {
@@ -128,7 +128,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         setEnhancedAnalytics(enhancedData);
       } catch (error) {
         console.error("Failed to fetch habit analytics:", error);
-        toast.error("Failed to load habit analytics");
+        toast.error("فشل تحميل تحليلات العادة");
       } finally {
         setLoading(false);
       }
@@ -147,9 +147,9 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
   if (!habitAnalytics || !habit || !enhancedAnalytics) {
     return (
       <div className="text-center p-8">
-        <p>No analytics data available for this habit.</p>
+        <p>لا توجد بيانات تحليلية متاحة لهذه العادة.</p>
         <Button onClick={onBack} className="mt-4">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Habits
+          <ArrowLeft className="w-4 h-4 mr-2" /> العودة إلى العادات
         </Button>
       </div>
     );
@@ -160,7 +160,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Button onClick={onBack} variant="ghost" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+            <ArrowLeft className="w-4 h-4 mr-2" /> رجوع
           </Button>
           <h2 className="text-2xl font-bold ml-2">{habit.name}</h2>
           {habit.tag && (
@@ -172,7 +172,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
 
         {/* Period Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-600">Period:</span>
+          <span className="text-sm font-medium text-gray-600">الفترة:</span>
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -191,7 +191,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">
-              Success Rate
+              معدل النجاح
             </h3>
             <div className="flex items-center">
               <Percent className="w-5 h-5 text-green-500 mr-2" />
@@ -208,7 +208,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">
-              Current Streak
+              السلسلة الحالية
             </h3>
             <div className="flex items-center">
               <Flame className="w-5 h-5 text-orange-500 mr-2" />
@@ -222,7 +222,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">
-              Best Streak
+              أفضل سلسلة
             </h3>
             <div className="flex items-center">
               <Award className="w-5 h-5 text-yellow-500 mr-2" />
@@ -236,7 +236,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
         <Card>
           <div className="p-4">
             <h3 className="text-sm font-medium text-gray-500 mb-1">
-              Days Completed
+              الأيام المكتملة
             </h3>
             <div className="flex items-center">
               <Calendar className="w-5 h-5 text-blue-500 mr-2" />
@@ -254,7 +254,7 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
 
       {/* Legacy Completion History Chart (keep for now as fallback) */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Recent Completion History</h3>
+        <h3 className="font-semibold mb-4">سجل الإنجاز الأخير</h3>
         {habitAnalytics.completionHistory &&
         habitAnalytics.completionHistory.length > 0 ? (
           <div className="overflow-x-auto">
@@ -284,37 +284,35 @@ const HabitDetailView: React.FC<{ habitId: string; onBack: () => void }> = ({
             </div>
           </div>
         ) : (
-          <p className="text-gray-500 text-center">
-            No completion history available
-          </p>
+          <p className="text-gray-500 text-center">لا يوجد سجل إنجاز متاح</p>
         )}
       </Card>
 
       {/* Habit Details */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Habit Details</h3>
+        <h3 className="font-semibold mb-4">تفاصيل العادة</h3>
         <div className="space-y-4">
           <p>
-            <span className="font-medium">Repetition Pattern:</span>{" "}
+            <span className="font-medium">نمط التكرار:</span>{" "}
             {habit.repetition.charAt(0).toUpperCase() +
               habit.repetition.slice(1)}
           </p>
           <p>
-            <span className="font-medium">Goal Type:</span>{" "}
-            {habit.goalType === "streak" ? "Streak" : "Counter"}
+            <span className="font-medium">نوع الهدف:</span>{" "}
+            {habit.goalType === "streak" ? "سلسلة" : "عداد"}
           </p>
           {habit.motivationNote && (
             <p>
-              <span className="font-medium">Motivation Note:</span>{" "}
+              <span className="font-medium">ملاحظة التحفيز:</span>{" "}
               {habit.motivationNote}
             </p>
           )}
           <p>
-            <span className="font-medium">Created:</span>{" "}
+            <span className="font-medium">تاريخ الإنشاء:</span>{" "}
             {new Date(habit.createdAt).toLocaleDateString()}
           </p>
           <p>
-            <span className="font-medium">Analysis Period:</span>{" "}
+            <span className="font-medium">فترة التحليل:</span>{" "}
             {enhancedAnalytics.period?.description} (
             {new Date(enhancedAnalytics.period?.startDate).toLocaleDateString()}{" "}
             - {new Date(enhancedAnalytics.period?.endDate).toLocaleDateString()}
@@ -353,7 +351,7 @@ const Analytics: React.FC = () => {
         setHabits(activeHabits);
       } catch (error) {
         console.error("Failed to fetch habits:", error);
-        toast.error("Failed to load habits");
+        toast.error("فشل تحميل العادات");
       } finally {
         setLoading(false);
       }
@@ -403,10 +401,9 @@ const Analytics: React.FC = () => {
   return (
     <div className="p-6">
       <div className="flex flex-col gap-2 mb-6">
-        <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+        <h1 className="text-2xl font-bold">لوحة التحليلات</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Track your habit performance and identify trends to improve your
-          consistency.
+          تتبع أداء عاداتك وحدد الاتجاهات لتحسين اتساقك.
         </p>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-500">
@@ -419,7 +416,7 @@ const Analytics: React.FC = () => {
           </span>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => setViewMode("overall")}>
-              <BarChart2 className="w-4 h-4 mr-2" /> Overall Analytics
+              <BarChart2 className="w-4 h-4 mr-2" /> التحليلات الشاملة
             </Button>
           </div>
         </div>
@@ -428,12 +425,12 @@ const Analytics: React.FC = () => {
       {habits.length === 0 ? (
         <div className="text-center p-8 border rounded-lg bg-gray-50 dark:bg-gray-800">
           <BarChart2 className="w-12 h-12 mx-auto text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium">No habits found</h3>
+          <h3 className="mt-4 text-lg font-medium">لم يتم العثور على عادات</h3>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
-            Create a habit to start tracking analytics
+            أنشئ عادة لبدء تتبع التحليلات
           </p>
           <Button className="mt-4" onClick={() => navigate("/settings")}>
-            Create Habit
+            إنشاء عادة
           </Button>
         </div>
       ) : (
@@ -443,7 +440,7 @@ const Analytics: React.FC = () => {
 
           {/* Individual Habit Cards Section */}
           <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-4">All Habits</h2>
+            <h2 className="text-xl font-semibold mb-4">جميع العادات</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {habits.map((habit) => (
                 <HabitCard

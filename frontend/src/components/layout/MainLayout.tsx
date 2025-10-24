@@ -40,7 +40,7 @@ const MainLayout = () => {
             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
-          <div className="fixed top-16 left-0 z-50 w-64 h-[calc(100vh-4rem)]">
+          <div className="fixed top-16 right-0 z-50 w-64 h-[calc(100vh-4rem)]">
             <Sidebar
               isMobile={isMobile}
               onClose={() => setIsSidebarOpen(false)}
@@ -51,15 +51,15 @@ const MainLayout = () => {
 
       {/* Sidebar static for desktop */}
       {!isMobile && isSidebarOpen && (
-        <div className="fixed top-16 left-0 z-30 w-64 h-[calc(100vh-4rem)] lg:block hidden">
+        <div className="fixed top-16 right-0 z-30 w-64 h-[calc(100vh-4rem)] lg:block hidden">
           <Sidebar isMobile={false} />
         </div>
       )}
 
-      {/* Main content always full width, with left padding on desktop if sidebar is open, and top padding for header */}
+      {/* Main content always full width, with right padding on desktop if sidebar is open, and top padding for header */}
       <main
         className={`transition-all duration-300 pt-16 ${
-          !isMobile && isSidebarOpen ? "lg:pl-64" : ""
+          !isMobile && isSidebarOpen ? "lg:pr-64" : ""
         }`}
       >
         <Outlet />

@@ -32,6 +32,7 @@ import Progress from "../components/ui/Progress";
 import CounterInput from "../components/ui/CounterInput";
 import WeeklyAnalytics from "../components/features/WeeklyAnalytics";
 import ErrorBoundary from "../components/ui/ErrorBoundary";
+import { getArabicDayName, getArabicMonthName } from "../utils/dateUtils";
 
 interface WeeklyAnalyticsData {
   startDate: string;
@@ -112,7 +113,8 @@ const transformAnalyticsData = (
         (stat) => stat?.date === date
       );
       const dayOfWeek = addDays(start, i).getDay();
-      const dayName = format(addDays(start, i), "EEEE");
+      const dayNameEnglish = format(addDays(start, i), "EEEE");
+      const dayName = getArabicDayName(dayNameEnglish);
 
       if (existingStat) {
         const totalHabits = existingStat.totalHabits || maxTotalHabits;
@@ -324,7 +326,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
     if (record.goalType === "counter") {
       return `${record.value}/${record.goalValue}`;
     }
-    return record.completed ? "Completed" : "Not completed";
+    return record.completed ? "مكتمل" : "غير مكتمل";
   };
 
   const progressValue = getProgressValue();
@@ -376,7 +378,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         {/* Progress section */}
         <div className="space-y-2 mb-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Progress</span>
+            <span className="text-gray-600 dark:text-gray-400">التقدم</span>
             <span className="font-medium">{getProgressDisplay()}</span>
           </div>
           <Progress
@@ -409,7 +411,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         ) : (
           <div className="flex items-center mt-auto">
             <div
-              className={`flex-shrink-0 w-6 h-6 rounded-lg mr-3 flex items-center justify-center transition-all duration-300
+              className={`flex-shrink-0 w-6 h-6 rounded-lg ml-3 flex items-center justify-center transition-all duration-300
                 ${
                   record.completed
                     ? "bg-green-500"
@@ -449,9 +451,11 @@ const DayColumn: React.FC<DayColumnProps> = ({
     totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
   // Format date info
-  const dayName = format(parseISO(date), "EEEE");
+  const dayNameEnglish = format(parseISO(date), "EEEE");
+  const dayName = getArabicDayName(dayNameEnglish);
   const dayNumber = format(parseISO(date), "d");
-  const monthName = format(parseISO(date), "MMM");
+  const monthNameEnglish = format(parseISO(date), "MMM");
+  const monthName = getArabicMonthName(monthNameEnglish);
   const isToday = format(new Date(), "yyyy-MM-dd") === date;
 
   return (
@@ -466,7 +470,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full mr-3 ${
+              className={`flex items-center justify-center w-10 h-10 rounded-full ml-3 ${
                 isToday
                   ? "bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300"
                   : "bg-gray-100 dark:bg-gray-700"
@@ -537,7 +541,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
             })
           ) : (
             <div className="flex items-center justify-center text-gray-500 italic h-24 text-sm">
-              No habits for current week
+              لا توجد عادات للأسبوع الحالي
             </div>
           )}
         </div>
@@ -594,11 +598,17 @@ const Weekly: React.FC = () => {
   const [weeklyAnalyticsData, setWeeklyAnalyticsData] =
     useState<WeeklyAnalyticsData | null>(null);
 
-  // Format date range for display
-  const weekDateRangeDisplay = `${format(currentWeekStart, "MMM d")} - ${format(
-    addDays(currentWeekStart, 6),
-    "MMM d, yyyy"
-  )}`;
+  // Format date range for display in Arabic
+  const startMonthEnglish = format(currentWeekStart, "MMM");
+  const startDay = format(currentWeekStart, "d");
+  const endMonthEnglish = format(addDays(currentWeekStart, 6), "MMM");
+  const endDay = format(addDays(currentWeekStart, 6), "d");
+  const endYear = format(addDays(currentWeekStart, 6), "yyyy");
+
+  const startMonth = getArabicMonthName(startMonthEnglish);
+  const endMonth = getArabicMonthName(endMonthEnglish);
+
+  const weekDateRangeDisplay = `${startDay} ${startMonth} - ${endDay} ${endMonth} ${endYear}`;
 
   // Fetch weekly records
   const fetchWeeklyData = useCallback(async () => {
@@ -791,10 +801,11 @@ const Weekly: React.FC = () => {
           const existingStat = dailyStats.find((stat) => stat?.date === date);
           if (existingStat) return existingStat;
 
+          const dayNameEnglish = format(new Date(date), "EEEE");
           return {
             date,
             dayOfWeek: new Date(date).getDay(),
-            dayName: format(new Date(date), "EEEE"),
+            dayName: getArabicDayName(dayNameEnglish),
             totalHabits: dailyStats[0]?.totalHabits || 0,
             completedHabits: 0,
             completionRate: 0,
@@ -1249,31 +1260,31 @@ const Weekly: React.FC = () => {
       {/* Header with Week Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3">
+          <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center ml-3">
             <Calendar className="w-6 h-6 text-blue-500" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-              Weekly Tracker
+              المتابعة الأسبوعية
             </h1>
             <div className="flex items-center text-gray-600 dark:text-gray-300">
               <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded text-sm font-medium">
                 {weekDateRangeDisplay}
               </span>
               {weeklyRecords && (
-                <span className="ml-3 text-sm">
+                <span className="mr-3 text-sm">
                   {weeklyRecords.records.reduce(
                     (sum, day) => sum + (day.records ? day.records.length : 0),
                     0
                   )}{" "}
-                  habits
+                  عادة
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-1 rounded-lg">
+        <div className="flex items-center space-x-2 space-x-reverse bg-gray-50 dark:bg-gray-700 p-1 rounded-lg">
           <Button
             onClick={goToPreviousWeek}
             variant="ghost"
@@ -1289,7 +1300,7 @@ const Weekly: React.FC = () => {
             size="sm"
             className="px-3 py-1"
           >
-            Current Week
+            الأسبوع الحالي
           </Button>
 
           <Button
@@ -1316,17 +1327,15 @@ const Weekly: React.FC = () => {
           <ErrorBoundary
             fallback={
               <Card className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center space-x-4 space-x-reverse mb-4">
                   <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
                     <AlertCircle className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">
-                      Weekly Analytics Unavailable
-                    </h3>
+                    <h3 className="font-semibold">تحليلات الأسبوع غير متاحة</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      There was a problem displaying the weekly analytics. Basic
-                      stats are still available below.
+                      كانت هناك مشكلة في عرض تحليلات الأسبوع. الإحصائيات
+                      الأساسية لا تزال متاحة أدناه.
                     </p>
                   </div>
                 </div>
@@ -1343,7 +1352,7 @@ const Weekly: React.FC = () => {
             <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Weekly Progress</h3>
+                  <h3 className="text-lg font-semibold">التقدم الأسبوعي</h3>
                   <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
                     <ArrowUp
                       className={`w-5 h-5 ${
@@ -1359,7 +1368,7 @@ const Weekly: React.FC = () => {
 
                 <div className="relative mb-6 pt-2">
                   <div className="flex justify-between mb-1 text-sm">
-                    <span>Completion Rate</span>
+                    <span>معدل الإنجاز</span>
                     <span className="font-semibold">
                       {Math.round(weekStats.completionRate)}%
                     </span>
@@ -1458,7 +1467,7 @@ const Weekly: React.FC = () => {
 
                   <div className="mb-3">
                     <div className="flex justify-between mb-1 text-sm">
-                      <span>Completion Rate</span>
+                      <span>معدل الإنجاز</span>
                       <span className="font-semibold">
                         {Math.round(weekStats.bestDay.completionRate)}%
                       </span>
@@ -1477,7 +1486,7 @@ const Weekly: React.FC = () => {
                     to={`/daily/${weekStats.bestDay.date}`}
                     className="text-blue-500 hover:text-blue-600 text-sm flex items-center mt-3"
                   >
-                    <span>View Details</span>
+                    <span>عرض التفاصيل</span>
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </Link>
                 </CardContent>
@@ -1489,7 +1498,7 @@ const Weekly: React.FC = () => {
               <Card className="md:col-span-4 shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px]">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Needs Attention</h3>
+                    <h3 className="text-lg font-semibold">يحتاج انتباه</h3>
                     <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
                       <svg
                         className="w-5 h-5 text-amber-500"
