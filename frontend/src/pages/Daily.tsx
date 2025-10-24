@@ -243,10 +243,14 @@ const Daily: React.FC = () => {
   };
 
   const goToToday = () => {
-    setTransitioning(true);
     const newDate = new Date();
     const newFormattedDate = format(newDate, "yyyy-MM-dd");
-    navigate(`/daily/${newFormattedDate}`);
+
+    // Only set transitioning if we're actually navigating to a different date
+    if (newFormattedDate !== formattedDate) {
+      setTransitioning(true);
+      navigate(`/daily/${newFormattedDate}`);
+    }
   };
 
   const syncAnalytics = async () => {
