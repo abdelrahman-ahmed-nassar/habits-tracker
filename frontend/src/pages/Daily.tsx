@@ -306,6 +306,27 @@ const Daily: React.FC = () => {
       } else {
         await RecordsService.toggleCompletion(habitId, formattedDate);
       }
+
+      // Fetch updated habit data to get the latest analytics (streaks, counter)
+      const updatedHabit = await habitsService.getHabit(habitId);
+
+      // Update the record with fresh analytics data
+      if (updatedHabit && dailyRecords) {
+        const updatedRecords = { ...dailyRecords };
+        const recordIdx = updatedRecords.records.findIndex(
+          (r) => r.habitId === habitId
+        );
+        if (recordIdx !== -1) {
+          updatedRecords.records[recordIdx] = {
+            ...updatedRecords.records[recordIdx],
+            currentStreak: updatedHabit.currentStreak || 0,
+            bestStreak: updatedHabit.bestStreak || 0,
+            currentCounter: updatedHabit.currentCounter || 0,
+          };
+          setDailyRecords(updatedRecords);
+        }
+      }
+
       toast.success("Habit completion updated");
     } catch (error) {
       console.error("Error toggling habit completion:", error);
@@ -372,6 +393,27 @@ const Daily: React.FC = () => {
         formattedDate,
         value
       );
+
+      // Fetch updated habit data to get the latest analytics (streaks, counter)
+      const updatedHabit = await habitsService.getHabit(habitId);
+
+      // Update the record with fresh analytics data
+      if (updatedHabit && dailyRecords) {
+        const updatedRecords = { ...dailyRecords };
+        const recordIdx = updatedRecords.records.findIndex(
+          (r) => r.habitId === habitId
+        );
+        if (recordIdx !== -1) {
+          updatedRecords.records[recordIdx] = {
+            ...updatedRecords.records[recordIdx],
+            currentStreak: updatedHabit.currentStreak || 0,
+            bestStreak: updatedHabit.bestStreak || 0,
+            currentCounter: updatedHabit.currentCounter || 0,
+          };
+          setDailyRecords(updatedRecords);
+        }
+      }
+
       toast.success("Habit value updated");
     } catch (error) {
       console.error("Error updating habit value:", error);
@@ -442,6 +484,31 @@ const Daily: React.FC = () => {
       }));
 
       await completionsService.createCompletionsBatch(completionsToCreate);
+
+      // Fetch updated analytics for all affected habits
+      const habitIds = habitsToComplete.map((h) => h.habitId);
+      const updatedHabits = await Promise.all(
+        habitIds.map((id) => habitsService.getHabit(id))
+      );
+
+      // Update records with fresh analytics data
+      if (updatedHabits.length > 0 && dailyRecords) {
+        const updatedRecords = { ...dailyRecords };
+        updatedHabits.forEach((updatedHabit) => {
+          const recordIdx = updatedRecords.records.findIndex(
+            (r) => r.habitId === updatedHabit.id
+          );
+          if (recordIdx !== -1) {
+            updatedRecords.records[recordIdx] = {
+              ...updatedRecords.records[recordIdx],
+              currentStreak: updatedHabit.currentStreak || 0,
+              bestStreak: updatedHabit.bestStreak || 0,
+              currentCounter: updatedHabit.currentCounter || 0,
+            };
+          }
+        });
+        setDailyRecords(updatedRecords);
+      }
 
       toast.success(`All ${tag} habits marked as complete`);
     } catch (error) {
