@@ -106,7 +106,7 @@ Output: `backend/executable/`
 pnpm run build:all
 
 # 2. Create GitHub Release
-deploy-release.bat
+pnpm run deploy:release
 
 # 3. Enter version (e.g., v1.0.0)
 ```

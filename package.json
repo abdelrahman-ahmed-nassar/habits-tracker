@@ -7,6 +7,7 @@
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "build:all": "build-all.bat",
+    "deploy:release": "node scripts/deploy-release.js",
     "start:backend": "cd backend && npm run dev",
     "start:frontend": "cd frontend && npm run dev"
   },
