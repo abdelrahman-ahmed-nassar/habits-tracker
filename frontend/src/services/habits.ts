@@ -120,6 +120,14 @@ class HabitsService {
     const response = await axios.post(`${API_BASE_URL}/habits/${id}/restore`);
     return response.data.data;
   }
+
+  /**
+   * Get a random habit
+   */
+  async getRandomHabit(): Promise<Habit> {
+    const response = await axios.get(`${API_BASE_URL}/habits/random/pick`);
+    return response.data.data;
+  }
 }
 
 export const habitsService = new HabitsService();

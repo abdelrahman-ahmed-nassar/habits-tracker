@@ -231,3 +231,29 @@ export const restoreHabit = asyncHandler(
     });
   }
 );
+
+/**
+ * Get a random habit
+ * @route GET /api/habits/random/pick
+ */
+export const getRandomHabit = asyncHandler(
+  async (req: Request, res: Response) => {
+    const habits = await dataService.getHabits();
+
+    // Filter to active habits only
+    const activeHabits = habits.filter((habit) => habit.isActive !== false);
+
+    if (activeHabits.length === 0) {
+      throw new AppError("No active habits found", 404);
+    }
+
+    // Get a random habit
+    const randomIndex = Math.floor(Math.random() * activeHabits.length);
+    const randomHabit = activeHabits[randomIndex];
+
+    res.status(200).json({
+      success: true,
+      data: randomHabit,
+    });
+  }
+);

@@ -9,6 +9,7 @@ import Yearly from "./pages/Yearly";
 import Analytics from "./pages/Analytics";
 import Notes from "./pages/Notes";
 import Settings from "./pages/Settings";
+import MotivationalPopup from "./components/ui/MotivationalPopup";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      <MotivationalPopup />
       <ToastContainer
         position="top-center"
         autoClose={1500}

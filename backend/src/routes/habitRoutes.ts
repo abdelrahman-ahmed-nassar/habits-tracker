@@ -7,6 +7,9 @@ const router: Router = express.Router();
 // GET /api/habits - Get all habits
 router.get("/", habitController.getAllHabits);
 
+// GET /api/habits/random/pick - Get a random habit
+router.get("/random/pick", habitController.getRandomHabit);
+
 // GET /api/habits/:id - Get a specific habit
 router.get("/:id", habitController.getHabitById);
 
