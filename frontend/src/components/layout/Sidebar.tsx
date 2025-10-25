@@ -10,6 +10,7 @@ import {
   Mail,
   Github,
   MessageCircle,
+  Calculator,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -30,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
     { path: `/yearly/${currentYear}`, icon: Calendar, label: "السنوي" },
     { path: "/analytics", icon: BarChart2, label: "التحليلات" },
     { path: "/notes", icon: BookOpen, label: "اليوميات" },
+    { path: "/counters", icon: Calculator, label: "العدادات" },
     { path: "/settings", icon: Settings, label: "الإعدادات" },
   ];
 

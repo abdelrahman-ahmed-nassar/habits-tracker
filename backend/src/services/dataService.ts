@@ -368,10 +368,13 @@ export const updateHabitStreaks = async (habitId: string): Promise<void> => {
     // Calculate current streak (consecutive days where value >= goalValue)
     currentStreak = calculateCounterStreak(completions, habit.goalValue);
 
-    // Update best streak if current is greater
-    if (currentStreak > bestStreak) {
-      bestStreak = currentStreak;
-    }
+    // Calculate all historical streaks for counter-type habits
+    const allCounterStreaks = calculateAllCounterStreaks(
+      completions,
+      habit.goalValue
+    );
+    // Set bestStreak to the maximum of all historical streaks
+    bestStreak = Math.max(...allCounterStreaks, 0, currentStreak);
   } else {
     // For streak-type habits, currentCounter tracks total completions (each completion = 1)
     currentCounter = completions.filter((c) => c.completed).length;
@@ -630,6 +633,70 @@ const calculateCounterStreak = (
   }
 
   return streak;
+};
+
+/**
+ * Calculate all historical streaks for counter-type habits
+ * @param completions Completion records
+ * @param goalValue The goal value to meet or exceed
+ * @returns Array of all streak lengths in history
+ */
+const calculateAllCounterStreaks = (
+  completions: CompletionRecord[],
+  goalValue: number
+): number[] => {
+  // Sort by date (oldest first)
+  const sortedCompletions = [...completions].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
+
+  if (sortedCompletions.length === 0) return [];
+
+  const streaks: number[] = [];
+  let currentStreak = 0;
+
+  for (let i = 0; i < sortedCompletions.length; i++) {
+    const completion = sortedCompletions[i];
+
+    // Check if the goal was met
+    const goalMet =
+      completion.completed &&
+      (completion.value !== undefined ? completion.value >= goalValue : false);
+
+    if (goalMet) {
+      currentStreak++;
+    } else {
+      // Goal not met, end current streak if it exists
+      if (currentStreak > 0) {
+        streaks.push(currentStreak);
+        currentStreak = 0;
+      }
+    }
+
+    // Check if there's a gap to the next date (more than 1 day)
+    if (i < sortedCompletions.length - 1) {
+      const currentDate = new Date(completion.date);
+      const nextDate = new Date(sortedCompletions[i + 1].date);
+      const dayDiff = Math.floor(
+        (nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      // If there's a gap of more than 1 day, end the streak
+      if (dayDiff > 1) {
+        if (currentStreak > 0) {
+          streaks.push(currentStreak);
+          currentStreak = 0;
+        }
+      }
+    }
+  }
+
+  // Add the last streak if there is one
+  if (currentStreak > 0) {
+    streaks.push(currentStreak);
+  }
+
+  return streaks;
 };
 
 /**

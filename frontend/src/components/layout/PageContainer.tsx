@@ -6,6 +6,7 @@ interface PageContainerProps {
   children: React.ReactNode;
   isLoading?: boolean;
   error?: string | null;
+  showBreadcrumbs?: boolean;
 }
 
 const PageContainer: React.FC<PageContainerProps> = ({
@@ -13,6 +14,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   children,
   isLoading = false,
   error = null,
+  showBreadcrumbs = true,
 }) => {
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -48,33 +50,35 @@ const PageContainer: React.FC<PageContainerProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
       {/* Breadcrumbs */}
-      <nav className="mb-4 overflow-x-auto">
-        <ol className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 min-w-max">
-          <li>
-            <Link
-              to="/"
-              className="hover:text-gray-700 dark:hover:text-gray-300"
-            >
-              Home
-            </Link>
-          </li>
-          {breadcrumbs.map((crumb, index) => (
-            <li key={crumb.path} className="flex items-center space-x-2">
-              <ChevronRight className="w-4 h-4 flex-shrink-0" />
+      {showBreadcrumbs && (
+        <nav className="mb-4 overflow-x-auto">
+          <ol className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 min-w-max">
+            <li>
               <Link
-                to={crumb.path}
-                className={`hover:text-gray-700 dark:hover:text-gray-300 ${
-                  index === breadcrumbs.length - 1
-                    ? "text-gray-900 dark:text-gray-100 font-medium"
-                    : ""
-                }`}
+                to="/"
+                className="hover:text-gray-700 dark:hover:text-gray-300"
               >
-                {crumb.label}
+                Home
               </Link>
             </li>
-          ))}
-        </ol>
-      </nav>
+            {breadcrumbs.map((crumb, index) => (
+              <li key={crumb.path} className="flex items-center space-x-2">
+                <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                <Link
+                  to={crumb.path}
+                  className={`hover:text-gray-700 dark:hover:text-gray-300 ${
+                    index === breadcrumbs.length - 1
+                      ? "text-gray-900 dark:text-gray-100 font-medium"
+                      : ""
+                  }`}
+                >
+                  {crumb.label}
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
 
       {/* Page Title */}
       <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6">

@@ -15,6 +15,7 @@ import optionsRoutes from "./routes/optionsRoutes";
 import backupRoutes from "./routes/backupRoutes";
 import tagRoutes from "./routes/tagRoutes";
 import templateRoutes from "./routes/templateRoutes";
+import counterRoutes from "./routes/counterRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 
@@ -42,6 +43,7 @@ app.use("/api/options", optionsRoutes);
 app.use("/api/backup", backupRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/templates", templateRoutes);
+app.use("/api/counters", counterRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
@@ -62,11 +64,17 @@ app.use(errorHandler);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);
-  console.log(`###################################`);
-  console.log(`#                                 #`);
-  console.log(`#     http://localhost:${PORT}       #`);
-  console.log(`#                                 #`);
-  console.log(`###################################`);
+  console.log(`################################`);
+  console.log(`#                              #`);
+  console.log(`#       Ctrl + Click           #`);
+  console.log(`#                              #`);
+  console.log(`#            ||                #`);
+  console.log(`#            \\/                #`);
+  console.log(`#                              #`);
+  console.log(`#     http://localhost:${PORT}    #`);
+  console.log(`#                              #`);
+  console.log(`#                              #`);
+  console.log(`################################`);
 });
 
 export default app;

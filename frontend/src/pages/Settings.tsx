@@ -6,6 +6,7 @@ import {
   FileText,
   Database,
   RotateCcw,
+  Calculator,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -14,8 +15,14 @@ import HabitsManager from "../components/settings/HabitsManager";
 import MoodsManager from "../components/settings/MoodsManager";
 import ProductivityLevelsManager from "../components/settings/ProductivityLevelsManager";
 import TemplatesManager from "../components/settings/TemplatesManager";
+import CountersManager from "../components/settings/CountersManager";
 
-type SettingsTab = "habits" | "moods" | "productivity" | "templates";
+type SettingsTab =
+  | "habits"
+  | "moods"
+  | "productivity"
+  | "templates"
+  | "counters";
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>("habits"); // These states are for future use with asynchronous data loading
@@ -80,6 +87,8 @@ const Settings: React.FC = () => {
         return <ProductivityLevelsManager />;
       case "templates":
         return <TemplatesManager />;
+      case "counters":
+        return <CountersManager />;
       default:
         return <div>اختر تبويبة</div>;
     }
@@ -146,6 +155,19 @@ const Settings: React.FC = () => {
               <div className="flex items-center">
                 <FileText className="w-4 h-4 ml-2" />
                 <span>قوالب اليوميات</span>
+              </div>
+            </button>{" "}
+            <button
+              onClick={() => handleTabChange("counters")}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "counters"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-500"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              <div className="flex items-center">
+                <Calculator className="w-4 h-4 ml-2" />
+                <span>العدادات</span>
               </div>
             </button>
           </nav>

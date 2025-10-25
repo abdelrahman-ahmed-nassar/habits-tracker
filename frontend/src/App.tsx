@@ -9,6 +9,7 @@ import Yearly from "./pages/Yearly";
 import Analytics from "./pages/Analytics";
 import Notes from "./pages/Notes";
 import Settings from "./pages/Settings";
+import Counters from "./pages/Counters";
 import MotivationalPopup from "./components/ui/MotivationalPopup";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -32,6 +33,7 @@ function App() {
             <Route path="analytics/overview" element={<Analytics />} />
             <Route path="analytics/:habitId" element={<Analytics />} />
             <Route path="notes" element={<Notes />} />
+            <Route path="counters" element={<Counters />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

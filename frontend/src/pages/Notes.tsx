@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
+import { arSA } from "date-fns/locale";
 import {
   Calendar as CalendarIcon,
   List,
@@ -182,7 +183,7 @@ const Notes: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 space-x-reverse">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                  {format(currentDate, "MMMM yyyy")}
+                  {format(currentDate, "MMMM yyyy", { locale: arSA })}
                 </h2>
                 <Badge variant="default" size="sm">
                   {calendarData?.totalNotes || 0} تدوين يوميات هذا الشهر

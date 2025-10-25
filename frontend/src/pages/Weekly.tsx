@@ -333,7 +333,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
 
   return (
     <div
-      className={`rounded-xl border ${getBgColor()} p-3 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start  ${
+      className={`rounded-xl border ${getBgColor()} p-3 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] relative w-full snap-start cursor-pointer ${
         record.goalType === "counter" ? "min-h-[160px]" : "min-h-[120px]"
       }`}
       onClick={() =>
@@ -421,7 +421,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
               {record.completed && <Check className="w-4 h-4 text-white" />}
             </div>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {record.completed ? "Completed" : "Mark as done"}
+              {record.completed ? "مكتملة" : "أكمل"}
             </span>
           </div>
         )}
@@ -495,7 +495,7 @@ const DayColumn: React.FC<DayColumnProps> = ({
             to={`/daily/${date}`}
             className="text-blue-500 hover:underline text-xs"
           >
-            View
+            عرض
           </Link>
         </div>
 

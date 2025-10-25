@@ -82,7 +82,7 @@ const Daily: React.FC = () => {
   const [transitioning, setTransitioning] = useState(false);
   const [updatingHabits, setUpdatingHabits] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<string>("habits");
-  const [activeHabitTab, setActiveHabitTab] = useState<string>("All");
+  const [activeHabitTab, setActiveHabitTab] = useState<string>("الجميع");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [syncingAnalytics, setSyncingAnalytics] = useState(false);
 
@@ -564,7 +564,7 @@ const Daily: React.FC = () => {
 
     // Add "All" tab
     tabs.push({
-      tag: "All",
+      tag: "الجميع",
       records: dailyRecords.records,
       completed: dailyRecords.stats.completedHabits,
       total: dailyRecords.stats.totalHabits,
@@ -828,7 +828,7 @@ const Daily: React.FC = () => {
           )}{" "}
           {/* Enhanced Mark All Complete Button */}
           {currentTabData &&
-            activeHabitTab !== "All" &&
+            activeHabitTab !== "الجميع" &&
             currentTabData.completed < currentTabData.total && (
               <div className="mb-6">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
@@ -900,7 +900,7 @@ const Daily: React.FC = () => {
                   لا توجد عادات لهذا اليوم
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
-                  {activeHabitTab === "All"
+                  {activeHabitTab === "الجميع"
                     ? "ليس لديك أي عادات مجدولة لهذا التاريخ."
                     : `لم يتم العثور على عادات ${activeHabitTab} لهذا التاريخ.`}
                 </p>
@@ -956,26 +956,31 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
     return record.completed ? "مكتمل" : "غير مكتمل";
   };
 
+  const handleClick = () => {
+    if (!isUpdating) {
+      onToggleCompletion(record.habitId);
+    }
+  };
+
   return (
     <div
+      onClick={handleClick}
       className={`flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border transition-all duration-200 hover:shadow-md ${
         record.completed
           ? "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
           : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
-      }`}
+      } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
     >
       {/* Left side: Checkbox and habit info */}
       <div className="flex items-center space-x-4 flex-1 min-w-0">
         {" "}
         {/* Minimal checkbox-style completion toggle */}
-        <button
-          onClick={() => onToggleCompletion(record.habitId)}
-          disabled={isUpdating}
-          className={`flex-shrink-0 w-6 h-6 border flex items-center justify-center transition-all duration-200 p-0 ${
+        <div
+          className={`flex-shrink-0 w-6 h-6 border flex items-center justify-center transition-all duration-200 p-0 rounded-md ${
             record.completed
               ? "bg-blue-500 border-blue-500 text-white"
               : "border-gray-300 dark:border-gray-500 hover:border-blue-400 dark:hover:border-blue-400 bg-white dark:bg-gray-700"
-          } ${isUpdating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          }`}
         >
           {isUpdating ? (
             <div className="w-2.5 h-2.5 border border-current border-t-transparent rounded-full animate-spin"></div>
@@ -990,7 +995,7 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
               </svg>
             )
           )}
-        </button>
+        </div>
         {/* Habit name and info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-3">
