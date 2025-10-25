@@ -142,6 +142,17 @@ class HabitsService {
     const response = await axios.post(url);
     return response.data.data;
   }
+
+  /**
+   * Reorder habits
+   * @param habitIds - Array of habit IDs in desired order
+   */
+  async reorderHabits(habitIds: string[]): Promise<Habit[]> {
+    const response = await axios.put(`${API_BASE_URL}/habits/reorder`, {
+      habitIds,
+    });
+    return response.data.data;
+  }
 }
 
 export const habitsService = new HabitsService();

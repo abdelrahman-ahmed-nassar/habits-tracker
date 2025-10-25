@@ -13,6 +13,7 @@ export interface Habit {
   createdAt: string;
   motivationNote?: string;
   isActive: boolean;
+  order?: number; // Order for custom sorting
 }
 
 // Re-export for backward compatibility

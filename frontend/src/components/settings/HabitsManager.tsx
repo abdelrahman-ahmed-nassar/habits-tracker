@@ -6,6 +6,10 @@ import {
   Trash2,
   ToggleLeft,
   ToggleRight,
+  GripVertical,
+  ArrowUpDown,
+  Save,
+  X,
 } from "lucide-react";
 import Card, { CardContent } from "../ui/Card";
 import Button from "../ui/Button";
@@ -49,6 +53,9 @@ const HabitsManager: React.FC = () => {
   const [currentHabitId, setCurrentHabitId] = useState<string | null>(null);
   const [formData, setFormData] = useState<HabitFormData>(defaultHabitData);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [isReorderMode, setIsReorderMode] = useState(false);
+  const [reorderedHabits, setReorderedHabits] = useState<Habit[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   const fetchHabits = async () => {
     try {
@@ -221,6 +228,65 @@ const HabitsManager: React.FC = () => {
     }
   };
 
+  const handleEnterReorderMode = () => {
+    // Sort habits by order field or use current order
+    const sorted = [...habits].sort((a, b) => {
+      const orderA = a.order !== undefined ? a.order : 999;
+      const orderB = b.order !== undefined ? b.order : 999;
+      return orderA - orderB;
+    });
+    setReorderedHabits(sorted);
+    setIsReorderMode(true);
+  };
+
+  const handleExitReorderMode = () => {
+    setIsReorderMode(false);
+    setReorderedHabits([]);
+    setDraggedIndex(null);
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+
+    if (draggedIndex === null || draggedIndex === index) return;
+
+    const newHabits = [...reorderedHabits];
+    const draggedHabit = newHabits[draggedIndex];
+
+    // Remove from old position
+    newHabits.splice(draggedIndex, 1);
+    // Insert at new position
+    newHabits.splice(index, 0, draggedHabit);
+
+    setReorderedHabits(newHabits);
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const handleSaveReorder = async () => {
+    try {
+      setIsSubmitting(true);
+      const habitIds = reorderedHabits.map((h) => h.id);
+      await habitsService.reorderHabits(habitIds);
+      toast.success("تم حفظ الترتيب بنجاح");
+      await fetchHabits();
+      setIsReorderMode(false);
+      setReorderedHabits([]);
+    } catch (err) {
+      toast.error("فشل حفظ الترتيب");
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const renderDaySelector = () => {
     if (formData.repetition === "daily") {
       return null;
@@ -358,12 +424,44 @@ const HabitsManager: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">مدير العادات</h2>
-        <Button
-          onClick={handleOpenCreateForm}
-          leftIcon={<PlusCircle size={16} />}
-        >
-          إنشاء عادة
-        </Button>
+        <div className="flex gap-2">
+          {!isReorderMode ? (
+            <>
+              <Button
+                onClick={handleEnterReorderMode}
+                variant="secondary"
+                leftIcon={<ArrowUpDown size={16} />}
+                disabled={habits.length === 0}
+              >
+                إعادة ترتيب
+              </Button>
+              <Button
+                onClick={handleOpenCreateForm}
+                leftIcon={<PlusCircle size={16} />}
+              >
+                إنشاء عادة
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={handleExitReorderMode}
+                variant="secondary"
+                leftIcon={<X size={16} />}
+                disabled={isSubmitting}
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleSaveReorder}
+                leftIcon={<Save size={16} />}
+                isLoading={isSubmitting}
+              >
+                حفظ الترتيب
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -372,7 +470,53 @@ const HabitsManager: React.FC = () => {
         </div>
       )}
 
-      {habits.length === 0 ? (
+      {isReorderMode ? (
+        // Reorder Mode
+        <Card>
+          <CardContent className="p-6">
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                اسحب العادات لإعادة ترتيبها، ثم اضغط على "حفظ الترتيب" لتطبيق
+                التغييرات.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {reorderedHabits.map((habit, index) => (
+                <div
+                  key={habit.id}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragEnd={handleDragEnd}
+                  className={`flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border rounded-lg cursor-move transition-all ${
+                    draggedIndex === index
+                      ? "opacity-50 border-blue-500"
+                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
+                  }`}
+                >
+                  <GripVertical className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium truncate">{habit.name}</h3>
+                    <div className="flex gap-2 mt-1">
+                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs">
+                        {habit.tag}
+                      </span>
+                      {habit.isActive === false && (
+                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs">
+                          غير نشط
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
+                    {index + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : habits.length === 0 ? (
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-gray-500 dark:text-gray-400">
@@ -487,7 +631,7 @@ const HabitsManager: React.FC = () => {
             fullWidth
           />
           <Input
-            label="ملاحظة تحفيزية"
+            label="ملاحظة تحفيزية (نية)"
             name="motivationNote"
             value={formData.motivationNote || ""}
             onChange={handleInputChange}

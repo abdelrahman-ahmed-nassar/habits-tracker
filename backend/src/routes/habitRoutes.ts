@@ -10,14 +10,17 @@ router.get("/", habitController.getAllHabits);
 // POST /api/habits/sync-analytics - Sync analytics for all habits
 router.post("/sync-analytics", habitController.syncHabitAnalytics);
 
+// PUT /api/habits/reorder - Reorder habits
+router.put("/reorder", habitController.reorderHabits);
+
 // GET /api/habits/random/pick - Get a random habit
 router.get("/random/pick", habitController.getRandomHabit);
 
-// GET /api/habits/:id - Get a specific habit
-router.get("/:id", habitController.getHabitById);
-
 // POST /api/habits - Create new habit
 router.post("/", habitController.createHabit);
+
+// GET /api/habits/:id - Get a specific habit
+router.get("/:id", habitController.getHabitById);
 
 // PUT /api/habits/:id - Update habit
 router.put("/:id", habitController.updateHabit);

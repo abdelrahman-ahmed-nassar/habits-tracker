@@ -179,6 +179,14 @@ export const deleteHabit = async (id: string): Promise<boolean> => {
 };
 
 /**
+ * Replace all habits with a new set
+ * @param habits New set of habits
+ */
+export const replaceAllHabits = async (habits: Habit[]): Promise<void> => {
+  await writeData(HABITS_FILE, habits);
+};
+
+/**
  * Get all completion records
  * @returns Promise with all completion records
  */

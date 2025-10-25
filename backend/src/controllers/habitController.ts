@@ -316,3 +316,47 @@ export const syncHabitAnalytics = asyncHandler(
     }
   }
 );
+
+/**
+ * Reorder habits
+ * @route PUT /api/habits/reorder
+ * @body { habitIds: string[] } - Array of habit IDs in desired order
+ */
+export const reorderHabits = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { habitIds } = req.body;
+
+    if (!Array.isArray(habitIds)) {
+      throw new AppError("habitIds must be an array", 400);
+    }
+
+    // Get all habits
+    const habits = await dataService.getHabits();
+
+    // Validate that all IDs exist
+    const habitIdSet = new Set(habits.map((h) => h.id));
+    const invalidIds = habitIds.filter((id) => !habitIdSet.has(id));
+
+    if (invalidIds.length > 0) {
+      throw new AppError(`Invalid habit IDs: ${invalidIds.join(", ")}`, 400);
+    }
+
+    // Update order for each habit
+    const updatedHabits = habits.map((habit) => {
+      const orderIndex = habitIds.indexOf(habit.id);
+      return {
+        ...habit,
+        order: orderIndex !== -1 ? orderIndex : habit.order || 999,
+      };
+    });
+
+    // Save updated habits
+    await dataService.replaceAllHabits(updatedHabits);
+
+    res.status(200).json({
+      success: true,
+      data: updatedHabits,
+      message: "Habits reordered successfully",
+    });
+  }
+);

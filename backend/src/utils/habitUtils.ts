@@ -139,6 +139,9 @@ export const filterAndSortHabits = (
       filters.sortField,
       filters.sortDirection || "asc"
     );
+  } else {
+    // Default sorting by order field if it exists
+    result = sortHabits(result, "order", "asc");
   }
 
   return result;
