@@ -7,18 +7,16 @@ import {
   PatchCounterRequest,
 } from "@shared/types";
 import { AppError, asyncHandler } from "../middleware/errorHandler";
-import * as fs from "fs/promises";
-import * as path from "path";
+import { readData, writeData } from "../services/fileStorageService";
 
-const COUNTERS_FILE = path.join(__dirname, "../../data/counters.json");
+const COUNTERS_FILE = "counters.json";
 
 /**
  * Read counters from file
  */
 async function readCounters(): Promise<Counter[]> {
   try {
-    const data = await fs.readFile(COUNTERS_FILE, "utf-8");
-    return JSON.parse(data);
+    return await readData<Counter[]>(COUNTERS_FILE);
   } catch (error) {
     // If file doesn't exist, return empty array
     return [];
@@ -29,7 +27,7 @@ async function readCounters(): Promise<Counter[]> {
  * Write counters to file
  */
 async function writeCounters(counters: Counter[]): Promise<void> {
-  await fs.writeFile(COUNTERS_FILE, JSON.stringify(counters, null, 2));
+  await writeData(COUNTERS_FILE, counters);
 }
 
 /**

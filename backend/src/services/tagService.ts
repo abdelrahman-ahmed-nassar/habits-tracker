@@ -1,50 +1,48 @@
-import fs from "fs";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { Tag, CreateTagDto, UpdateTagDto } from "../types/tag";
+import { readData, writeData } from "./fileStorageService";
 
-const TAGS_FILE = path.join(__dirname, "../../data/tags.json");
+const TAGS_FILE = "tags.json";
 
 // Helper function to read tags
-const readTags = (): Tag[] => {
+const readTags = async (): Promise<Tag[]> => {
   try {
-    const data = fs.readFileSync(TAGS_FILE, "utf8");
-    return JSON.parse(data);
+    return await readData<Tag[]>(TAGS_FILE);
   } catch (error) {
     return [];
   }
 };
 
 // Helper function to write tags
-const writeTags = (tags: Tag[]): void => {
-  fs.writeFileSync(TAGS_FILE, JSON.stringify(tags, null, 2));
+const writeTags = async (tags: Tag[]): Promise<void> => {
+  await writeData(TAGS_FILE, tags);
 };
 
-export const getAllTags = (): Tag[] => {
-  return readTags();
+export const getAllTags = async (): Promise<Tag[]> => {
+  return await readTags();
 };
 
-export const getTagById = (id: string): Tag | undefined => {
-  const tags = readTags();
+export const getTagById = async (id: string): Promise<Tag | undefined> => {
+  const tags = await readTags();
   return tags.find((tag) => tag.id === id);
 };
 
-export const createTag = (tagData: CreateTagDto): Tag => {
-  const tags = readTags();
+export const createTag = async (tagData: CreateTagDto): Promise<Tag> => {
+  const tags = await readTags();
   const newTag: Tag = {
     id: uuidv4(),
     ...tagData,
   };
   tags.push(newTag);
-  writeTags(tags);
+  await writeTags(tags);
   return newTag;
 };
 
-export const updateTag = (
+export const updateTag = async (
   id: string,
   tagData: UpdateTagDto
-): Tag | undefined => {
-  const tags = readTags();
+): Promise<Tag | undefined> => {
+  const tags = await readTags();
   const tagIndex = tags.findIndex((tag) => tag.id === id);
 
   if (tagIndex === -1) return undefined;
@@ -55,17 +53,17 @@ export const updateTag = (
   };
 
   tags[tagIndex] = updatedTag;
-  writeTags(tags);
+  await writeTags(tags);
   return updatedTag;
 };
 
-export const deleteTag = (id: string): boolean => {
-  const tags = readTags();
+export const deleteTag = async (id: string): Promise<boolean> => {
+  const tags = await readTags();
   const initialLength = tags.length;
   const filteredTags = tags.filter((tag) => tag.id !== id);
 
   if (filteredTags.length === initialLength) return false;
 
-  writeTags(filteredTags);
+  await writeTags(filteredTags);
   return true;
 };

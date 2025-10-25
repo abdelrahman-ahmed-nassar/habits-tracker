@@ -22,6 +22,85 @@ import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
 const app: Express = express();
 const PORT = process.env.PORT || 5002;
 
+// Function to start server with proper error handling
+const startServer = (port: number): void => {
+  const server = app.listen(port, () => {
+    console.log(`Server running on port ${port} 🚀`);
+    console.log(`################################`);
+    console.log(`#                              #`);
+    console.log(`#       Ctrl + Click           #`);
+    console.log(`#                              #`);
+    console.log(`#            ||                #`);
+    console.log(`#            \\/                #`);
+    console.log(`#                              #`);
+    console.log(`#     http://localhost:${port}    #`);
+    console.log(`#                              #`);
+    console.log(`#                              #`);
+    console.log(`################################`);
+  });
+
+  // Handle server errors
+  server.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.error(`❌ ERROR: Port ${port} is already in use!`);
+      console.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+      console.error(
+        `The application MUST run on port ${port} to work properly.`
+      );
+      console.error(
+        `The frontend is configured to connect to this specific port.\n`
+      );
+      console.error(`📋 Solutions:\n`);
+      console.error(`1️⃣  Close any application using port ${port}`);
+      console.error(`    - Check if another instance of this app is running`);
+      console.error(`    - Look for other development servers\n`);
+      console.error(`2️⃣  Find and kill the process using port ${port}:`);
+      console.error(`    Windows:`);
+      console.error(`      netstat -ano | findstr :${port}`);
+      console.error(`      taskkill /PID <PID_NUMBER> /F`);
+      console.error(`    `);
+      console.error(`    Mac/Linux:`);
+      console.error(`      lsof -ti:${port} | xargs kill -9\n`);
+      console.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+
+      console.error(`Press any key to exit...`);
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.on("data", () => process.exit(1));
+    } else if (error.code === "EACCES") {
+      console.error(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.error(`❌ ERROR: Permission denied for port ${port}`);
+      console.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+      console.error(`You don't have permission to use this port.\n`);
+      console.error(`📋 Solutions:\n`);
+      console.error(
+        `1️⃣  Run as administrator (Windows) or with sudo (Mac/Linux)`
+      );
+      console.error(
+        `2️⃣  Use a port number above 1024 (requires code changes)\n`
+      );
+      console.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+
+      console.error(`Press any key to exit...`);
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.on("data", () => process.exit(1));
+    } else {
+      console.error(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.error(`❌ Server Error`);
+      console.error(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+      console.error(error);
+      console.error(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+
+      console.error(`Press any key to exit...`);
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+      process.stdin.on("data", () => process.exit(1));
+    }
+  });
+};
+
 // Middleware
 app.use(cors());
 app.use(helmet());
@@ -61,20 +140,25 @@ app.get("/*", function (req, res) {
 // Error handling middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
-  console.log(`################################`);
-  console.log(`#                              #`);
-  console.log(`#       Ctrl + Click           #`);
-  console.log(`#                              #`);
-  console.log(`#            ||                #`);
-  console.log(`#            \\/                #`);
-  console.log(`#                              #`);
-  console.log(`#     http://localhost:${PORT}    #`);
-  console.log(`#                              #`);
-  console.log(`#                              #`);
-  console.log(`################################`);
+// Start server with automatic port fallback
+startServer(Number(PORT));
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("\n❌ Uncaught Exception:", error);
+  console.error("Press any key to exit...");
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on("data", () => process.exit(1));
+});
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("\n❌ Unhandled Rejection at:", promise, "reason:", reason);
+  console.error("Press any key to exit...");
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdin.on("data", () => process.exit(1));
 });
 
 export default app;

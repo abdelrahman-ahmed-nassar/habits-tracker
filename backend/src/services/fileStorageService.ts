@@ -19,18 +19,25 @@ const isCompiledCode = __dirname.includes("dist");
 let dataDir: string;
 if (isPkgExecutable) {
   // For pkg executable: next to .exe file
+  // process.execPath gives the full path to the .exe
   dataDir = path.join(path.dirname(process.execPath), "data");
+  console.log(`Running as PKG executable. execPath: ${process.execPath}`);
 } else if (isCompiledCode) {
   // For compiled JS running from dist: dist/backend/src/services -> backend/data
   dataDir = path.join(__dirname, "../../../../data");
+  console.log(`Running as compiled code from dist. __dirname: ${__dirname}`);
 } else {
   // For ts-node dev mode: src/services -> backend/data
   dataDir = path.join(__dirname, "../../data");
+  console.log(`Running in dev mode. __dirname: ${__dirname}`);
 }
 
 const backupDir = path.join(dataDir, "backups");
 
 console.log(`Data directory: ${dataDir}`);
+console.log(
+  `isPkgExecutable: ${isPkgExecutable}, isCompiledCode: ${isCompiledCode}`
+);
 
 /**
  * Initialize the storage directories

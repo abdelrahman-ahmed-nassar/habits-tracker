@@ -17,6 +17,8 @@ const NOTES_FILE = "notes.json";
 const SETTINGS_FILE = "settings.json";
 const BACKUP_FOLDER = "backups";
 const NOTES_TEMPLATES_FILE = "notes_templates.json";
+const COUNTERS_FILE = "counters.json";
+const TAGS_FILE = "tags.json";
 
 // Default settings
 const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +48,8 @@ export const initializeData = async (): Promise<void> => {
   await ensureFileExists(COMPLETIONS_FILE, []);
   await ensureFileExists(NOTES_FILE, []);
   await ensureFileExists(SETTINGS_FILE, DEFAULT_SETTINGS);
+  await ensureFileExists(COUNTERS_FILE, []);
+  await ensureFileExists(TAGS_FILE, []);
   await ensureFileExists(NOTES_TEMPLATES_FILE, [
     {
       id: "daily",
