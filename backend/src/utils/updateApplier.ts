@@ -8,23 +8,32 @@ import { execSync } from "child_process";
 export function applyPendingUpdate(): boolean {
   try {
     const updateDir = path.join(process.cwd(), "updates");
-    const extractedDir = path.join(updateDir, "extracted");
 
-    // Check if there's a pending update
-    if (!fs.existsSync(extractedDir)) {
+    // Check if there's a pending update directory
+    if (!fs.existsSync(updateDir)) {
+      return false;
+    }
+
+    console.log("📦 Checking for pending updates...");
+
+    // Get the executable name for the current platform
+    const executableName = getExecutableName();
+
+    // Try to find the update executable (could be with or without platform suffix)
+    let newExecutablePath = path.join(updateDir, executableName);
+
+    // If not found with simple name, try with platform suffix
+    if (!fs.existsSync(newExecutablePath)) {
+      const executableWithPlatform = getExecutableNameWithPlatform();
+      newExecutablePath = path.join(updateDir, executableWithPlatform);
+    }
+
+    if (!fs.existsSync(newExecutablePath)) {
+      console.log("⚠️  No update executable found");
       return false;
     }
 
     console.log("📦 Pending update found, preparing to apply...");
-
-    // Get the executable name for the current platform
-    const executableName = getExecutableName();
-    const newExecutablePath = path.join(extractedDir, executableName);
-
-    if (!fs.existsSync(newExecutablePath)) {
-      console.log("⚠️  Update executable not found, skipping update");
-      return false;
-    }
 
     // Get current executable path
     const currentExecutable = process.execPath;
@@ -35,9 +44,12 @@ export function applyPendingUpdate(): boolean {
       createWindowsUpdateScript(
         currentExecutable,
         newExecutablePath,
-        extractedDir
+        updateDir
       );
       console.log("✅ Update ready - will be applied on next restart");
+      console.log(
+        "💡 Close the app and run apply-update.bat to complete the update"
+      );
       return true;
     } else {
       // On Unix systems (macOS, Linux), we can replace the file directly
@@ -53,14 +65,6 @@ export function applyPendingUpdate(): boolean {
 
       // Set execute permissions
       fs.chmodSync(currentExecutable, 0o755);
-
-      // Copy data folder if it exists in the update
-      const updateDataDir = path.join(extractedDir, "data");
-      const currentDataDir = path.join(currentDir, "data");
-
-      if (fs.existsSync(updateDataDir) && !fs.existsSync(currentDataDir)) {
-        copyDirectory(updateDataDir, currentDataDir);
-      }
 
       // Clean up
       fs.rmSync(updateDir, { recursive: true, force: true });
@@ -80,13 +84,12 @@ export function applyPendingUpdate(): boolean {
 function createWindowsUpdateScript(
   currentExecutable: string,
   newExecutablePath: string,
-  extractedDir: string
+  updateDir: string
 ): void {
   const scriptPath = path.join(
     path.dirname(currentExecutable),
     "apply-update.bat"
   );
-  const updateBaseDir = path.dirname(extractedDir); // Get the 'updates' folder
 
   const script = `@echo off
 echo Applying update...
@@ -98,18 +101,8 @@ copy /Y "${currentExecutable}" "${currentExecutable}.backup"
 REM Replace with new version
 copy /Y "${newExecutablePath}" "${currentExecutable}"
 
-REM Copy data folder if needed (but don't overwrite existing data)
-if exist "${path.join(extractedDir, "data")}" (
-  if not exist "${path.join(path.dirname(currentExecutable), "data")}" (
-    xcopy /E /I /Y "${path.join(extractedDir, "data")}" "${path.join(
-    path.dirname(currentExecutable),
-    "data"
-  )}"
-  )
-)
-
 REM Clean up
-rmdir /S /Q "${updateBaseDir}"
+rmdir /S /Q "${updateDir}"
 del "%~f0"
 
 echo Update completed! Starting application...
@@ -131,6 +124,22 @@ function getExecutableName(): string {
     case "darwin":
     case "linux":
       return "modawim-habits-tracker";
+    default:
+      throw new Error(`Unsupported platform: ${process.platform}`);
+  }
+}
+
+/**
+ * Get the executable name with platform suffix (as downloaded from GitHub)
+ */
+function getExecutableNameWithPlatform(): string {
+  switch (process.platform) {
+    case "win32":
+      return "modawim-habits-tracker-win.exe";
+    case "darwin":
+      return "modawim-habits-tracker-macos";
+    case "linux":
+      return "modawim-habits-tracker-linux";
     default:
       throw new Error(`Unsupported platform: ${process.platform}`);
   }

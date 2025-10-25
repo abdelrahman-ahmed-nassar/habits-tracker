@@ -52,10 +52,6 @@ export function UpdateNotification() {
 
       if (result.success) {
         setDownloadComplete(true);
-        // Show success message for 3 seconds then hide
-        setTimeout(() => {
-          setIsVisible(false);
-        }, 3000);
       } else {
         alert(`Update failed: ${result.message}`);
       }
@@ -110,13 +106,26 @@ export function UpdateNotification() {
         </div>
 
         {downloadComplete ? (
-          <div className="bg-white/20 rounded-lg p-3 mb-3">
-            <p className="text-sm font-medium mb-2">
+          <div className="bg-white/20 rounded-lg p-4 mb-3">
+            <p className="text-sm font-medium mb-3 text-center">
               ✅ تم تحميل التحديث بنجاح!
             </p>
-            <p className="text-xs text-white/90">
-              أغلق التطبيق وافتحه مرة أخرى لتطبيق التحديث.
-            </p>
+            <div className="bg-white/10 rounded p-3 space-y-2 text-xs">
+              <p className="font-semibold">خطوات التحديث:</p>
+              <ol className="list-decimal list-inside space-y-1 mr-2">
+                <li>أغلق التطبيق (الموقع + CMD)</li>
+                <li>
+                  افتح ملف{" "}
+                  <code className="bg-black/20 px-1 rounded">
+                    apply-update.bat
+                  </code>
+                </li>
+                <li>سيتم تطبيق التحديث تلقائياً!</li>
+              </ol>
+              <p className="text-white/80 mt-2 pt-2 border-t border-white/20">
+                💡 الملف موجود بجانب التطبيق
+              </p>
+            </div>
           </div>
         ) : (
           <div className="flex gap-2">

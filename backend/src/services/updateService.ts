@@ -1,11 +1,6 @@
 import https from "https";
 import fs from "fs";
 import path from "path";
-import { exec } from "child_process";
-import { promisify } from "util";
-import AdmZip from "adm-zip";
-
-const execAsync = promisify(exec);
 
 interface GitHubRelease {
   tag_name: string;
@@ -100,10 +95,15 @@ export class UpdateService {
 
       console.log("Update downloaded successfully!");
 
+      // On Windows, create the update script immediately
+      if (process.platform === "win32") {
+        this.createUpdateScript(downloadPath);
+      }
+
       return {
         success: true,
         message:
-          "Update downloaded successfully. Please restart the application to complete the installation.",
+          "Update downloaded successfully. Close the app and run apply-update.bat to complete the installation.",
         updatePath: downloadPath,
       };
     } catch (error) {
@@ -114,6 +114,52 @@ export class UpdateService {
           error instanceof Error ? error.message : "Failed to download update",
       };
     }
+  }
+
+  /**
+   * Create Windows update script
+   */
+  private createUpdateScript(newExecutablePath: string): void {
+    const currentExecutable = process.execPath;
+    const scriptPath = path.join(
+      path.dirname(currentExecutable),
+      "apply-update.bat"
+    );
+    const updateDir = path.dirname(newExecutablePath);
+
+    const script = `@echo off
+echo ================================
+echo  Applying Modawim Update
+echo ================================
+echo.
+echo Waiting for app to close...
+timeout /t 3 /nobreak > nul
+
+REM Backup current executable
+echo Creating backup...
+copy /Y "${currentExecutable}" "${currentExecutable}.backup" > nul
+
+REM Replace with new version
+echo Installing update...
+copy /Y "${newExecutablePath}" "${currentExecutable}" > nul
+
+REM Clean up
+echo Cleaning up...
+rmdir /S /Q "${updateDir}" > nul 2>&1
+del "%~f0" > nul 2>&1
+
+echo.
+echo ================================
+echo  Update Complete!
+echo ================================
+echo.
+echo Starting application...
+timeout /t 2 /nobreak > nul
+start "" "${currentExecutable}"
+`;
+
+    fs.writeFileSync(scriptPath, script, "utf-8");
+    console.log(`📝 Update script created at: ${scriptPath}`);
   }
 
   /**
@@ -194,31 +240,6 @@ export class UpdateService {
           reject(error);
         });
     });
-  }
-
-  /**
-   * Extract a ZIP file using Node.js (no PowerShell needed)
-   */
-  private async extractZip(
-    zipPath: string,
-    extractPath: string
-  ): Promise<void> {
-    if (!fs.existsSync(extractPath)) {
-      fs.mkdirSync(extractPath, { recursive: true });
-    }
-
-    try {
-      const zip = new AdmZip(zipPath);
-      zip.extractAllTo(extractPath, true);
-      console.log("ZIP extracted successfully");
-    } catch (error) {
-      console.error("Failed to extract ZIP:", error);
-      throw new Error(
-        `Failed to extract ZIP file: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    }
   }
 
   /**

@@ -27,7 +27,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "adm-zip": "^0.5.16",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
@@ -37,7 +36,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/adm-zip": "^0.5.7",
     "@types/cors": "^2.8.15",
     "@types/express": "^4.17.20",
     "@types/morgan": "^1.9.7",
