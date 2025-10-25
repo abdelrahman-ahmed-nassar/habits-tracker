@@ -244,7 +244,7 @@ MIT License - See LICENSE file for details
 
 **عبدالرحمن أحمد نصار** (Abdelrahman Ahmed Nassar)
 
-- Email: abdelrahman.ahmed.nassar@gmail.com
+- Email: abdelrhman.ahmed.nassar@gmail.com
 - GitHub: [@abdelrahman-ahmed-nassar](https://github.com/abdelrahman-ahmed-nassar)
 - WhatsApp: +201003685977
 

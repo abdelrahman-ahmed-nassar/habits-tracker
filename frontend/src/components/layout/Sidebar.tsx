@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
               {/* Contact links */}
               <div className="flex items-center justify-center space-x-reverse space-x-3 pt-2">
                 <a
-                  href="mailto:abdelrahman.ahmed.nassar@gmail.com"
+                  href="mailto:abdelrhman.ahmed.nassar@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
