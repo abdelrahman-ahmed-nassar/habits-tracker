@@ -38,7 +38,7 @@ If using GitHub Releases, update `landing/index.html`:
 
 ```html
 <a
-  href="https://github.com/abdelrahman-ahmed-nassar/habits-tracker/releases/latest/download/modawim-windows.zip"
+  href="https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker/releases/latest/download/modawim-windows.zip"
   class="download-btn"
   download
 >
@@ -47,7 +47,7 @@ If using GitHub Releases, update `landing/index.html`:
 </a>
 
 <a
-  href="https://github.com/abdelrahman-ahmed-nassar/habits-tracker/releases/latest/download/modawim-macos.zip"
+  href="https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker/releases/latest/download/modawim-macos.zip"
   class="download-btn"
   download
 >
@@ -56,7 +56,7 @@ If using GitHub Releases, update `landing/index.html`:
 </a>
 
 <a
-  href="https://github.com/abdelrahman-ahmed-nassar/habits-tracker/releases/latest/download/modawim-linux.zip"
+  href="https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker/releases/latest/download/modawim-linux.zip"
   class="download-btn"
   download
 >

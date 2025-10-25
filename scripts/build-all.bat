@@ -4,6 +4,9 @@ echo  Building Habits Tracker
 echo ================================
 echo.
 
+REM Change to the directory where this script is located, then go to parent (root)
+cd /d "%~dp0.."
+
 REM Step 1: Build Frontend
 echo [1/6] Building React frontend...
 cd frontend
@@ -96,9 +99,9 @@ echo  Build Complete!
 echo ================================
 echo.
 echo Executables are in: backend\executable\
-echo   - habits-tracker-backend-win.exe
-echo   - habits-tracker-backend-linux
-echo   - habits-tracker-backend-macos
+echo   - modawim-habits-tracker-win.exe
+echo   - modawim-habits-tracker-linux
+echo   - modawim-habits-tracker-macos
 echo.
 echo Next steps:
 echo 1. Test the executable locally

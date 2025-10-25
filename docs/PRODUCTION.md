@@ -121,7 +121,7 @@ Use **GitHub Releases** instead:
 2. Update download links in `landing/index.html`:
    ```html
    <a
-     href="https://github.com/abdelrahman-ahmed-nassar/habits-tracker/releases/latest/download/modawim-windows.zip"
+     href="https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker/releases/latest/download/modawim-windows.zip"
      class="download-btn"
      download
    ></a>

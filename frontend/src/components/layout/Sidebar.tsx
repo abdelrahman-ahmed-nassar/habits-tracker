@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Calculator,
 } from "lucide-react";
+import { APP_VERSION } from "../../../../shared/version";
 
 interface SidebarProps {
   isMobile: boolean;
@@ -83,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
             {/* Hadith quote */}
             <div className="text-center pb-3 border-b border-gray-200 dark:border-gray-700">
               <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                "أَحَبُّ الأعمالِ إلى اللهِ أدْومُها و إن قَلَّ"
+                "أَحَبُّ الأعمالِ إلى اللهِ أدْومُها و إن قَلَّ"
               </p>
             </div>
 
@@ -127,6 +128,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
                 >
                   <Github className="w-4 h-4" />
                 </a>
+              </div>
+
+              {/* Version */}
+              <div className="text-center pt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  الإصدار {APP_VERSION}
+                </p>
               </div>
             </div>
           </div>

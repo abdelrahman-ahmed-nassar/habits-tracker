@@ -1,19 +1,19 @@
 {
   "name": "habits-tracker-workspace",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Personal habit tracking desktop application",
   "scripts": {
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
-    "build:all": "build-all.bat",
+    "build:all": "scripts\\build-all.bat",
     "deploy:release": "node scripts/deploy-release.js",
     "start:backend": "cd backend && npm run dev",
     "start:frontend": "cd frontend && npm run dev"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abdelrahman-ahmed-nassar/habits-tracker.git"
+    "url": "git+https://github.com/abdelrahman-ahmed-nassar/modawim-habits-tracker.git"
   },
   "keywords": [
     "habits",

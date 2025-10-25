@@ -74,20 +74,20 @@ function packageExecutables(version) {
 
   // Windows
   fs.copyFileSync(
-    path.join(backendExec, "habits-tracker-backend-win.exe"),
-    path.join(tempDir, "modawim-windows", "habits-tracker-backend.exe")
+    path.join(backendExec, "modawim-habits-tracker-win.exe"),
+    path.join(tempDir, "modawim-windows", "modawim-habits-tracker.exe")
   );
 
   // macOS
   fs.copyFileSync(
-    path.join(backendExec, "habits-tracker-backend-macos"),
-    path.join(tempDir, "modawim-macos", "habits-tracker-backend")
+    path.join(backendExec, "modawim-habits-tracker-macos"),
+    path.join(tempDir, "modawim-macos", "modawim-habits-tracker")
   );
 
   // Linux
   fs.copyFileSync(
-    path.join(backendExec, "habits-tracker-backend-linux"),
-    path.join(tempDir, "modawim-linux", "habits-tracker-backend")
+    path.join(backendExec, "modawim-habits-tracker-linux"),
+    path.join(tempDir, "modawim-linux", "modawim-habits-tracker")
   );
 
   // Copy data and README for all platforms
@@ -134,20 +134,29 @@ function packageExecutables(version) {
 function createRelease(version, tempDir) {
   log(`Creating GitHub Release ${version}...`, "info");
 
-  const zipFiles = [
+  const backendExec = path.join(process.cwd(), "backend", "executable");
+
+  // Include both ZIP files (for new installations) and raw executables (for auto-updates)
+  const files = [
+    // Full packages with data and README (for new users)
     path.join(tempDir, "modawim-windows.zip"),
     path.join(tempDir, "modawim-macos.zip"),
     path.join(tempDir, "modawim-linux.zip"),
+
+    // Individual executables (for auto-updates)
+    path.join(backendExec, "modawim-habits-tracker-win.exe"),
+    path.join(backendExec, "modawim-habits-tracker-macos"),
+    path.join(backendExec, "modawim-habits-tracker-linux"),
   ];
 
   const command = [
     "gh release create",
     version,
-    ...zipFiles.map((f) => `"${f}"`),
+    ...files.map((f) => `"${f}"`),
     "--title",
     `"مداوم ${version}"`,
     "--notes",
-    `"تطبيق مداوم لتتبع العادات - إصدار ${version}"`,
+    `"تطبيق مداوم لتتبع العادات - إصدار ${version}\n\n## تحميل التطبيق الكامل (للمستخدمين الجدد)\n- modawim-windows.zip\n- modawim-macos.zip\n- modawim-linux.zip\n\n## ملفات التحديث التلقائي\n- modawim-habits-tracker-win.exe\n- modawim-habits-tracker-macos\n- modawim-habits-tracker-linux"`,
   ].join(" ");
 
   try {

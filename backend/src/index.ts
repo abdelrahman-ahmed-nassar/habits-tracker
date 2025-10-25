@@ -16,11 +16,20 @@ import backupRoutes from "./routes/backupRoutes";
 import tagRoutes from "./routes/tagRoutes";
 import templateRoutes from "./routes/templateRoutes";
 import counterRoutes from "./routes/counterRoutes";
+import updateRoutes from "./routes/updateRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { invalidateAnalyticsCache } from "./middleware/cacheMiddleware";
+import { applyPendingUpdate } from "./utils/updateApplier";
 
 const app: Express = express();
 const PORT = process.env.PORT || 5002;
+
+// Check for and apply any pending updates before starting the server
+console.log("🔍 Checking for pending updates...");
+const updateApplied = applyPendingUpdate();
+if (updateApplied) {
+  console.log("✨ Update has been prepared for next restart");
+}
 
 // Function to start server with proper error handling
 const startServer = (port: number): void => {
@@ -123,6 +132,7 @@ app.use("/api/backup", backupRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/templates", templateRoutes);
 app.use("/api/counters", counterRoutes);
+app.use("/api/updates", updateRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
