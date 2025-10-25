@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Plus, Minus, Target, TrendingUp } from "lucide-react";
 import { toast } from "react-toastify";
 import PageContainer from "../components/layout/PageContainer";
@@ -219,7 +220,13 @@ const Counters: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-2">لا توجد عدادات</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              ابدأ بإنشاء عداد جديد من صفحة الإعدادات
+              ابدأ بإنشاء عداد جديد من{" "}
+              <Link
+                to="/settings?tab=counters"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                صفحة الإعدادات
+              </Link>
             </p>
           </CardContent>
         </Card>
@@ -230,7 +237,13 @@ const Counters: React.FC = () => {
           </div>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              يمكنك إضافة أو تعديل العدادات من صفحة الإعدادات
+              يمكنك إضافة أو تعديل العدادات من{" "}
+              <Link
+                to="/settings?tab=counters"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                صفحة الإعدادات
+              </Link>
             </p>
           </div>
         </>

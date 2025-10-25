@@ -848,6 +848,19 @@ export const updateSettings = async (
 };
 
 /**
+ * Reset all data (delete all entries from JSON files)
+ * Keeps settings and templates, but clears habits, completions, notes, counters, and tags
+ */
+export const resetAllData = async (): Promise<void> => {
+  await writeData(HABITS_FILE, []);
+  await writeData(COMPLETIONS_FILE, []);
+  await writeData(NOTES_FILE, []);
+  await writeData(COUNTERS_FILE, []);
+  await writeData(TAGS_FILE, []);
+  console.log("All data has been reset");
+};
+
+/**
  * Create a backup of all data
  * @returns The backup data
  */
@@ -1209,6 +1222,7 @@ export const dataService = {
   deleteNote,
   getSettings,
   updateSettings,
+  resetAllData,
   createBackup,
   restoreFromBackup,
   calculateHabitAnalytics,

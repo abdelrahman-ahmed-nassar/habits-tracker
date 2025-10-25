@@ -9,4 +9,7 @@ router.get("/", settingsController.getSettings);
 // PUT /api/settings - Update settings
 router.put("/", settingsController.updateSettings);
 
+// DELETE /api/settings/reset-data - Reset all data
+router.delete("/reset-data", settingsController.resetAllData);
+
 export default router;

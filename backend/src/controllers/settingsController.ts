@@ -19,6 +19,24 @@ export const getSettings = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
+ * Reset all data (delete all entries from JSON files)
+ * @route DELETE /api/settings/reset-data
+ */
+export const resetAllData = asyncHandler(
+  async (req: Request, res: Response) => {
+    await dataService.resetAllData();
+
+    // Clear analytics cache after resetting data
+    analyticsCache.clear();
+
+    res.status(200).json({
+      success: true,
+      message: "All data has been reset successfully",
+    });
+  }
+);
+
+/**
  * Update settings
  * @route PUT /api/settings
  */
